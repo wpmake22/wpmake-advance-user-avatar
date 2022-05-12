@@ -9,6 +9,7 @@
 namespace WPMake\WPMakeUserAvatar;
 
 use WPMake\WPMakeUserAvatar\Admin\Admin;
+use WPMake\WPMakeUserAvatar\Admin\Shortcodes;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -47,6 +48,15 @@ if ( ! class_exists( 'UserAvatar' ) ) :
 		public $admin = null;
 
 		/**
+		 * Shortcodes.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @var WPMake\WPMakeUserAvatar\Admin\Shortcodes;
+		 */
+		public $shortcodes = null;
+
+		/**
 		 * Return an instance of this class
 		 *
 		 * @return object A single instance of this class.
@@ -76,6 +86,7 @@ if ( ! class_exists( 'UserAvatar' ) ) :
 		 * Includes.
 		 */
 		public function includes() {
+			$this->shortcodes = new Shortcodes();
 
 			// Class admin.
 			if ( $this->is_admin() ) {
