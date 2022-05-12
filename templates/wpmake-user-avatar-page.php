@@ -1,6 +1,6 @@
 <?php
 /**
- * WPMake User Avatar Uploader Layout
+ * WPMake User Avatar Display Layout
  *
  * Shows user lists in selected layout
  *

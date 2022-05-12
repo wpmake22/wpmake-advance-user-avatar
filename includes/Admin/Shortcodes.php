@@ -39,12 +39,8 @@ class Shortcodes {
 	 */
 	public static function user_avatar_upload( $atts ) {
 
-		if ( empty( $atts ) || ! isset( $atts['id'] ) ) {
-			return '';
-		}
-
 		ob_start();
-		self::render_avatar_uploader( $atts['id'] );
+		self::render_avatar_uploader();
 		return ob_get_clean();
 	}
 
