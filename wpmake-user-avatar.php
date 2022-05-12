@@ -59,7 +59,7 @@ if ( ! defined( ' WPMAKE_USER_AVATAR_TEMPLATE_PATH' ) ) {
 }
 
 /**
- * Initialization of FrontendListing instance.
+ * Initialization of UserAvatar instance.
  **/
 function wpmake_user_avatar() {
 	return UserAvatar::get_instance();

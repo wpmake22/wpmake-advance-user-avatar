@@ -8,6 +8,8 @@
 
 namespace WPMake\WPMakeUserAvatar;
 
+use WPMake\WPMakeUserAvatar\Admin\Admin;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -35,6 +37,14 @@ if ( ! class_exists( 'UserAvatar' ) ) :
 		 * @var string
 		 */
 		const VERSION = WPMAKE_USER_AVATAR_VERSION;
+
+		/**
+		 * Admin class instance
+		 *
+		 * @var \Admin
+		 * @since 1.0.0
+		 */
+		public $admin = null;
 
 		/**
 		 * Return an instance of this class
@@ -66,7 +76,12 @@ if ( ! class_exists( 'UserAvatar' ) ) :
 		 * Includes.
 		 */
 		public function includes() {
-			// Files to include.
+
+			// Class admin.
+			if ( $this->is_admin() ) {
+				// require file.
+				$this->admin = new Admin();
+			}
 		}
 
 		/**
