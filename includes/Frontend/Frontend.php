@@ -53,6 +53,7 @@ class Frontend {
 		// Enqueue frontend styles here.
 		wp_enqueue_style( 'wpmake-user-avatar-frontend-style', WPMAKE_USER_AVATAR_ASSETS_URL . '/css/wpmake-user-avatar-frontend.css', array(), WPMAKE_USER_AVATAR_VERSION );
 		wp_enqueue_style( 'sweetalert2', WPMAKE_USER_AVATAR_ASSETS_URL . '/css/sweetalert2/sweetalert2.min.css', array(), '10.16.7' );
+		wp_enqueue_style( 'wpmake-user-avatar-jcrop-style', WPMAKE_USER_AVATAR_ASSETS_URL . '/css/jquery.Jcrop.min.css', array(), 'WPMAKE_USER_AVATAR_VERSION' );
 
 		wp_localize_script(
 			'wpmake-user-avatar-frontend-script',
