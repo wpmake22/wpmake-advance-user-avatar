@@ -412,7 +412,10 @@ jQuery(function ($) {
 
 		if (!error_exist) {
 			Webcam.attach("#my_camera");
-
+			$(".swal2-html-container").attr(
+				"style",
+				"display: flex;align-items: center;justify-content: center;"
+			);
 			$(".swal2-confirm").on("click", function () {
 				// take snapshot and get image data
 				Webcam.snap(function (data_uri) {
@@ -436,7 +439,10 @@ jQuery(function ($) {
 								container: "wpmake-user-avatar-swal2-container",
 							},
 						});
-
+						$(".swal2-html-container").attr(
+							"style",
+							"display: flex;align-items: center;justify-content: center;"
+						);
 						$("#crop_container").attr("src", data_uri);
 						WPMake_User_Avatar_Frontend.crop_image(
 							$this
