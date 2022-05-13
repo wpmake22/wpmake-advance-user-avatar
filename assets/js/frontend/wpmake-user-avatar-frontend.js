@@ -233,7 +233,7 @@ jQuery(function ($) {
 
 						if (!response_obj.success) {
 							message =
-								'<p class="wpmake-user-avatar-error">' +
+								'<p class="wpmake-user-avatar-file-error">' +
 								message +
 								"</p>";
 						}
