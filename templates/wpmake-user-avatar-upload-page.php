@@ -42,16 +42,31 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<?php echo '<input type="text" class="wpmake-user-avatar-input input-text wpmake-user-avatar-frontend-field" name="profile_pic_url" id="profile_pic_url" value="' . esc_url( $profile_picture_url ) . '" />'; ?>
 				</span>
 				<?php
+				$options  = get_option( 'wpmake_user_avatar_settings', array() );
+
 				if ( ! $profile_picture_url ) {
 					?>
 						<button type="button" class="button wpmake-user-avatar-remove hide-if-no-js" style="display:none"><?php echo __( 'Remove', 'wpmake-user-avatar' ); ?></button>
+					<?php
+					if ( isset( $options['capture_picture'] ) && $options['capture_picture'] ) {
+						?>
 						<button type="button" class="button wpmake_user_avatar_take_snapshot hide-if-no-js"><?php echo __( 'Take Picture', 'wpmake-user-avatar' ); ?></button>
+						<?php
+					}
+					?>
 						<button type="button" class="button wpmake_user_avatar_upload hide-if-no-js"><?php echo __( 'Upload file', 'wpmake-user-avatar' ); ?></button>
 					<?php
 				} else {
 					?>
 						<button type="button" class="button wpmake-user-avatar-remove hide-if-no-js"><?php echo __( 'Remove', 'wpmake-user-avatar' ); ?></button>
+
+						<?php
+						if ( isset( $options['capture_picture'] ) && $options['capture_picture'] ) {
+							?>
 						<button type="button" class="button wpmake_user_avatar_take_snapshot hide-if-no-js" style="display:none"><?php echo __( 'Take Picture', 'wpmake-user-avatar' ); ?></button>
+							<?php
+						}
+						?>
 						<button type="button" class="button wpmake_user_avatar_upload hide-if-no-js" style="display:none"><?php echo __( 'Upload file', 'wpmake-user-avatar' ); ?></button>
 					<?php
 				}

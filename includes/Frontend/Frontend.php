@@ -43,7 +43,7 @@ class Frontend {
 	 */
 	public function load_scripts() {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-		$options  = get_option( 'wpmake_user_avatar_settings' );
+		$options  = get_option( 'wpmake_user_avatar_settings', array() );
 
 		// Enqueue frontend scripts here.
 		wp_enqueue_script( 'wpmake-user-avatar-frontend-script', WPMAKE_USER_AVATAR_ASSETS_URL . '/js/frontend/wpmake-user-avatar-frontend' . $suffix . '.js', array( 'jquery' ), WPMAKE_USER_AVATAR_VERSION, false );

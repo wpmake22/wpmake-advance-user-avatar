@@ -201,7 +201,7 @@ class Ajax {
 
 			$url = wp_get_attachment_url( $attachment_id );
 
-			$options  = get_option( 'wpmake_user_avatar_settings' );
+			$options  = get_option( 'wpmake_user_avatar_settings', array() );
 
 			if ( isset( $options['cropping_interface'] ) && $options['cropping_interface'] ) {
 				// Retrieves original picture height and width.

@@ -131,7 +131,7 @@ class Admin {
 	 *  Max avatar size setting.
 	 */
 	public function wpmake_user_avatar_setting_max_size_callback() {
-		$options  = get_option( 'wpmake_user_avatar_settings' );
+		$options  = get_option( 'wpmake_user_avatar_settings', array() );
 
 		$max_size = '1024';
 		if ( isset( $options['max_size'] ) ) {
@@ -146,7 +146,7 @@ class Admin {
 	 *  Allowed file type setting.
 	 */
 	public function wpmake_user_avatar_settings_allowed_file_type_callback() {
-		$options  = get_option( 'wpmake_user_avatar_settings' );
+		$options  = get_option( 'wpmake_user_avatar_settings', array() );
 		$allowed_file_type = '';
 		if ( isset( $options['allowed_file_type'] ) ) {
 			$allowed_file_type = $options['allowed_file_type'];
