@@ -201,41 +201,45 @@ class Ajax {
 
 			$url = wp_get_attachment_url( $attachment_id );
 
-			// Retrieves original picture height and width.
-			list( $original_image_width, $original_image_height ) = getimagesize( $pic_path );
+			$options  = get_option( 'wpmake_user_avatar_settings' );
 
-			// Determines the type of uploaded picture and treats them differently.
-			switch ( $upload['type'] ) {
-				case 'image/png':
-					$img_r = imagecreatefrompng( $pic_path );
-					break;
-				case 'image/gif':
-					$img_r = imagecreatefromgif( $pic_path );
-					break;
-				default:
-					$img_r = imagecreatefromjpeg( $pic_path );
+			if ( isset( $options['cropping_interface'] ) && $options['cropping_interface'] ) {
+				// Retrieves original picture height and width.
+				list( $original_image_width, $original_image_height ) = getimagesize( $pic_path );
+
+				// Determines the type of uploaded picture and treats them differently.
+				switch ( $upload['type'] ) {
+					case 'image/png':
+						$img_r = imagecreatefrompng( $pic_path );
+						break;
+					case 'image/gif':
+						$img_r = imagecreatefromgif( $pic_path );
+						break;
+					default:
+						$img_r = imagecreatefromjpeg( $pic_path );
+				}
+
+				$cropped_image_holder_width  = rtrim( $cropped_image_size['holder_width'], 'px' );
+				$cropped_image_holder_height = rtrim( $cropped_image_size['holder_height'], 'px' );
+
+				// Calculates the actual portion of original picture where the cropping is applied.
+				$cropped_image_width  = absint( $cropped_image_size['w'] * $original_image_width / $cropped_image_holder_width );
+				$cropped_image_left   = absint( $cropped_image_size['x'] * $original_image_width / $cropped_image_holder_width );
+				$cropped_image_height = absint( $cropped_image_size['h'] * $original_image_height / $cropped_image_holder_height );
+				$cropped_image_right  = absint( $cropped_image_size['y'] * $original_image_height / $cropped_image_holder_height );
+
+				// Creates a frame of original height and width and copies the cropped picture portion to the frame.
+				$dst_r = wp_imageCreateTrueColor( $original_image_width, $original_image_height );
+				imagecopyresampled( $dst_r, $img_r, 0, 0, $cropped_image_left, $cropped_image_right, $original_image_width, $original_image_height, $cropped_image_width, $cropped_image_height );
+
+				// Retrieves and Resizes the cropped picture to a size defined by user in filter or default of 150 by 150.
+				list( $image_width, $image_height ) = apply_filters( 'user_registration_cropped_image_size', array( 150, 150 ) );
+				$dest_r = wp_imageCreateTrueColor( $image_width, $image_height );
+				imagecopyresampled( $dest_r, $dst_r, 0, 0, 0, 0, $image_width, $image_height, $original_image_width, $original_image_height );
+
+				// Replaces the original picture with the cropped picture.
+				$img_r = imagejpeg( $dest_r, $pic_path );
 			}
-
-			$cropped_image_holder_width  = rtrim( $cropped_image_size['holder_width'], 'px' );
-			$cropped_image_holder_height = rtrim( $cropped_image_size['holder_height'], 'px' );
-
-			// Calculates the actual portion of original picture where the cropping is applied.
-			$cropped_image_width  = absint( $cropped_image_size['w'] * $original_image_width / $cropped_image_holder_width );
-			$cropped_image_left   = absint( $cropped_image_size['x'] * $original_image_width / $cropped_image_holder_width );
-			$cropped_image_height = absint( $cropped_image_size['h'] * $original_image_height / $cropped_image_holder_height );
-			$cropped_image_right  = absint( $cropped_image_size['y'] * $original_image_height / $cropped_image_holder_height );
-
-			// Creates a frame of original height and width and copies the cropped picture portion to the frame.
-			$dst_r = wp_imageCreateTrueColor( $original_image_width, $original_image_height );
-			imagecopyresampled( $dst_r, $img_r, 0, 0, $cropped_image_left, $cropped_image_right, $original_image_width, $original_image_height, $cropped_image_width, $cropped_image_height );
-
-			// Retrieves and Resizes the cropped picture to a size defined by user in filter or default of 150 by 150.
-			list( $image_width, $image_height ) = apply_filters( 'user_registration_cropped_image_size', array( 150, 150 ) );
-			$dest_r = wp_imageCreateTrueColor( $image_width, $image_height );
-			imagecopyresampled( $dest_r, $dst_r, 0, 0, 0, 0, $image_width, $image_height, $original_image_width, $original_image_height );
-
-			// Replaces the original picture with the cropped picture.
-			$img_r = imagejpeg( $dest_r, $pic_path );
 
 			if ( empty( $url ) ) {
 				$url = home_url() . '/wp-includes/images/media/text.png';

@@ -43,6 +43,7 @@ class Frontend {
 	 */
 	public function load_scripts() {
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		$options  = get_option( 'wpmake_user_avatar_settings' );
 
 		// Enqueue frontend scripts here.
 		wp_enqueue_script( 'wpmake-user-avatar-frontend-script', WPMAKE_USER_AVATAR_ASSETS_URL . '/js/frontend/wpmake-user-avatar-frontend' . $suffix . '.js', array( 'jquery' ), WPMAKE_USER_AVATAR_VERSION, false );
@@ -73,6 +74,7 @@ class Frontend {
 				'wpmake_user_avatar_permission_error_text' => esc_html__( 'Please allow access to webcam.', 'wpmake-user-avatar' ),
 				'wpmake_user_avatar_cancel_button'         => esc_html__( 'Cancel', 'wpmake-user-avatar' ),
 				'wpmake_user_avatar_cancel_button_confirmation' => esc_html__( 'OK', 'wpmake-user-avatar' ),
+				'wpmake_user_avatar_enable_cropping_interface' => isset( $options['cropping_interface'] ) ? $options['cropping_interface'] : false,
 			)
 		);
 	}

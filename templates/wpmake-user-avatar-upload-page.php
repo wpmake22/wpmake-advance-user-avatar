@@ -32,10 +32,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	}
 	?>
 		<img class="profile-preview" alt="profile-picture" src="<?php echo esc_url( $image ); ?>" style='max-width:96px; max-height:96px;'>
-		<p class="wpmake-user-avatar-tips"><?php echo esc_html__( 'Max size: ', 'wpmake-user-avatar' ) . esc_attr( size_format( $max_upload_size ) ); ?></p>
 </div>
 <header>
-	<p><strong><?php echo esc_html( apply_filters( 'wpmake_user_avatar_upload_new_message', esc_html__( 'Upload your new profile image.', 'wpmake-user-avatar' ) ) ); ?></strong></p>
 	<div class="button-group">
 		<div class="wpmake-user-avatar-upload">
 			<p class="form-row " id="profile_pic_url_field" data-priority="">
