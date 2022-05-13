@@ -77,6 +77,7 @@ jQuery(function ($) {
 				$(".cropped_image_size").val(
 					JSON.stringify(cropped_image_size)
 				);
+				console.log(file_instance);
 				WPMake_User_Avatar_Frontend.send_file(file_instance);
 			});
 		},
@@ -231,32 +232,29 @@ jQuery(function ($) {
 					}
 					upload_node.text(upload_node_value);
 				},
-				dataURItoBlob: function (dataURI) {
-					// convert base64/URLEncoded data component to raw binary data held in a string
-					var byteString;
-
-					if (dataURI.split(",")[0].indexOf("base64") >= 0) {
-						byteString = atob(dataURI.split(",")[1]);
-					} else {
-						byteString = unescape(dataURI.split(",")[1]);
-					}
-
-					// separate out the mime component
-					var mimeString = dataURI
-						.split(",")[0]
-						.split(":")[1]
-						.split(";")[0];
-
-					// write the bytes of the string to a typed array
-					var ia = new Uint8Array(byteString.length);
-
-					for (var i = 0; i < byteString.length; i++) {
-						ia[i] = byteString.charCodeAt(i);
-					}
-
-					return new Blob([ia], { type: mimeString });
-				},
 			});
+		},
+		dataURItoBlob: function (dataURI) {
+			// convert base64/URLEncoded data component to raw binary data held in a string
+			var byteString;
+
+			if (dataURI.split(",")[0].indexOf("base64") >= 0) {
+				byteString = atob(dataURI.split(",")[1]);
+			} else {
+				byteString = unescape(dataURI.split(",")[1]);
+			}
+
+			// separate out the mime component
+			var mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];
+
+			// write the bytes of the string to a typed array
+			var ia = new Uint8Array(byteString.length);
+
+			for (var i = 0; i < byteString.length; i++) {
+				ia[i] = byteString.charCodeAt(i);
+			}
+
+			return new Blob([ia], { type: mimeString });
 		},
 	};
 
@@ -267,5 +265,124 @@ jQuery(function ($) {
 			.closest(".wpmake-user-avatar-upload")
 			.find('input[type="file"]')
 			.trigger("click");
+	});
+
+	$(document).on("click", ".wpmake_user_avatar_take_snapshot", function () {
+		var message_body = '<div id="my_camera"></div>';
+		var $this = $(this);
+		Swal.fire({
+			title: wpmake_user_avatar_params.wpmake_user_avatar_capture,
+			html: message_body,
+			confirmButtonText:
+				wpmake_user_avatar_params.wpmake_user_avatar_capture,
+			allowOutsideClick: false,
+			showCancelButton: true,
+			cancelButtonText:
+				wpmake_user_avatar_params.wpmake_user_avatar_cancel_button,
+			customClass: {
+				container: "wpmake-user-avatar-swal2-container",
+			},
+		});
+
+		// Standard image frame size for bigger screen devices
+		var width = 320;
+		var height = 240;
+
+		// Check if screen size is of smaller screen devices and change height and width.
+		if ($(window).width() < $(window).height()) {
+			// Standard image frame size for smaller screen devices
+			width = 240;
+			height = 320;
+		}
+
+		/**
+		 * Utilizes Webcam js library to provide a container for taking snapshot
+		 *
+		 * @since  1.0.0
+		 *
+		 */
+		Webcam.set({
+			width: width,
+			height: height,
+			dest_width: width,
+			dest_height: height,
+			crop_width: width,
+			crop_height: height,
+			image_format: "jpeg",
+			jpeg_quality: 90,
+		});
+
+		var error_exist = false;
+		Webcam.on("error", function (err) {
+			var title = "",
+				error_msg = "";
+
+			if ("WebcamError" === err.name) {
+				title =
+					wpmake_user_avatar_params.wpmake_user_avatar_ssl_error_title;
+				error_msg =
+					wpmake_user_avatar_params.wpmake_user_avatar_ssl_error_text;
+			} else {
+				title =
+					wpmake_user_avatar_params.wpmake_user_avatar_permission_error_title;
+				error_msg =
+					wpmake_user_avatar_params.wpmake_user_avatar_permission_error_text;
+			}
+
+			error_exist = true;
+			swal.fire({
+				icon: "warning",
+				title: title,
+				html: error_msg,
+				showConfirmButton: false,
+				showCancelButton: true,
+				cancelButtonText:
+					wpmake_user_avatar_params.wpmake_user_avatar_cancel_button_confirmation,
+				cancelButtonColor: "#236bb0",
+				customClass: {
+					container: "wpmake-user-avatar-swal2-container",
+				},
+			});
+		});
+
+		if (!error_exist) {
+			Webcam.attach("#my_camera");
+
+			$(".swal2-confirm").on("click", function () {
+				// take snapshot and get image data
+				Webcam.snap(function (data_uri) {
+					// display results in page
+					var messages =
+						'<img id="crop_container" src="#" alt="your image" class="img"/><input type="hidden" name="cropped_image" class="cropped_image_size"/>';
+
+					Swal.fire({
+						title: wpmake_user_avatar_params.wpmake_user_avatar_crop_picture_title,
+						html: messages,
+						confirmButtonText:
+							wpmake_user_avatar_params.wpmake_user_avatar_crop_picture_button,
+						allowOutsideClick: false,
+						showCancelButton: true,
+						cancelButtonText:
+							wpmake_user_avatar_params.wpmake_user_avatar_cancel_button,
+						customClass: {
+							container: "wpmake-user-avatar-swal2-container",
+						},
+					});
+					$("#crop_container").attr("src", data_uri);
+					WPMake_User_Avatar_Frontend.crop_image(
+						$this
+							.closest(".wpmake-user-avatar-upload")
+							.find(
+								'.wpmake-user-avatar-upload-node input[type="file"]'
+							)
+					);
+				});
+				Webcam.reset();
+			});
+
+			$(".swal2-cancel").on("click", function () {
+				Webcam.reset();
+			});
+		}
 	});
 });

@@ -48,6 +48,7 @@ class Frontend {
 		wp_enqueue_script( 'wpmake-user-avatar-frontend-script', WPMAKE_USER_AVATAR_ASSETS_URL . '/js/frontend/wpmake-user-avatar-frontend' . $suffix . '.js', array( 'jquery' ), WPMAKE_USER_AVATAR_VERSION, false );
 		wp_enqueue_script( 'sweetalert2', WPMAKE_USER_AVATAR_ASSETS_URL . '/js/sweetalert2/sweetalert2.min.js', array( 'jquery' ), '10.16.7', false );
 		wp_enqueue_script( 'wpmake-user-avatar-jcrop-script', WPMAKE_USER_AVATAR_ASSETS_URL . '/js/jquery-Jcrop/jquery.Jcrop.min.js', array( 'jquery' ), WPMAKE_USER_AVATAR_VERSION, false );
+		wp_enqueue_script( 'wpmake-user-avatar-webcam-script', WPMAKE_USER_AVATAR_ASSETS_URL . '/js/webcam/webcam' . $suffix . '.js', array( 'jquery' ), WPMAKE_USER_AVATAR_VERSION );
 
 		// Enqueue frontend styles here.
 		wp_enqueue_style( 'wpmake-user-avatar-frontend-style', WPMAKE_USER_AVATAR_ASSETS_URL . '/css/wpmake-user-avatar-frontend.css', array(), WPMAKE_USER_AVATAR_VERSION );
