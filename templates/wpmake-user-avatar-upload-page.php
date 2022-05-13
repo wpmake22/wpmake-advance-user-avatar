@@ -19,6 +19,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 		$image               = ( ! empty( $profile_picture_url ) ) ? $profile_picture_url : $gravatar_image;
 		$max_size            = wp_max_upload_size();
 		$max_upload_size     = $max_size;
+		$options             = get_option( 'wpmake_user_avatar_settings' );
+
+	if ( isset( $options['max_size'] ) ) {
+		$max_upload_size = $options['max_size'];
+	}
+
+		$wpmake_valid_file_type = 'image/jpeg,image/jpg,image/gif,image/png';
+
+	if ( isset( $options['allowed_file_type'] ) ) {
+		$wpmake_valid_file_type = implode( ', ', $options['allowed_file_type'] );
+	}
 	?>
 		<img class="profile-preview" alt="profile-picture" src="<?php echo esc_url( $image ); ?>" style='max-width:96px; max-height:96px;'>
 		<p class="wpmake-user-avatar-tips"><?php echo esc_html__( 'Max size: ', 'wpmake-user-avatar' ) . esc_attr( size_format( $max_upload_size ) ); ?></p>
@@ -29,7 +40,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div class="wpmake-user-avatar-upload">
 			<p class="form-row " id="profile_pic_url_field" data-priority="">
 				<span class="wpmake-user-avatar-upload-node" style="height: 0;width: 0;margin: 0;padding: 0;float: left;border: 0;overflow: hidden;">
-				<input type="file" id="wpmake-user-avatar-pic" name="profile-pic" class="profile-pic-upload" size="<?php echo esc_attr( $max_upload_size ); ?>" style="<?php echo esc_attr( ( $gravatar_image !== $image ) ? 'display:none;' : '' ); ?>" />
+				<input type="file" id="wpmake-user-avatar-pic" name="profile-pic" class="profile-pic-upload" size="<?php echo esc_attr( $max_upload_size ); ?>" accept="<?php echo esc_attr( $wpmake_valid_file_type ); ?>" style="<?php echo esc_attr( ( $gravatar_image !== $image ) ? 'display:none;' : '' ); ?>" />
 				<?php echo '<input type="text" class="wpmake-user-avatar-input input-text wpmake-user-avatar-frontend-field" name="profile_pic_url" id="profile_pic_url" value="' . esc_url( $profile_picture_url ) . '" />'; ?>
 				</span>
 				<?php

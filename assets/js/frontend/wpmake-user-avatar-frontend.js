@@ -236,25 +236,25 @@ jQuery(function ($) {
 								.closest(".wpmake-user-avatar-upload")
 								.find(".profile-preview")
 								.attr("src", profile_pic_url);
+
+							// Shows the remove button and hides the upload and take snapshot buttons after successfull picture upload
+							$node
+								.closest(".wpmake-user-avatar-upload")
+								.find(".wpmake-user-avatar-remove")
+								.removeAttr("style");
+							$node
+								.closest(".wpmake-user-avatar-upload")
+								.find(".wpmake_user_avatar_take_snapshot ")
+								.attr("style", "display:none");
+							$node
+								.closest(".wpmake-user-avatar-upload")
+								.find(".wpmake_user_avatar_upload ")
+								.attr("style", "display:none");
 						}
 					} catch (e) {
 						message =
 							wpmake_user_avatar_params.wpmake_user_avatar_something_wrong;
 					}
-
-					// Shows the remove button and hides the upload and take snapshot buttons after successfull picture upload
-					$node
-						.closest(".wpmake-user-avatar-upload")
-						.find(".wpmake-user-avatar-remove")
-						.removeAttr("style");
-					$node
-						.closest(".wpmake-user-avatar-upload")
-						.find(".wpmake_user_avatar_take_snapshot ")
-						.attr("style", "display:none");
-					$node
-						.closest(".wpmake-user-avatar-upload")
-						.find(".wp_wpmake_user_avatar_upload ")
-						.attr("style", "display:none");
 
 					// Finds and removes any prevaling errors and appends new errors occured during picture upload
 					$node
