@@ -34,6 +34,7 @@ class Ajax {
 
 		$ajax_events = array(
 			'method_upload' => true,
+			'remove_avatar' => true,
 		);
 		foreach ( $ajax_events as $ajax_event => $nopriv ) {
 
@@ -50,6 +51,35 @@ class Ajax {
 				);
 			}
 		}
+	}
+
+	/**
+	 * User avatar remove function.
+	 */
+	public static function remove_avatar() {
+		check_ajax_referer( 'wpmake_user_avatar_remove_nonce', 'security' );
+		$nonce = isset( $_REQUEST['security'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['security'] ) ) : false;
+
+		$flag = wp_verify_nonce( $nonce, 'wpmake_user_avatar_remove_nonce' );
+
+		if ( true != $flag || is_wp_error( $flag ) ) {
+
+			wp_send_json_error(
+				array(
+					'message' => __( 'Nonce error, please reload.', 'wpmake-user-avatar' ),
+				)
+			);
+		}
+
+		$user_id = get_current_user_id();
+		update_user_meta( $user_id, 'wpmake_user_avatar_attachment_id', '' );
+
+		wp_send_json_success(
+			array(
+				'message' => __( 'User avatar removed successfully', 'wpmake-user-avatar' ),
+			)
+		);
+
 	}
 
 	/**

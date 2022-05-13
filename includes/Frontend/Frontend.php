@@ -60,6 +60,7 @@ class Frontend {
 			array(
 				'ajax_url'                                 => admin_url( 'admin-ajax.php' ),
 				'wpmake_user_avatar_upload_nonce'          => wp_create_nonce( 'wpmake_user_avatar_upload_nonce' ),
+				'wpmake_user_avatar_remove_nonce'          => wp_create_nonce( 'wpmake_user_avatar_remove_nonce' ),
 				'wpmake_user_avatar_uploading'             => __( 'Uploading...', 'wpmake-user-avatar' ),
 				'wpmake_user_avatar_something_wrong'       => __( 'Something wrong, please try again.', 'wpmake-user-avatar' ),
 				'wpmake_user_avatar_crop_picture_title'    => esc_html__( 'Crop Your Picture', 'wpmake-user-avatar' ),

@@ -77,8 +77,57 @@ jQuery(function ($) {
 				$(".cropped_image_size").val(
 					JSON.stringify(cropped_image_size)
 				);
-				console.log(file_instance);
 				WPMake_User_Avatar_Frontend.send_file(file_instance);
+			});
+		},
+		remove_avatar: function ($node) {
+			var url =
+				wpmake_user_avatar_params.ajax_url +
+				"?action=wpmake_user_avatar_upload_remove_avatar&security=" +
+				wpmake_user_avatar_params.wpmake_user_avatar_remove_nonce;
+
+			$.ajax({
+				url: url,
+				type: "POST",
+				beforeSend: function () {
+					$node.text(
+						wpmake_user_avatar_params.wpmake_user_avatar_removing
+					);
+					$node
+						.closest(".wpmake-user-avatar-upload")
+						.find("#wpmake-user-avatar-pic")
+						.val("");
+					$node
+						.closest(".wpmake-user-avatar-upload")
+						.find(".wpmake-user-avatar-input")
+						.val("");
+					$node
+						.closest(".wpmake-user-avatar-upload")
+						.find(".wpmake-user-avatar-error")
+						.remove();
+					$(".profile-preview").attr(
+						"src",
+						"https://secure.gravatar.com/avatar/?s=96&d=mm&r=g"
+					);
+				},
+				complete: function (ajax_response) {
+					$node
+						.closest(".wpmake-user-avatar-upload")
+						.find(".wpmake-user-avatar-remove")
+						.attr("style", "display:none");
+					$node
+						.closest(".wpmake-user-avatar-upload")
+						.find(".wpmake_user_avatar_take_snapshot ")
+						.removeAttr("style");
+					$node
+						.closest(".wpmake-user-avatar-upload")
+						.find(".wpmake_user_avatar_upload ")
+						.removeAttr("style");
+					$node
+						.closest(".wpmake-user-avatar-upload")
+						.find('input[type="file"]')
+						.off("click");
+				},
 			});
 		},
 		/**
@@ -384,5 +433,9 @@ jQuery(function ($) {
 				Webcam.reset();
 			});
 		}
+	});
+
+	$(document).on("click", ".wpmake-user-avatar-remove", function () {
+		WPMake_User_Avatar_Frontend.remove_avatar($(this));
 	});
 });
