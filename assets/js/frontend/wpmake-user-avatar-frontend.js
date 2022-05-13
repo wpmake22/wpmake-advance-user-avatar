@@ -1,0 +1,271 @@
+jQuery(function ($) {
+	var WPMake_User_Avatar_Frontend = {
+		init: function () {
+			WPMake_User_Avatar_Frontend.process_avatar_upload();
+		},
+		/**
+		 * Process avatar upload.
+		 *
+		 * @since  1.0.0
+		 */
+		process_avatar_upload: function () {
+			$("body").on(
+				"change",
+				'.wpmake-user-avatar-upload-node input[type="file"]',
+				function () {
+					if (this.files && this.files[0]) {
+						var reader = new FileReader();
+
+						reader.onload = function (e) {
+							$(".img").attr("src", e.target.result);
+						};
+
+						reader.readAsDataURL(this.files[0]);
+						var message_body =
+							'<img id="crop_container" src="#" alt="your image" class="img"/><input type="hidden" name="cropped_image" class="cropped_image_size"/>';
+
+						Swal.fire({
+							title: wpmake_user_avatar_params.wpmake_user_avatar_crop_picture_title,
+							html: message_body,
+							confirmButtonText:
+								wpmake_user_avatar_params.wpmake_user_avatar_crop_picture_button,
+							allowOutsideClick: false,
+							showCancelButton: true,
+							cancelButtonText:
+								wpmake_user_avatar_params.wpmake_user_avatar_cancel_button,
+							customClass: {
+								container: "wpmake-user-avatar-swal2-container",
+							},
+						});
+
+						$(".swal2-cancel ").on("click", function () {
+							$(".wpmake-user-avatar-upload")
+								.find("#wpmake-user-avatar-pic")
+								.val("");
+						});
+						WPMake_User_Avatar_Frontend.crop_image($(this));
+					}
+				}
+			);
+		},
+		/**
+		 * Utilizes Jcrop library to provide a space for cropping the picture
+		 * and determining exact dimensions of cropped picture.
+		 *
+		 * @since  1.0.0
+		 *
+		 */
+		crop_image: function (file_instance) {
+			var size;
+			$("#crop_container").Jcrop({
+				aspectRatio: 1,
+				onSelect: function (c) {
+					size = { x: c.x, y: c.y, w: c.w, h: c.h };
+				},
+				setSelect: [100, 100, 50, 50],
+			});
+
+			$(".swal2-confirm").on("click", function () {
+				var cropped_image_size = {
+					x: size.x,
+					y: size.y,
+					w: size.w,
+					h: size.h,
+					holder_width: $("#crop_container").css("width"),
+					holder_height: $("#crop_container").css("height"),
+				};
+				$(".cropped_image_size").val(
+					JSON.stringify(cropped_image_size)
+				);
+				WPMake_User_Avatar_Frontend.send_file(file_instance);
+			});
+		},
+		/**
+		 * Sends the file, the user is willing to upload as an ajax request
+		 * and receives output in order to process any errors occured during file upload
+		 * or to display a preview of the picture on the frontend.
+		 *
+		 * @since  1.0.0
+		 *
+		 * @param {Function} $node Executes once the picture upload triggers an event.
+		 */
+		send_file: function ($node) {
+			var url =
+				wpmake_user_avatar_params.ajax_url +
+				"?action=wpmake_user_avatar_upload_method_upload&security=" +
+				wpmake_user_avatar_params.wpmake_user_avatar_upload_nonce;
+			var formData = new FormData();
+
+			// Get cropped img data
+			var img = $("#crop_container").attr("src");
+
+			if ($node[0].files[0]) {
+				formData.append("file", $node[0].files[0]);
+			} else {
+				// Converts base64/URLEncoded data component to blob using link above and appends to the input type file.
+				var blob = WPMake_User_Avatar_Frontend.dataURItoBlob(img);
+				var fileOfBlob = new File([blob], "snapshot.jpg");
+				formData.append("file", fileOfBlob);
+			}
+			// Appends the dimensions of cropped image
+			formData.append("cropped_image", $(".cropped_image_size").val());
+
+			formData.append(
+				"valid_extension",
+				$('input[name="profile-pic"]').attr("accept")
+			);
+
+			formData.append(
+				"max_uploaded_size",
+				$('input[name="profile-pic"]').attr("size")
+			);
+
+			var upload_node = $node
+				.closest(".wpmake-user-avatar-upload")
+				.find(".wp_wpmake_user_avatar_upload");
+			var upload_node_value = upload_node.text();
+			$.ajax({
+				url: url,
+				data: formData,
+				type: "POST",
+				processData: false,
+				contentType: false,
+				// tell jQuery not to set contentType
+				beforeSend: function () {
+					upload_node.text(
+						wpmake_user_avatar_params.wpmake_user_avatar_uploading
+					);
+				},
+				complete: function (ajax_response) {
+					var message = "";
+					var attachment_id = 0;
+					var profile_pic_url = "";
+
+					$node
+						.parent()
+						.parent()
+						.parent()
+						.find(".wpmake-user-avatar-error")
+						.remove();
+					$node
+						.closest(".wpmake-user-avatar-upload")
+						.find(".wpmake-user-avatar-input")
+						.val("");
+
+					try {
+						var response_obj = JSON.parse(
+							ajax_response.responseText
+						);
+
+						if (
+							"undefined" === typeof response_obj.success ||
+							"undefined" === typeof response_obj.data
+						) {
+							throw wpmake_user_avatar_params.wpmake_user_avatar_something_wrong;
+						}
+						message = response_obj.data.message;
+
+						if (!response_obj.success) {
+							message =
+								'<p class="wpmake-user-avatar-error">' +
+								message +
+								"</p>";
+						}
+
+						if (response_obj.success) {
+							message = "";
+							attachment_id = response_obj.data.attachment_id;
+
+							// Gets the profile picture url and displays the picture on frontend
+							profile_pic_url =
+								response_obj.data.profile_picture_url;
+							$(".wpmake-user-avatar-container")
+								.find(".profile-preview")
+								.attr("src", profile_pic_url);
+							$node
+								.closest(".wpmake-user-avatar-upload")
+								.find(".profile-preview")
+								.attr("src", profile_pic_url);
+						}
+					} catch (e) {
+						message =
+							wpmake_user_avatar_params.wpmake_user_avatar_something_wrong;
+					}
+
+					// Shows the remove button and hides the upload and take snapshot buttons after successfull picture upload
+					$node
+						.closest(".wpmake-user-avatar-upload")
+						.find(".wpmake-user-avatar-remove")
+						.removeAttr("style");
+					$node
+						.closest(".wpmake-user-avatar-upload")
+						.find(".wpmake_user_avatar_take_snapshot ")
+						.attr("style", "display:none");
+					$node
+						.closest(".wpmake-user-avatar-upload")
+						.find(".wp_wpmake_user_avatar_upload ")
+						.attr("style", "display:none");
+
+					// Finds and removes any prevaling errors and appends new errors occured during picture upload
+					$node
+						.closest(".wpmake-user-avatar-upload")
+						.find(".wpmake-user-avatar-error")
+						.remove();
+					$node
+						.closest(".wpmake-user-avatar-upload")
+						.find(".wpmake-user-avatar-file-error")
+						.remove();
+					$node
+						.closest(".wpmake-user-avatar-upload")
+						.append(
+							'<span class="wpmake-user-avatar-error">' +
+								message +
+								"</span>"
+						);
+
+					if (attachment_id > 0) {
+						$node
+							.closest(".wpmake-user-avatar-upload")
+							.find(".wpmake-user-avatar-input")
+							.val(attachment_id);
+					}
+					upload_node.text(upload_node_value);
+				},
+				dataURItoBlob: function (dataURI) {
+					// convert base64/URLEncoded data component to raw binary data held in a string
+					var byteString;
+
+					if (dataURI.split(",")[0].indexOf("base64") >= 0) {
+						byteString = atob(dataURI.split(",")[1]);
+					} else {
+						byteString = unescape(dataURI.split(",")[1]);
+					}
+
+					// separate out the mime component
+					var mimeString = dataURI
+						.split(",")[0]
+						.split(":")[1]
+						.split(";")[0];
+
+					// write the bytes of the string to a typed array
+					var ia = new Uint8Array(byteString.length);
+
+					for (var i = 0; i < byteString.length; i++) {
+						ia[i] = byteString.charCodeAt(i);
+					}
+
+					return new Blob([ia], { type: mimeString });
+				},
+			});
+		},
+	};
+
+	WPMake_User_Avatar_Frontend.init(jQuery);
+
+	$(document).on("click", ".wpmake_user_avatar_upload", function () {
+		$(this)
+			.closest(".wpmake-user-avatar-upload")
+			.find('input[type="file"]')
+			.trigger("click");
+	});
+});

@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div class="wpmake-user-avatar-container">
 	<?php
 		$gravatar_image      = get_avatar_url( get_current_user_id(), $args = null );
-		$profile_picture_url = wp_get_attachment_url( get_user_meta( get_current_user_id(), 'wpmake_user_avatar_url', true ) );
+		$profile_picture_url = wp_get_attachment_url( get_user_meta( get_current_user_id(), 'wpmake_user_avatar_attachment_id', true ) );
 		$image               = ( ! empty( $profile_picture_url ) ) ? $profile_picture_url : $gravatar_image;
 		$max_size            = wp_max_upload_size();
 		$max_upload_size     = $max_size;
@@ -29,7 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div class="wpmake-user-avatar-upload">
 			<p class="form-row " id="profile_pic_url_field" data-priority="">
 				<span class="wpmake-user-avatar-upload-node" style="height: 0;width: 0;margin: 0;padding: 0;float: left;border: 0;overflow: hidden;">
-				<input type="file" id="ur-profile-pic" name="profile-pic" class="profile-pic-upload" size="<?php echo esc_attr( $max_upload_size ); ?>" style="<?php echo esc_attr( ( $gravatar_image !== $image ) ? 'display:none;' : '' ); ?>" />
+				<input type="file" id="wpmake-user-avatar-pic" name="profile-pic" class="profile-pic-upload" size="<?php echo esc_attr( $max_upload_size ); ?>" style="<?php echo esc_attr( ( $gravatar_image !== $image ) ? 'display:none;' : '' ); ?>" />
 				<?php echo '<input type="text" class="wpmake-user-avatar-input input-text wpmake-user-avatar-frontend-field" name="profile_pic_url" id="profile_pic_url" value="' . esc_url( $profile_picture_url ) . '" />'; ?>
 				</span>
 				<?php

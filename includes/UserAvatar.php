@@ -10,6 +10,7 @@ namespace WPMake\WPMakeUserAvatar;
 
 use WPMake\WPMakeUserAvatar\Admin\Admin;
 use WPMake\WPMakeUserAvatar\Admin\Shortcodes;
+use WPMake\WPMakeUserAvatar\Frontend\Frontend;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -46,6 +47,23 @@ if ( ! class_exists( 'UserAvatar' ) ) :
 		 * @since 1.0.0
 		 */
 		public $admin = null;
+
+		/**
+		 * Frontend class instance
+		 *
+		 * @var \Frontend
+		 * @since 1.0.0
+		 */
+		public $frontend = null;
+
+		/**
+		 * Ajax class instance
+		 *
+		 * @since 1.0.0
+		 *
+		 * @var use WPMake\WPMakeUserAvatar\Ajax;
+		 */
+		public $ajax = null;
 
 		/**
 		 * Shortcodes.
@@ -86,12 +104,23 @@ if ( ! class_exists( 'UserAvatar' ) ) :
 		 * Includes.
 		 */
 		public function includes() {
+			$this->ajax = new Ajax();
 			$this->shortcodes = new Shortcodes();
 
 			// Class admin.
 			if ( $this->is_admin() ) {
 				// require file.
 				$this->admin = new Admin();
+			} else {
+				// require file.
+				$this->frontend = new Frontend();
+			}
+
+			// Create a folder to store avatars if not present.
+			$path = WP_CONTENT_DIR . '/uploads/wpmake_user_avatar_uploads';
+
+			if ( ! is_dir( $path ) ) {
+				mkdir( $path, 0777, true );
 			}
 		}
 
