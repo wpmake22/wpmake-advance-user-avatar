@@ -10,8 +10,7 @@
  * @version  1.0.0
  */
 
-add_filter( 'get_avatar', 'wpmake_user_avatar_replace_gravatar_image', 99, 6 );
-
+ add_filter( 'get_avatar', 'wpmake_user_avatar_replace_gravatar_image', 99, 6 );
 
 if ( ! function_exists( 'wpmake_user_avatar_replace_gravatar_image' ) ) {
 	/**

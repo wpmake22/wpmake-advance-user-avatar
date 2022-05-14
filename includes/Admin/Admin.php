@@ -51,7 +51,7 @@ class Admin {
 			'users.php',
 			__( 'WPMake Users Avatar', 'wpmake-user-avatar' ),
 			__( 'Users Avatar', 'wpmake-user-avatar' ),
-			'manage_user_registration',
+			'manage_options',
 			'wpmake-user-avatar',
 			array(
 				$this,
@@ -147,7 +147,7 @@ class Admin {
 	 */
 	public function wpmake_user_avatar_settings_allowed_file_type_callback() {
 		$options  = get_option( 'wpmake_user_avatar_settings', array() );
-		$allowed_file_type = '';
+		$allowed_file_type = array();
 		if ( isset( $options['allowed_file_type'] ) ) {
 			$allowed_file_type = $options['allowed_file_type'];
 		}
