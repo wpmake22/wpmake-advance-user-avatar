@@ -1,4 +1,6 @@
 jQuery(function ($) {
+	"use strict";
+
 	var WPMake_User_Avatar_Frontend = {
 		init: function () {
 			WPMake_User_Avatar_Frontend.process_avatar_upload();

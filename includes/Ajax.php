@@ -105,7 +105,7 @@ class Ajax {
 		$upload = isset( $_FILES['file'] ) ? $_FILES['file'] : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 		// valid extension for image.
-		$valid_extensions     = $_REQUEST['valid_extension'];
+		$valid_extensions     = isset( $_REQUEST['valid_extension'] ) ? $_REQUEST['valid_extension'] : array();
 		$valid_extension_type = explode( ',', $valid_extensions );
 		$valid_ext            = array();
 

@@ -104,7 +104,7 @@ if ( ! class_exists( 'UserAvatar' ) ) :
 		 * Includes.
 		 */
 		public function includes() {
-			$this->ajax = new Ajax();
+			$this->ajax       = new Ajax();
 			$this->shortcodes = new Shortcodes();
 
 			// Class admin.

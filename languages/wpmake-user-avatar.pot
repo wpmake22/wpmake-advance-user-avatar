@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2022-05-21T00:53:43+00:00\n"
+"POT-Creation-Date: 2022-05-21T15:33:37+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.6.0\n"
 "X-Domain: wpmake-user-avatar\n"
@@ -34,64 +34,64 @@ msgstr ""
 msgid "https://wpmake.com"
 msgstr ""
 
-#: includes/Admin/Admin.php:52
+#: includes/Admin/Admin.php:53
 msgid "WPMake Users Avatar"
 msgstr ""
 
-#: includes/Admin/Admin.php:53
+#: includes/Admin/Admin.php:54
 msgid "Users Avatar"
 msgstr ""
 
-#: includes/Admin/Admin.php:92
+#: includes/Admin/Admin.php:93
 #: includes/UserAvatar.php:149
 msgid "Settings"
 msgstr ""
 
-#: includes/Admin/Admin.php:99
+#: includes/Admin/Admin.php:100
 msgid "Max Avatar Size Allowed"
 msgstr ""
 
-#: includes/Admin/Admin.php:107
+#: includes/Admin/Admin.php:108
 msgid "Allowed File Type"
 msgstr ""
 
-#: includes/Admin/Admin.php:115
+#: includes/Admin/Admin.php:116
 msgid "Capture Picture"
 msgstr ""
 
-#: includes/Admin/Admin.php:123
+#: includes/Admin/Admin.php:124
 msgid "Cropping interface"
 msgstr ""
 
-#: includes/Admin/Admin.php:142
+#: includes/Admin/Admin.php:143
 msgid "Maximum avatar size allowed for upload. Enter file size in Kb. Leave the field empty for upload without restriction"
 msgstr ""
 
-#: includes/Admin/Admin.php:156
+#: includes/Admin/Admin.php:157
 msgid "JPG"
 msgstr ""
 
-#: includes/Admin/Admin.php:157
+#: includes/Admin/Admin.php:158
 msgid "JPEG"
 msgstr ""
 
-#: includes/Admin/Admin.php:158
+#: includes/Admin/Admin.php:159
 msgid "GIF"
 msgstr ""
 
-#: includes/Admin/Admin.php:159
+#: includes/Admin/Admin.php:160
 msgid "PNG"
 msgstr ""
 
-#: includes/Admin/Admin.php:161
+#: includes/Admin/Admin.php:162
 msgid "Choose valid file types allowed for avatar upload"
 msgstr ""
 
-#: includes/Admin/Admin.php:177
+#: includes/Admin/Admin.php:178
 msgid "This option will enable avatar cropping interface"
 msgstr ""
 
-#: includes/Admin/Admin.php:193
+#: includes/Admin/Admin.php:194
 msgid "This option will enable taking picture using webcam. Note that your site must be secure"
 msgstr ""
 
@@ -169,6 +169,10 @@ msgstr ""
 
 #: includes/UserAvatar.php:149
 msgid "View User Avatar Settings"
+msgstr ""
+
+#: templates/wpmake-user-avatar-upload-page.php:34
+msgid "User Avatar Upload"
 msgstr ""
 
 #: templates/wpmake-user-avatar-upload-page.php:49
