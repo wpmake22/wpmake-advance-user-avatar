@@ -50,8 +50,8 @@ class Admin {
 	public function wpmake_user_avatar_menu() {
 		$template_page = add_submenu_page(
 			'users.php',
-			__( 'WPMake Users Avatar', 'wpmake-user-avatar' ),
-			__( 'Users Avatar', 'wpmake-user-avatar' ),
+			esc_html__( 'WPMake Users Avatar', 'wpmake-user-avatar' ),
+			esc_html__( 'Users Avatar', 'wpmake-user-avatar' ),
 			'manage_options',
 			'wpmake-user-avatar',
 			array(
@@ -90,14 +90,14 @@ class Admin {
 
 		add_settings_section(
 			'wpmake_user_avatar_setting_section',
-			__( 'Settings', 'wpmake-user-avatar' ),
+			esc_html__( 'Settings', 'wpmake-user-avatar' ),
 			'',
 			'wpmake_user_avatar_settings'
 		);
 
 		add_settings_field(
 			'wpmake_user_avatar_settings_max_size',
-			__( 'Max Avatar Size Allowed', 'wpmake-user-avatar' ),
+			esc_html__( 'Max Avatar Size Allowed', 'wpmake-user-avatar' ),
 			array( $this, 'wpmake_user_avatar_setting_max_size_callback' ),
 			'wpmake_user_avatar_settings',
 			'wpmake_user_avatar_setting_section'
@@ -105,7 +105,7 @@ class Admin {
 
 		add_settings_field(
 			'wpmake_user_avatar_settings_allowed_file_type',
-			__( 'Allowed File Type', 'wpmake-user-avatar' ),
+			esc_html__( 'Allowed File Type', 'wpmake-user-avatar' ),
 			array( $this, 'wpmake_user_avatar_settings_allowed_file_type_callback' ),
 			'wpmake_user_avatar_settings',
 			'wpmake_user_avatar_setting_section'
@@ -113,7 +113,7 @@ class Admin {
 
 		add_settings_field(
 			'wpmake_user_avatar_settings_capture_picture',
-			__( 'Capture Picture', 'wpmake-user-avatar' ),
+			esc_html__( 'Capture Picture', 'wpmake-user-avatar' ),
 			array( $this, 'wpmake_user_avatar_settings_capture_picture_callback' ),
 			'wpmake_user_avatar_settings',
 			'wpmake_user_avatar_setting_section'
@@ -121,7 +121,7 @@ class Admin {
 
 		add_settings_field(
 			'wpmake_user_avatar_settings_cropping_interface',
-			__( 'Cropping interface', 'wpmake-user-avatar' ),
+			esc_html__( 'Cropping interface', 'wpmake-user-avatar' ),
 			array( $this, 'wpmake_user_avatar_settings_cropping_interface_callback' ),
 			'wpmake_user_avatar_settings',
 			'wpmake_user_avatar_setting_section'

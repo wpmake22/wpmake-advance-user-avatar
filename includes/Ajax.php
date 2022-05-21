@@ -66,7 +66,7 @@ class Ajax {
 
 			wp_send_json_error(
 				array(
-					'message' => __( 'Nonce error, please reload.', 'wpmake-user-avatar' ),
+					'message' => esc_html__( 'Nonce error, please reload.', 'wpmake-user-avatar' ),
 				)
 			);
 		}
@@ -76,7 +76,7 @@ class Ajax {
 
 		wp_send_json_success(
 			array(
-				'message' => __( 'User avatar removed successfully', 'wpmake-user-avatar' ),
+				'message' => esc_html__( 'User avatar removed successfully', 'wpmake-user-avatar' ),
 			)
 		);
 
@@ -97,7 +97,7 @@ class Ajax {
 
 			wp_send_json_error(
 				array(
-					'message' => __( 'Nonce error, please reload.', 'wpmake-user-avatar' ),
+					'message' => esc_html__( 'Nonce error, please reload.', 'wpmake-user-avatar' ),
 				)
 			);
 		}
@@ -121,7 +121,7 @@ class Ajax {
 		if ( ! in_array( $file_extension, $valid_ext ) ) {
 			wp_send_json_error(
 				array(
-					'message' => __( 'Invalid file type, please contact with site administrator.', 'wpmake-user-avatar' ),
+					'message' => esc_html__( 'Invalid file type, please contact with site administrator.', 'wpmake-user-avatar' ),
 				)
 			);
 		}
@@ -144,14 +144,14 @@ class Ajax {
 			wp_send_json_error(
 				array(
 					/* translators: %s - Max Size */
-					'message' => sprintf( __( 'Please upload a picture with size less than %s', 'wpmake-user-avatar' ), size_format( $max_size ) ),
+					'message' => sprintf( esc_html__( 'Please upload a picture with size less than %s', 'wpmake-user-avatar' ), size_format( $max_size ) ),
 				)
 			);
 		} else if ( $upload['size'] > $max_upload_size_options_value ) {
 			wp_send_json_error(
 				array(
 					/* translators: %s - Max Size */
-					'message' => sprintf( __( 'Please upload a picture with size less than %s', 'wpmake-user-avatar' ), size_format( $max_upload_size_options_value ) ),
+					'message' => sprintf( esc_html__( 'Please upload a picture with size less than %s', 'wpmake-user-avatar' ), size_format( $max_upload_size_options_value ) ),
 				)
 			);
 		}
@@ -163,7 +163,7 @@ class Ajax {
 
 			wp_send_json_error(
 				array(
-					'message' => __( 'Upload path permission deny.', 'wpmake-user-avatar' ),
+					'message' => esc_html__( 'Upload path permission deny.', 'wpmake-user-avatar' ),
 				)
 			);
 
@@ -257,7 +257,7 @@ class Ajax {
 		} else {
 			wp_send_json_error(
 				array(
-					'message' => __( 'File cannot be uploaded.', 'wpmake-user-avatar' ),
+					'message' => esc_html__( 'File cannot be uploaded.', 'wpmake-user-avatar' ),
 				)
 			);
 		}

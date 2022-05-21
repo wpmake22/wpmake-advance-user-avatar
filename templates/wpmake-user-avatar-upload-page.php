@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		$max_upload_size = $options['max_size'];
 	}
 
-		$wpmake_valid_file_type = 'image/jpeg,image/jpg,image/gif,image/png';
+	$wpmake_valid_file_type = 'image/jpeg,image/jpg,image/gif,image/png';
 
 	if ( isset( $options['allowed_file_type'] ) ) {
 		$wpmake_valid_file_type = implode( ', ', $options['allowed_file_type'] );
@@ -72,7 +72,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 					}
 					?>
 				</p>
-				<div style="clear:both; margin-bottom: 20px"></div>
 			</div>
 		</div>
 	</header>

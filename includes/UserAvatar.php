@@ -146,7 +146,7 @@ if ( ! class_exists( 'UserAvatar' ) ) :
 		 */
 		public function plugin_action_links( $actions ) {
 			$new_actions = array(
-				'settings' => '<a href="' . admin_url( 'admin.php?page=wpmake-user-avatar' ) . '" title="' . esc_attr( __( 'View User Avatar Settings', 'wpmake-user-avatar' ) ) . '">' . __( 'Settings', 'wpmake-user-avatar' ) . '</a>',
+				'settings' => '<a href="' . admin_url( 'admin.php?page=wpmake-user-avatar' ) . '" title="' . esc_attr__( 'View User Avatar Settings', 'wpmake-user-avatar' ) . '">' . esc_html__( 'Settings', 'wpmake-user-avatar' ) . '</a>',
 			);
 
 			return array_merge( $new_actions, $actions );
