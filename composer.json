@@ -6,7 +6,7 @@
 	"license": "GPL-3.0-or-later",
   "autoload": {
 		"psr-4": {
-		  "WPMake\\WPMakeUserAvatar\\": "includes/"
+		  "WPMake\\WPMakeAdvanceUserAvatar\\": "includes/"
 		}
 	  },
 	"require": {
@@ -26,7 +26,7 @@
 		"phpcbf -p"
 	  ],
 	  "makepot-audit": [
-		"wp --allow-root i18n make-pot . --exclude=\"github,.wordpress-org,bin,node_modules,vendor,tests, build\" --headers='{\"Report-Msgid-Bugs-To\":\"help@wpmake.com\"}' --slug=wpmake-user-avatar"
+		"wp --allow-root i18n make-pot . --exclude=\"github,.wordpress-org,bin,node_modules,vendor,tests, build\" --headers='{\"Report-Msgid-Bugs-To\":\"help@wpmake.com\"}' --slug=wpmake-advance-user-avatar"
 	  ],
 	  "makepot": [
 		"@makepot-audit --skip-audit"
@@ -36,8 +36,8 @@
 	  "scripts-description": {
 		"phpcs": "Analyze code against the WordPress coding standard with PHP_CodeSniffer",
 		"phpcbf": "Fix coding standards warnings/errors automatically with PHP Code Beautifier",
-		"makepot-audit": "Generate langauges/wpmake-user-avatar.pot file and run audit",
-		"makepot": "Generate langauges/wpmake-user-avatar.pot file"
+		"makepot-audit": "Generate langauges/wpmake-advance-user-avatar.pot file and run audit",
+		"makepot": "Generate langauges/wpmake-advance-user-avatar.pot file"
 	  }
 	},
 	"config": {

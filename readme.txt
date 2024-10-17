@@ -9,5 +9,5 @@ License: GNU General Public License v3.0 or later
 
 == Changelog ==
 
-= 1.0.0 = 17-05-2022
+= 1.0.0 = xx-xx-xxxx
 * Initial Release

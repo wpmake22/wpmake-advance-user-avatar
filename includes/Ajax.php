@@ -1,15 +1,15 @@
 <?php
 /**
- * WPMakeUserAvatar Ajax
+ * WPMakeAdvanceUserAvatar Ajax
  *
  * Ajax Event Handler
  *
  * @class    Ajax
  * @version  1.0.0
- * @package  WPMakeUserAvatar/Ajax
+ * @package  WPMakeAdvanceUserAvatar/Ajax
  */
 
-namespace  WPMake\WPMakeUserAvatar;
+namespace WPMake\WPMakeAdvanceUserAvatar;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -38,12 +38,12 @@ class Ajax {
 		);
 		foreach ( $ajax_events as $ajax_event => $nopriv ) {
 
-			add_action( 'wp_ajax_wpmake_user_avatar_upload_' . $ajax_event, array( __CLASS__, $ajax_event ) );
+			add_action( 'wp_ajax_WPMake_Advance_User_Avatar_upload_' . $ajax_event, array( __CLASS__, $ajax_event ) );
 
 			if ( $nopriv ) {
 
 				add_action(
-					'wp_ajax_nopriv_wpmake_user_avatar_upload_' . $ajax_event,
+					'wp_ajax_nopriv_WPMake_Advance_User_Avatar_upload_' . $ajax_event,
 					array(
 						__CLASS__,
 						$ajax_event,
@@ -57,29 +57,28 @@ class Ajax {
 	 * User avatar remove function.
 	 */
 	public static function remove_avatar() {
-		check_ajax_referer( 'wpmake_user_avatar_remove_nonce', 'security' );
+		check_ajax_referer( 'WPMake_Advance_User_Avatar_remove_nonce', 'security' );
 		$nonce = isset( $_REQUEST['security'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['security'] ) ) : false;
 
-		$flag = wp_verify_nonce( $nonce, 'wpmake_user_avatar_remove_nonce' );
+		$flag = wp_verify_nonce( $nonce, 'WPMake_Advance_User_Avatar_remove_nonce' );
 
 		if ( true != $flag || is_wp_error( $flag ) ) {
 
 			wp_send_json_error(
 				array(
-					'message' => esc_html__( 'Nonce error, please reload.', 'wpmake-user-avatar' ),
+					'message' => esc_html__( 'Nonce error, please reload.', 'wpmake-advance-user-avatar' ),
 				)
 			);
 		}
 
 		$user_id = get_current_user_id();
-		update_user_meta( $user_id, 'wpmake_user_avatar_attachment_id', '' );
+		update_user_meta( $user_id, 'WPMake_Advance_User_Avatar_attachment_id', '' );
 
 		wp_send_json_success(
 			array(
-				'message' => esc_html__( 'User avatar removed successfully', 'wpmake-user-avatar' ),
+				'message' => esc_html__( 'User avatar removed successfully', 'wpmake-advance-user-avatar' ),
 			)
 		);
-
 	}
 
 	/**
@@ -87,17 +86,17 @@ class Ajax {
 	 */
 	public static function method_upload() {
 
-		check_ajax_referer( 'wpmake_user_avatar_upload_nonce', 'security' );
+		check_ajax_referer( 'WPMake_Advance_User_Avatar_upload_nonce', 'security' );
 
 		$nonce = isset( $_REQUEST['security'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['security'] ) ) : false;
 
-		$flag = wp_verify_nonce( $nonce, 'wpmake_user_avatar_upload_nonce' );
+		$flag = wp_verify_nonce( $nonce, 'WPMake_Advance_User_Avatar_upload_nonce' );
 
 		if ( true != $flag || is_wp_error( $flag ) ) {
 
 			wp_send_json_error(
 				array(
-					'message' => esc_html__( 'Nonce error, please reload.', 'wpmake-user-avatar' ),
+					'message' => esc_html__( 'Nonce error, please reload.', 'wpmake-advance-user-avatar' ),
 				)
 			);
 		}
@@ -121,7 +120,7 @@ class Ajax {
 		if ( ! in_array( $file_extension, $valid_ext ) ) {
 			wp_send_json_error(
 				array(
-					'message' => esc_html__( 'Invalid file type, please contact with site administrator.', 'wpmake-user-avatar' ),
+					'message' => esc_html__( 'Invalid file type, please contact with site administrator.', 'wpmake-advance-user-avatar' ),
 				)
 			);
 		}
@@ -144,26 +143,26 @@ class Ajax {
 			wp_send_json_error(
 				array(
 					/* translators: %s - Max Size */
-					'message' => sprintf( esc_html__( 'Please upload a picture with size less than %s', 'wpmake-user-avatar' ), size_format( $max_size ) ),
+					'message' => sprintf( esc_html__( 'Please upload a picture with size less than %s', 'wpmake-advance-user-avatar' ), size_format( $max_size ) ),
 				)
 			);
-		} else if ( $upload['size'] > $max_upload_size_options_value ) {
+		} elseif ( $upload['size'] > $max_upload_size_options_value ) {
 			wp_send_json_error(
 				array(
 					/* translators: %s - Max Size */
-					'message' => sprintf( esc_html__( 'Please upload a picture with size less than %s', 'wpmake-user-avatar' ), size_format( $max_upload_size_options_value ) ),
+					'message' => sprintf( esc_html__( 'Please upload a picture with size less than %s', 'wpmake-advance-user-avatar' ), size_format( $max_upload_size_options_value ) ),
 				)
 			);
 		}
 
 		$upload_dir  = wp_upload_dir();
-		$upload_path = apply_filters( 'wpmake_user_avatar_upload_url', $upload_dir['basedir'] . '/wpmake_user_avatar_uploads' ); /*Get path of upload dir of WordPress*/
+		$upload_path = apply_filters( 'WPMake_Advance_User_Avatar_upload_url', $upload_dir['basedir'] . '/WPMake_Advance_User_Avatar_uploads' ); /*Get path of upload dir of WordPress*/
 
 		if ( ! is_writable( $upload_path ) ) {  /*Check if upload dir is writable*/
 
 			wp_send_json_error(
 				array(
-					'message' => esc_html__( 'Upload path permission deny.', 'wpmake-user-avatar' ),
+					'message' => esc_html__( 'Upload path permission deny.', 'wpmake-advance-user-avatar' ),
 				)
 			);
 
@@ -201,7 +200,7 @@ class Ajax {
 
 			$url = wp_get_attachment_url( $attachment_id );
 
-			$options  = get_option( 'wpmake_user_avatar_settings', array() );
+			$options = get_option( 'WPMake_Advance_User_Avatar_settings', array() );
 
 			if ( isset( $options['cropping_interface'] ) && $options['cropping_interface'] ) {
 				// Retrieves original picture height and width.
@@ -234,7 +233,7 @@ class Ajax {
 
 				// Retrieves and Resizes the cropped picture to a size defined by user in filter or default of 150 by 150.
 				list( $image_width, $image_height ) = apply_filters( 'user_registration_cropped_image_size', array( 150, 150 ) );
-				$dest_r = wp_imageCreateTrueColor( $image_width, $image_height );
+				$dest_r                             = wp_imageCreateTrueColor( $image_width, $image_height );
 				imagecopyresampled( $dest_r, $dst_r, 0, 0, 0, 0, $image_width, $image_height, $original_image_width, $original_image_height );
 
 				// Replaces the original picture with the cropped picture.
@@ -246,7 +245,7 @@ class Ajax {
 			}
 
 			$user_id = get_current_user_id();
-			update_user_meta( $user_id, 'wpmake_user_avatar_attachment_id', $attachment_id );
+			update_user_meta( $user_id, 'WPMake_Advance_User_Avatar_attachment_id', $attachment_id );
 
 			wp_send_json_success(
 				array(
@@ -257,11 +256,9 @@ class Ajax {
 		} else {
 			wp_send_json_error(
 				array(
-					'message' => esc_html__( 'File cannot be uploaded.', 'wpmake-user-avatar' ),
+					'message' => esc_html__( 'File cannot be uploaded.', 'wpmake-advance-user-avatar' ),
 				)
 			);
 		}
-
 	}
-
 }

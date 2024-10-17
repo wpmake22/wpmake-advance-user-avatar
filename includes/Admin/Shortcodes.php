@@ -4,10 +4,10 @@
  *
  * @class    Shortcodes
  * @version  1.0.0
- * @package  WPMakeUserAvatar/Classes
+ * @package  WPMakeAdvanceUserAvatar/Classes
  */
 
-namespace  WPMake\WPMakeUserAvatar\Admin;
+namespace WPMake\WPMakeAdvanceUserAvatar\Admin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -23,8 +23,8 @@ class Shortcodes {
 	 */
 	public function __construct() {
 		$shortcodes = array(
-			'wpmake_user_avatar'        => __CLASS__ . '::user_avatar',
-			'wpmake_user_avatar_upload' => __CLASS__ . '::user_avatar_upload',
+			'WPMake_Advance_User_Avatar'        => __CLASS__ . '::user_avatar',
+			'WPMake_Advance_User_Avatar_upload' => __CLASS__ . '::user_avatar_upload',
 		);
 
 		foreach ( $shortcodes as $shortcode => $function ) {
@@ -63,7 +63,7 @@ class Shortcodes {
 	 */
 	public static function render_avatar_uploader() {
 		if ( is_user_logged_in() ) {
-			include WPMAKE_USER_AVATAR_TEMPLATE_PATH . '/wpmake-user-avatar-upload-page.php';
+			include WPMake_Advance_User_Avatar_TEMPLATE_PATH . '/wpmake-advance-user-avatar-upload-page.php';
 		}
 	}
 
@@ -74,7 +74,7 @@ class Shortcodes {
 	 */
 	public static function render_avatar() {
 		if ( is_user_logged_in() ) {
-			include WPMAKE_USER_AVATAR_TEMPLATE_PATH . '/wpmake-user-avatar-page.php';
+			include WPMake_Advance_User_Avatar_TEMPLATE_PATH . '/wpmake-advance-user-avatar-page.php';
 		}
 	}
 }

@@ -1,4 +1,4 @@
-.wpmake-user-avatar-container {
+.wpmake-advance-user-avatar-container {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -17,8 +17,8 @@
 		max-height:96px;
 	}
 
-	.wpmake-user-avatar-upload {
-		.wpmake-user-avatar-upload-node {
+	.wpmake-advance-user-avatar-upload {
+		.wpmake-advance-user-avatar-upload-node {
 			height: 0;
 			width: 0;
 			margin: 0;
@@ -29,14 +29,14 @@
 		}
 	}
 
-	.wpmake-user-avatar-error {
+	.wpmake-advance-user-avatar-error {
 		border-top-color:#ff4f55;
 		background:rgba(255,79,85,.1);
 		color:#ff030b;
 		font-size: 18px;
 	}
 
-	.wpmake-user-avatar-success {
+	.wpmake-advance-user-avatar-success {
 		border-top-color:green;
 		background:rgba(255,79,85,.1);
 		color:green;

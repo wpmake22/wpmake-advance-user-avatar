@@ -67,7 +67,7 @@ module.exports = function (grunt) {
 		sass: {
 			options: {
 				sourcemap: "none",
-				implementation: require("node-sass"),
+				implementation: require("sass"),
 			},
 			compile: {
 				files: [

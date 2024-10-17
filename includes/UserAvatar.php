@@ -1,16 +1,16 @@
 <?php
 /**
- * WPMake_User_Avatar setup
+ * WPMake_Advance_User_Avatar setup
  *
- * @package WPMake_User_Avatar
+ * @package WPMake_Advance_User_Avatar
  * @since  1.0.0
  */
 
-namespace WPMake\WPMakeUserAvatar;
+namespace WPMake\WPMakeAdvanceUserAvatar;
 
-use WPMake\WPMakeUserAvatar\Admin\Admin;
-use WPMake\WPMakeUserAvatar\Admin\Shortcodes;
-use WPMake\WPMakeUserAvatar\Frontend\Frontend;
+use WPMake\WPMakeAdvanceUserAvatar\Admin\Admin;
+use WPMake\WPMakeAdvanceUserAvatar\Admin\Shortcodes;
+use WPMake\WPMakeAdvanceUserAvatar\Frontend\Frontend;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -38,7 +38,7 @@ if ( ! class_exists( 'UserAvatar' ) ) :
 		 *
 		 * @var string
 		 */
-		const VERSION = WPMAKE_USER_AVATAR_VERSION;
+		const VERSION = WPMake_Advance_User_Avatar_VERSION;
 
 		/**
 		 * Admin class instance
@@ -61,7 +61,7 @@ if ( ! class_exists( 'UserAvatar' ) ) :
 		 *
 		 * @since 1.0.0
 		 *
-		 * @var use WPMake\WPMakeUserAvatar\Ajax;
+		 * @var use WPMake\WPMakeAdvanceUserAvatar\Ajax;
 		 */
 		public $ajax = null;
 
@@ -70,7 +70,7 @@ if ( ! class_exists( 'UserAvatar' ) ) :
 		 *
 		 * @since 1.0.0
 		 *
-		 * @var WPMake\WPMakeUserAvatar\Admin\Shortcodes;
+		 * @var WPMake\WPMakeAdvanceUserAvatar\Admin\Shortcodes;
 		 */
 		public $shortcodes = null;
 
@@ -96,7 +96,7 @@ if ( ! class_exists( 'UserAvatar' ) ) :
 			require 'Functions/CoreFunctions.php';
 
 			// Actions and Filters.
-			add_filter( 'plugin_action_links_' . plugin_basename( WPMAKE_USER_AVATAR_PLUGIN_FILE ), array( $this, 'plugin_action_links' ) );
+			add_filter( 'plugin_action_links_' . plugin_basename( WPMake_Advance_User_Avatar_PLUGIN_FILE ), array( $this, 'plugin_action_links' ) );
 			add_action( 'init', array( $this, 'includes' ) );
 		}
 
@@ -117,7 +117,7 @@ if ( ! class_exists( 'UserAvatar' ) ) :
 			}
 
 			// Create a folder to store avatars if not present.
-			$path = WP_CONTENT_DIR . '/uploads/wpmake_user_avatar_uploads';
+			$path = WP_CONTENT_DIR . '/uploads/WPMake_Advance_User_Avatar_uploads';
 
 			if ( ! is_dir( $path ) ) {
 				mkdir( $path, 0777, true );
@@ -146,7 +146,7 @@ if ( ! class_exists( 'UserAvatar' ) ) :
 		 */
 		public function plugin_action_links( $actions ) {
 			$new_actions = array(
-				'settings' => '<a href="' . admin_url( 'admin.php?page=wpmake-user-avatar' ) . '" title="' . esc_attr__( 'View User Avatar Settings', 'wpmake-user-avatar' ) . '">' . esc_html__( 'Settings', 'wpmake-user-avatar' ) . '</a>',
+				'settings' => '<a href="' . admin_url( 'admin.php?page=wpmake-advance-user-avatar' ) . '" title="' . esc_attr__( 'View User Avatar Settings', 'wpmake-advance-user-avatar' ) . '">' . esc_html__( 'Settings', 'wpmake-advance-user-avatar' ) . '</a>',
 			);
 
 			return array_merge( $new_actions, $actions );
@@ -160,7 +160,6 @@ if ( ! class_exists( 'UserAvatar' ) ) :
 		public function plugin_url() {
 			return untrailingslashit( plugins_url( '/', __FILE__ ) );
 		}
-
 	}
 endif;
 

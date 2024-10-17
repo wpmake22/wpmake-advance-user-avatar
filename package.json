@@ -1,8 +1,8 @@
 {
-  "name": "wpmake-user-avatar",
+  "name": "wpmake-advance-user-avatar",
   "title": "WPMake User Avatar",
   "version": "1.0.0",
-  "homepage": "https://wpmake.com/plugins/wpmake-user-avatar/",
+  "homepage": "https://wpmake.com/plugins/wpmake-advance-user-avatar/",
   "license": "GPL-3.0+",
   "main": "Gruntfile.js",
   "scripts": {
@@ -24,7 +24,7 @@
     "grunt-rtlcss": "~2.0.1",
     "grunt-sass": "~3.0.0",
     "grunt-stylelint": "~0.8.0",
-    "node-sass": "^4.14.1"
+    "sass": "^1.52.3"
   },
   "engines": {
     "node": ">=0.8.0",

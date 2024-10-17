@@ -1,18 +1,18 @@
 <?php
 /**
- * WPMakeUserAvatar CoreFunctions.
+ * WPMakeAdvanceUserAvatar CoreFunctions.
  *
  * General core functions available on both the front-end and admin.
  *
  * @author   WPMake
  * @category Core
- * @package  WPMakeUserAvatar/Handler
+ * @package  WPMakeAdvanceUserAvatar/Handler
  * @version  1.0.0
  */
 
-add_filter( 'get_avatar', 'wpmake_user_avatar_replace_gravatar_image', 99, 6 );
+add_filter( 'get_avatar', 'WPMake_Advance_User_Avatar_replace_gravatar_image', 99, 6 );
 
-if ( ! function_exists( 'wpmake_user_avatar_replace_gravatar_image' ) ) {
+if ( ! function_exists( 'WPMake_Advance_User_Avatar_replace_gravatar_image' ) ) {
 	/**
 	 * Custom function to override get_gavatar function.
 	 *
@@ -23,12 +23,12 @@ if ( ! function_exists( 'wpmake_user_avatar_replace_gravatar_image' ) ) {
 	 * @param [type] $alt Alt.
 	 * @param array  $args Args.
 	 */
-	function wpmake_user_avatar_replace_gravatar_image( $avatar, $id_or_email, $size, $default, $alt, $args = array() ) {
+	function WPMake_Advance_User_Avatar_replace_gravatar_image( $avatar, $id_or_email, $size, $default, $alt, $args = array() ) {
 		global $wp_filter;
 
 		remove_all_filters( 'get_avatar' );
 
-		add_filter( 'get_avatar', 'wpmake_user_avatar_replace_gravatar_image', 100, 6 );
+		add_filter( 'get_avatar', 'WPMake_Advance_User_Avatar_replace_gravatar_image', 100, 6 );
 
 		// Process the user identifier.
 		$user = false;
@@ -53,7 +53,7 @@ if ( ! function_exists( 'wpmake_user_avatar_replace_gravatar_image' ) ) {
 			return $avatar;
 		}
 
-		$profile_picture_url = wp_get_attachment_url( get_user_meta( $user->ID, 'wpmake_user_avatar_attachment_id', true ) );
+		$profile_picture_url = wp_get_attachment_url( get_user_meta( $user->ID, 'WPMake_Advance_User_Avatar_attachment_id', true ) );
 		$class               = array( 'avatar', 'avatar-' . (int) $args['size'], 'photo' );
 
 		if ( ( isset( $args['found_avatar'] ) && ! $args['found_avatar'] ) || ( isset( $args['force_default'] ) && $args['force_default'] ) ) {

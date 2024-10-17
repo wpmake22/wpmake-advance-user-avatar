@@ -1,25 +1,25 @@
-# Copyright (C) 2023 WPMake
+# Copyright (C) 2024 WPMake
 # This file is distributed under the GNU General Public License v3.0.
 msgid ""
 msgstr ""
-"Project-Id-Version: User Avatar 1.0.0\n"
+"Project-Id-Version: Advance User Avatar 1.0.0\n"
 "Report-Msgid-Bugs-To: help@wpmake.com\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-01-09T01:14:24+00:00\n"
+"POT-Creation-Date: 2024-10-17T12:47:25+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: wpmake-advance-user-avatar\n"
 
 #. Plugin Name of the plugin
-msgid "User Avatar"
+msgid "Advance User Avatar"
 msgstr ""
 
 #. Plugin URI of the plugin
-msgid "https://wpmake.com/wordpress-plugins/"
+msgid "https://wpmake.net/advance-user-avatar/"
 msgstr ""
 
 #. Description of the plugin
@@ -31,7 +31,7 @@ msgid "WPMake"
 msgstr ""
 
 #. Author URI of the plugin
-msgid "https://wpmake.com"
+msgid "https://wpmake.net"
 msgstr ""
 
 #: includes/Admin/Admin.php:53
@@ -42,61 +42,61 @@ msgstr ""
 msgid "Users Avatar"
 msgstr ""
 
-#: includes/Admin/Admin.php:93
+#: includes/Admin/Admin.php:91
 #: includes/UserAvatar.php:149
 msgid "Settings"
 msgstr ""
 
-#: includes/Admin/Admin.php:100
+#: includes/Admin/Admin.php:98
 msgid "Max Avatar Size Allowed"
 msgstr ""
 
-#: includes/Admin/Admin.php:108
+#: includes/Admin/Admin.php:106
 msgid "Allowed File Type"
 msgstr ""
 
-#: includes/Admin/Admin.php:116
+#: includes/Admin/Admin.php:114
 msgid "Capture Picture"
 msgstr ""
 
-#: includes/Admin/Admin.php:124
+#: includes/Admin/Admin.php:122
 msgid "Cropping interface"
 msgstr ""
 
-#: includes/Admin/Admin.php:143
+#: includes/Admin/Admin.php:141
 msgid "Maximum avatar size allowed for upload. Enter file size in Kb. Leave the field empty for upload without restriction"
 msgstr ""
 
-#: includes/Admin/Admin.php:157
+#: includes/Admin/Admin.php:155
 msgid "JPG"
 msgstr ""
 
-#: includes/Admin/Admin.php:158
+#: includes/Admin/Admin.php:156
 msgid "JPEG"
 msgstr ""
 
-#: includes/Admin/Admin.php:159
+#: includes/Admin/Admin.php:157
 msgid "GIF"
 msgstr ""
 
-#: includes/Admin/Admin.php:160
+#: includes/Admin/Admin.php:158
 msgid "PNG"
 msgstr ""
 
-#: includes/Admin/Admin.php:162
+#: includes/Admin/Admin.php:160
 msgid "Choose valid file types allowed for avatar upload"
 msgstr ""
 
-#: includes/Admin/Admin.php:178
+#: includes/Admin/Admin.php:176
 msgid "This option will enable avatar cropping interface"
 msgstr ""
 
-#: includes/Admin/Admin.php:194
+#: includes/Admin/Admin.php:192
 msgid "This option will enable taking picture using webcam. Note that your site must be secure"
 msgstr ""
 
 #: includes/Ajax.php:69
-#: includes/Ajax.php:100
+#: includes/Ajax.php:99
 msgid "Nonce error, please reload."
 msgstr ""
 
@@ -104,22 +104,22 @@ msgstr ""
 msgid "User avatar removed successfully"
 msgstr ""
 
-#: includes/Ajax.php:124
+#: includes/Ajax.php:123
 msgid "Invalid file type, please contact with site administrator."
 msgstr ""
 
 #. translators: %s - Max Size
 #. translators: %s - Max Size
-#: includes/Ajax.php:147
-#: includes/Ajax.php:154
+#: includes/Ajax.php:146
+#: includes/Ajax.php:153
 msgid "Please upload a picture with size less than %s"
 msgstr ""
 
-#: includes/Ajax.php:166
+#: includes/Ajax.php:165
 msgid "Upload path permission deny."
 msgstr ""
 
-#: includes/Ajax.php:260
+#: includes/Ajax.php:259
 msgid "File cannot be uploaded."
 msgstr ""
 
@@ -171,21 +171,21 @@ msgstr ""
 msgid "View User Avatar Settings"
 msgstr ""
 
-#: templates/wpmake-advance-user-avatar-upload-page.php:34
+#: templates/wpmake-user-avatar-upload-page.php:34
 msgid "User Avatar Upload"
 msgstr ""
 
-#: templates/wpmake-advance-user-avatar-upload-page.php:49
-#: templates/wpmake-advance-user-avatar-upload-page.php:61
+#: templates/wpmake-user-avatar-upload-page.php:49
+#: templates/wpmake-user-avatar-upload-page.php:61
 msgid "Remove"
 msgstr ""
 
-#: templates/wpmake-advance-user-avatar-upload-page.php:53
-#: templates/wpmake-advance-user-avatar-upload-page.php:66
+#: templates/wpmake-user-avatar-upload-page.php:53
+#: templates/wpmake-user-avatar-upload-page.php:66
 msgid "Take Picture"
 msgstr ""
 
-#: templates/wpmake-advance-user-avatar-upload-page.php:57
-#: templates/wpmake-advance-user-avatar-upload-page.php:70
+#: templates/wpmake-user-avatar-upload-page.php:57
+#: templates/wpmake-user-avatar-upload-page.php:70
 msgid "Upload file"
 msgstr ""
