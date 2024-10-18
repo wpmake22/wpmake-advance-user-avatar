@@ -25,20 +25,20 @@ jQuery(function ($) {
 						reader.readAsDataURL(this.files[0]);
 
 						if (
-							WPMake_Advance_User_Avatar_params.WPMake_Advance_User_Avatar_enable_cropping_interface
+							wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_enable_cropping_interface
 						) {
 							var message_body =
 								'<img id="crop_container" src="#" alt="your image" class="img"/><input type="hidden" name="cropped_image" class="cropped_image_size"/>';
 
 							Swal.fire({
-								title: WPMake_Advance_User_Avatar_params.WPMake_Advance_User_Avatar_crop_picture_title,
+								title: wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_crop_picture_title,
 								html: message_body,
 								confirmButtonText:
-									WPMake_Advance_User_Avatar_params.WPMake_Advance_User_Avatar_crop_picture_button,
+									wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_crop_picture_button,
 								allowOutsideClick: false,
 								showCancelButton: true,
 								cancelButtonText:
-									WPMake_Advance_User_Avatar_params.WPMake_Advance_User_Avatar_cancel_button,
+									wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_cancel_button,
 								customClass: {
 									container:
 										"wpmake-advance-user-avatar-swal2-container",
@@ -96,16 +96,16 @@ jQuery(function ($) {
 		},
 		remove_avatar: function ($node) {
 			var url =
-				WPMake_Advance_User_Avatar_params.ajax_url +
-				"?action=WPMake_Advance_User_Avatar_upload_remove_avatar&security=" +
-				WPMake_Advance_User_Avatar_params.WPMake_Advance_User_Avatar_remove_nonce;
+				wpmake_advance_user_avatar_params.ajax_url +
+				"?action=wpmake_advance_user_avatar_upload_remove_avatar&security=" +
+				wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_remove_nonce;
 
 			$.ajax({
 				url: url,
 				type: "POST",
 				beforeSend: function () {
 					$node.text(
-						WPMake_Advance_User_Avatar_params.WPMake_Advance_User_Avatar_removing
+						wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_removing
 					);
 					$node
 						.closest(".wpmake-advance-user-avatar-upload")
@@ -131,11 +131,11 @@ jQuery(function ($) {
 						.attr("style", "display:none");
 					$node
 						.closest(".wpmake-advance-user-avatar-upload")
-						.find(".WPMake_Advance_User_Avatar_take_snapshot ")
+						.find(".wpmake_advance_user_avatar_take_snapshot ")
 						.removeAttr("style");
 					$node
 						.closest(".wpmake-advance-user-avatar-upload")
-						.find(".WPMake_Advance_User_Avatar_upload ")
+						.find(".wpmake_advance_user_avatar_upload ")
 						.removeAttr("style");
 					$node
 						.closest(".wpmake-advance-user-avatar-upload")
@@ -155,14 +155,14 @@ jQuery(function ($) {
 		 */
 		send_file: function ($node) {
 			var url =
-				WPMake_Advance_User_Avatar_params.ajax_url +
-				"?action=WPMake_Advance_User_Avatar_upload_method_upload&security=" +
-				WPMake_Advance_User_Avatar_params.WPMake_Advance_User_Avatar_upload_nonce;
+				wpmake_advance_user_avatar_params.ajax_url +
+				"?action=wpmake_advance_user_avatar_upload_method_upload&security=" +
+				wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_upload_nonce;
 			var formData = new FormData();
 			var img = "";
 
 			if (
-				WPMake_Advance_User_Avatar_params.WPMake_Advance_User_Avatar_enable_cropping_interface
+				wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_enable_cropping_interface
 			) {
 				// Get cropped img data
 				img = $("#crop_container").attr("src");
@@ -195,7 +195,7 @@ jQuery(function ($) {
 
 			var upload_node = $node
 				.closest(".wpmake-advance-user-avatar-upload")
-				.find(".wp_WPMake_Advance_User_Avatar_upload");
+				.find(".wp_wpmake_advance_user_avatar_upload");
 			var upload_node_value = upload_node.text();
 			$.ajax({
 				url: url,
@@ -206,7 +206,7 @@ jQuery(function ($) {
 				// tell jQuery not to set contentType
 				beforeSend: function () {
 					upload_node.text(
-						WPMake_Advance_User_Avatar_params.WPMake_Advance_User_Avatar_uploading
+						wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_uploading
 					);
 				},
 				complete: function (ajax_response) {
@@ -234,7 +234,7 @@ jQuery(function ($) {
 							"undefined" === typeof response_obj.success ||
 							"undefined" === typeof response_obj.data
 						) {
-							throw WPMake_Advance_User_Avatar_params.WPMake_Advance_User_Avatar_something_wrong;
+							throw wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_something_wrong;
 						}
 						message = response_obj.data.message;
 
@@ -268,17 +268,17 @@ jQuery(function ($) {
 							$node
 								.closest(".wpmake-advance-user-avatar-upload")
 								.find(
-									".WPMake_Advance_User_Avatar_take_snapshot "
+									".wpmake_advance_user_avatar_take_snapshot "
 								)
 								.attr("style", "display:none");
 							$node
 								.closest(".wpmake-advance-user-avatar-upload")
-								.find(".WPMake_Advance_User_Avatar_upload ")
+								.find(".wpmake_advance_user_avatar_upload ")
 								.attr("style", "display:none");
 						}
 					} catch (e) {
 						message =
-							WPMake_Advance_User_Avatar_params.WPMake_Advance_User_Avatar_something_wrong;
+							wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_something_wrong;
 					}
 
 					// Finds and removes any prevaling errors and appends new errors occured during picture upload
@@ -334,7 +334,7 @@ jQuery(function ($) {
 
 	WPMake_Advance_User_Avatar_Frontend.init(jQuery);
 
-	$(document).on("click", ".WPMake_Advance_User_Avatar_upload", function () {
+	$(document).on("click", ".wpmake_advance_user_avatar_upload", function () {
 		$(this)
 			.closest(".wpmake-advance-user-avatar-upload")
 			.find('input[type="file"]')
@@ -343,19 +343,19 @@ jQuery(function ($) {
 
 	$(document).on(
 		"click",
-		".WPMake_Advance_User_Avatar_take_snapshot",
+		".wpmake_advance_user_avatar_take_snapshot",
 		function () {
 			var message_body = '<div id="my_camera"></div>';
 			var $this = $(this);
 			Swal.fire({
-				title: WPMake_Advance_User_Avatar_params.WPMake_Advance_User_Avatar_capture,
+				title: wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_capture,
 				html: message_body,
 				confirmButtonText:
-					WPMake_Advance_User_Avatar_params.WPMake_Advance_User_Avatar_capture,
+					wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_capture,
 				allowOutsideClick: false,
 				showCancelButton: true,
 				cancelButtonText:
-					WPMake_Advance_User_Avatar_params.WPMake_Advance_User_Avatar_cancel_button,
+					wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_cancel_button,
 				customClass: {
 					container: "wpmake-advance-user-avatar-swal2-container",
 				},
@@ -396,14 +396,14 @@ jQuery(function ($) {
 
 				if ("WebcamError" === err.name) {
 					title =
-						WPMake_Advance_User_Avatar_params.WPMake_Advance_User_Avatar_ssl_error_title;
+						wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_ssl_error_title;
 					error_msg =
-						WPMake_Advance_User_Avatar_params.WPMake_Advance_User_Avatar_ssl_error_text;
+						wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_ssl_error_text;
 				} else {
 					title =
-						WPMake_Advance_User_Avatar_params.WPMake_Advance_User_Avatar_permission_error_title;
+						wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_permission_error_title;
 					error_msg =
-						WPMake_Advance_User_Avatar_params.WPMake_Advance_User_Avatar_permission_error_text;
+						wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_permission_error_text;
 				}
 
 				error_exist = true;
@@ -414,7 +414,7 @@ jQuery(function ($) {
 					showConfirmButton: false,
 					showCancelButton: true,
 					cancelButtonText:
-						WPMake_Advance_User_Avatar_params.WPMake_Advance_User_Avatar_cancel_button_confirmation,
+						wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_cancel_button_confirmation,
 					cancelButtonColor: "#236bb0",
 					customClass: {
 						container: "wpmake-advance-user-avatar-swal2-container",
@@ -432,21 +432,21 @@ jQuery(function ($) {
 					// take snapshot and get image data
 					Webcam.snap(function (data_uri) {
 						if (
-							WPMake_Advance_User_Avatar_params.WPMake_Advance_User_Avatar_enable_cropping_interface
+							wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_enable_cropping_interface
 						) {
 							// display results in page
 							var messages =
 								'<img id="crop_container" src="#" alt="your image" class="img"/><input type="hidden" name="cropped_image" class="cropped_image_size"/>';
 
 							Swal.fire({
-								title: WPMake_Advance_User_Avatar_params.WPMake_Advance_User_Avatar_crop_picture_title,
+								title: wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_crop_picture_title,
 								html: messages,
 								confirmButtonText:
-									WPMake_Advance_User_Avatar_params.WPMake_Advance_User_Avatar_crop_picture_button,
+									wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_crop_picture_button,
 								allowOutsideClick: false,
 								showCancelButton: true,
 								cancelButtonText:
-									WPMake_Advance_User_Avatar_params.WPMake_Advance_User_Avatar_cancel_button,
+									wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_cancel_button,
 								customClass: {
 									container:
 										"wpmake-advance-user-avatar-swal2-container",

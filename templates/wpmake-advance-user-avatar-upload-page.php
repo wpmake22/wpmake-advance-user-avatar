@@ -15,11 +15,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div class="wpmake-advance-user-avatar-container">
 	<?php
 		$gravatar_image      = get_avatar_url( get_current_user_id(), $args = null );
-		$profile_picture_url = wp_get_attachment_url( get_user_meta( get_current_user_id(), 'WPMake_Advance_User_Avatar_attachment_id', true ) );
+		$profile_picture_url = wp_get_attachment_url( get_user_meta( get_current_user_id(), 'wpmake_advance_user_avatar_attachment_id', true ) );
 		$image               = ( ! empty( $profile_picture_url ) ) ? $profile_picture_url : $gravatar_image;
 		$max_size            = wp_max_upload_size();
 		$max_upload_size     = $max_size;
-		$options             = get_option( 'WPMake_Advance_User_Avatar_settings' );
+		$options             = get_option( 'wpmake_advance_user_avatar_settings' );
 
 	if ( isset( $options['max_size'] ) ) {
 		$max_upload_size = $options['max_size'];
@@ -42,7 +42,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<?php echo '<input type="text" class="wpmake-advance-user-avatar-input input-text wpmake-advance-user-avatar-frontend-field" name="profile_pic_url" id="profile_pic_url" value="' . esc_url( $profile_picture_url ) . '" />'; ?>
 					</span>
 					<?php
-					$options = get_option( 'WPMake_Advance_User_Avatar_settings', array() );
+					$options = get_option( 'wpmake_advance_user_avatar_settings', array() );
 
 					if ( ! $profile_picture_url ) {
 						?>
@@ -50,24 +50,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<?php
 						if ( isset( $options['capture_picture'] ) && $options['capture_picture'] ) {
 							?>
-							<button type="button" class="button WPMake_Advance_User_Avatar_take_snapshot hide-if-no-js"><?php esc_html_e( 'Take Picture', 'wpmake-advance-user-avatar' ); ?></button>
+							<button type="button" class="button wpmake_advance_user_avatar_take_snapshot hide-if-no-js"><?php esc_html_e( 'Take Picture', 'wpmake-advance-user-avatar' ); ?></button>
 							<?php
 						}
 						?>
-							<button type="button" class="button WPMake_Advance_User_Avatar_upload hide-if-no-js"><?php esc_html_e( 'Upload file', 'wpmake-advance-user-avatar' ); ?></button>
+							<button type="button" class="button wpmake_advance_user_avatar_upload hide-if-no-js"><?php esc_html_e( 'Upload file', 'wpmake-advance-user-avatar' ); ?></button>
 						<?php
 					} else {
 						?>
 							<button type="button" class="button wpmake-advance-user-avatar-remove hide-if-no-js"><?php esc_html_e( 'Remove', 'wpmake-advance-user-avatar' ); ?></button>
 
 							<?php
-							if ( isset( $options['capture_picture'] ) && $options['capture_picture'] ) {
+							if ( aua_fs()->can_use_premium_code() && isset( $options['capture_picture'] ) && $options['capture_picture'] ) {
 								?>
-							<button type="button" class="button WPMake_Advance_User_Avatar_take_snapshot hide-if-no-js" style="display:none"><?php esc_html_e( 'Take Picture', 'wpmake-advance-user-avatar' ); ?></button>
+							<button type="button" class="button wpmake_advance_user_avatar_take_snapshot hide-if-no-js" style="display:none"><?php esc_html_e( 'Take Picture', 'wpmake-advance-user-avatar' ); ?></button>
 								<?php
 							}
 							?>
-							<button type="button" class="button WPMake_Advance_User_Avatar_upload hide-if-no-js" style="display:none"><?php esc_html_e( 'Upload file', 'wpmake-advance-user-avatar' ); ?></button>
+							<button type="button" class="button wpmake_advance_user_avatar_upload hide-if-no-js" style="display:none"><?php esc_html_e( 'Upload file', 'wpmake-advance-user-avatar' ); ?></button>
 						<?php
 					}
 					?>

@@ -38,7 +38,7 @@ if ( ! class_exists( 'UserAvatar' ) ) :
 		 *
 		 * @var string
 		 */
-		const VERSION = WPMake_Advance_User_Avatar_VERSION;
+		const VERSION = WPMAKE_ADVANCE_USER_AVATAR_VERSION;
 
 		/**
 		 * Admin class instance
@@ -96,7 +96,7 @@ if ( ! class_exists( 'UserAvatar' ) ) :
 			require 'Functions/CoreFunctions.php';
 
 			// Actions and Filters.
-			add_filter( 'plugin_action_links_' . plugin_basename( WPMake_Advance_User_Avatar_PLUGIN_FILE ), array( $this, 'plugin_action_links' ) );
+			add_filter( 'plugin_action_links_' . plugin_basename( WPMAKE_ADVANCE_USER_AVATAR_PLUGIN_FILE ), array( $this, 'plugin_action_links' ) );
 			add_action( 'init', array( $this, 'includes' ) );
 		}
 
@@ -117,7 +117,7 @@ if ( ! class_exists( 'UserAvatar' ) ) :
 			}
 
 			// Create a folder to store avatars if not present.
-			$path = WP_CONTENT_DIR . '/uploads/WPMake_Advance_User_Avatar_uploads';
+			$path = WP_CONTENT_DIR . '/uploads/wpmake_advance_user_avatar_uploads';
 
 			if ( ! is_dir( $path ) ) {
 				mkdir( $path, 0777, true );
