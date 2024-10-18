@@ -126,6 +126,7 @@ class Ajax {
 		}
 
 		$max_size = wp_max_upload_size();
+		$max_size = size_format( $max_size );
 
 		// Retrieves cropped picture dimensions from ajax request.
 		$value                          = $_REQUEST['cropped_image'];

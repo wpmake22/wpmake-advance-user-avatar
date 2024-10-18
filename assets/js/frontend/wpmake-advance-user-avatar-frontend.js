@@ -73,6 +73,8 @@ jQuery(function ($) {
 			var size;
 			$("#crop_container").Jcrop({
 				aspectRatio: 1,
+				boxWidth: 400,
+				boxHeight: 400,
 				onSelect: function (c) {
 					size = { x: c.x, y: c.y, w: c.w, h: c.h };
 				},
