@@ -6,14 +6,18 @@ project.properties
 .project
 .settings*
 .idea
-.vscode/
+.vscode
+*.sublime-project
+*.sublime-workspace
+.sublimelinterrc
 
 # Build
 build/
-vendor/
+chunks/
 
 # Grunt
 /node_modules/
+none
 
 # Sass
 .sass-cache/
@@ -23,3 +27,15 @@ vendor/
 
 # Windows junk
 Thumbs.db
+
+# Composer
+/vendor/
+
+# PHP Unit Tests
+/tests/
+
+# Local overrides
+phpcs.xml
+phpunit.xml
+phpunit-watcher.yml
+.wp-env.override.json

@@ -66,6 +66,15 @@ if ( ! class_exists( 'UserAvatar' ) ) :
 		public $ajax = null;
 
 		/**
+		 * Gutenberg class instance
+		 *
+		 * @since 1.0.0
+		 *
+		 * @var use WPMake\WPMakeAdvanceUserAvatar\Gutenberg;
+		 */
+		public $gutenberg = null;
+
+		/**
 		 * Shortcodes.
 		 *
 		 * @since 1.0.0
@@ -98,13 +107,15 @@ if ( ! class_exists( 'UserAvatar' ) ) :
 			// Actions and Filters.
 			add_filter( 'plugin_action_links_' . plugin_basename( WPMAKE_ADVANCE_USER_AVATAR_PLUGIN_FILE ), array( $this, 'plugin_action_links' ) );
 			add_action( 'init', array( $this, 'includes' ) );
+			$this->gutenberg = new Gutenberg();
 		}
 
 		/**
 		 * Includes.
 		 */
 		public function includes() {
-			$this->ajax       = new Ajax();
+			$this->ajax = new Ajax();
+
 			$this->shortcodes = new Shortcodes();
 
 			// Class admin.

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://schemas.wp.org/block-json/1.1",
+  "apiVersion": 3,
+  "name": "wpmake-aua/user-avatar",
+  "version": "1.0.0",
+  "title": "Advance User Avatar",
+  "category": "common",
+  "description": "This block allows user to upload their avatar",
+  "keywords": [
+    "user avatar", "avatar", "profile picture", "picture"
+  ],
+  "textdomain": "wpmake-advance-user-avatar",
+  "example": {
+    "attributes": {}
+  },
+  "supports": {
+    "className": false,
+    "customClassName": false,
+    "reusable": false
+  },
+  "attributes": {
+    "blockType": {
+      "type": "string",
+      "default": "uploader"
+    }
+  },
+  "editorScript": "wpmake-aua-gutenberg-block-script"
+}

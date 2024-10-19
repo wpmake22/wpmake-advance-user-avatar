@@ -31,7 +31,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 		$wpmake_valid_file_type = implode( ', ', $options['allowed_file_type'] );
 	}
 	?>
-	<h4> <?php esc_html_e( 'User Avatar Upload', 'wpmake-advance-user-avatar' ); ?></h4>
 	<img class="profile-preview" alt="profile-picture" src="<?php echo esc_url( $image ); ?>" >
 	<header>
 		<div class="button-group">
