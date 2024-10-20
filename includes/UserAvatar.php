@@ -143,7 +143,7 @@ if ( ! class_exists( 'UserAvatar' ) ) :
 		 */
 		public function is_admin() {
 			$check_ajax    = defined( 'DOING_AJAX' ) && DOING_AJAX;
-			$check_context = isset( $_REQUEST['context'] ) && $_REQUEST['context'] == 'frontend';
+			$check_context = isset( $_REQUEST['context'] ) && 'frontend' === $_REQUEST['context'];
 
 			return is_admin() && ! ( $check_ajax && $check_context );
 		}

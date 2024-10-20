@@ -102,11 +102,10 @@ class Gutenberg {
 		return $content;
 	}
 
-
 	/**
 	 * Advance Avatar content.
 	 *
-	 * @return string
+	 * @param array $attributes Block Attributes.
 	 */
 	public function wpmake_advance_user_avatar_content( $attributes ) {
 		if ( ! is_user_logged_in() ) {

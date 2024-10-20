@@ -139,8 +139,13 @@ class Admin {
 			$max_size = esc_html( $options['max_size'] );
 		}
 
-		echo '<input name="wpmake_advance_user_avatar_settings[max_size]" type="text" value="' . esc_attr( $max_size ) . '" class="wpmake-advance-user-avatar-setting-field" placeholder="" />';
-		echo '<p class="wpmake-advance-user-avatar-setting-desc" >' . esc_html__( 'Maximum avatar size allowed for upload. Enter file size in Kb. Leave the field empty for upload without restriction', 'wpmake-advance-user-avatar' ) . '</p>';
+		ob_start();
+		?>
+		<input name="wpmake_advance_user_avatar_settings[max_size]" type="text" value="<?php echo esc_attr( $max_size ); ?>" class="wpmake-advance-user-avatar-setting-field" placeholder="" />
+		<p class="wpmake-advance-user-avatar-setting-desc" ><?php esc_html_e( 'Maximum avatar size allowed for upload. Enter file size in Kb. Leave the field empty for upload without restriction', 'wpmake-advance-user-avatar' ); ?></p>
+		<?php
+		$settings = ob_get_clean();
+		echo wp_kses( $settings, wpmake_aua_get_allowed_html_tags() );
 	}
 
 		/**
@@ -153,21 +158,31 @@ class Admin {
 			$allowed_file_type = $options['allowed_file_type'];
 		}
 
-		echo "<select class='wpmake-advance-user-avatar-enhanced-select wpmake-advance-user-avatar-setting-field' name='wpmake_advance_user_avatar_settings[allowed_file_type][]' multiple='multiple' >
-		<option value='image/jpg' " . esc_attr( selected( in_array( 'image/jpg', $allowed_file_type ), true, false ) ) . '>' . esc_html__( 'JPG', 'wpmake-advance-user-avatar' ) . "</option>
-		<option value='image/jpeg' " . esc_attr( selected( in_array( 'image/jpeg', $allowed_file_type ), true, false ) ) . '>' . esc_html__( 'JPEG', 'wpmake-advance-user-avatar' ) . '</option>';
-
-		if ( aua_fs()->can_use_premium_code() ) {
-			echo "<option value='image/gif' " . esc_attr( selected( in_array( 'image/gif', $allowed_file_type ), true, false ) ) . '>' . esc_html__( 'GIF', 'wpmake-advance-user-avatar' ) . "</option><option value='image/png' " . esc_attr( selected( in_array( 'image/png', $allowed_file_type ), true, false ) ) . '>' . esc_html__( 'PNG', 'wpmake-advance-user-avatar' ) . '</option>';
-		}
-
-		echo '</select>';
-		echo '<p class="wpmake-advance-user-avatar-setting-desc" >' . esc_html__( 'Choose valid file types allowed for avatar upload', 'wpmake-advance-user-avatar' ) . '</p>';
+		ob_start();
+		?>
+		<select class='wpmake-advance-user-avatar-enhanced-select wpmake-advance-user-avatar-setting-field' name='wpmake_advance_user_avatar_settings[allowed_file_type][]' multiple='multiple' >
+			<option value='image/jpg' <?php echo esc_attr( selected( in_array( 'image/jpg', $allowed_file_type ), true, false ) ); ?> ><?php esc_html_e( 'JPG', 'wpmake-advance-user-avatar' ); ?></option>
+			<option value='image/jpeg' <?php echo esc_attr( selected( in_array( 'image/jpeg', $allowed_file_type ), true, false ) ); ?> ><?php esc_html_e( 'JPEG', 'wpmake-advance-user-avatar' ); ?></option>
+			<?php
+			if ( aua_fs()->can_use_premium_code() ) {
+				?>
+				<option value='image/gif' <?php echo esc_attr( selected( in_array( 'image/gif', $allowed_file_type ), true, false ) ); ?> ><?php esc_html_e( 'GIF', 'wpmake-advance-user-avatar' ); ?></option>
+				<option value='image/png' <?php echo esc_attr( selected( in_array( 'image/png', $allowed_file_type ), true, false ) ); ?> ><?php esc_html_e( 'PNG', 'wpmake-advance-user-avatar' ); ?></option>
+				<?php
+			}
+			?>
+		</select>
+		<p class="wpmake-advance-user-avatar-setting-desc" ><?php esc_html_e( 'Choose valid file types allowed for avatar upload', 'wpmake-advance-user-avatar' ); ?></p>
+		<?php
+		$settings = ob_get_clean();
+		echo wp_kses( $settings, wpmake_aua_get_allowed_html_tags() );
 	}
 
-		/**
-		 *  Cropping interface.
-		 */
+	/**
+	 * Cropping interface.
+	 *
+	 * @param array $args Arguments.
+	 */
 	public function wpmake_advance_user_avatar_settings_cropping_interface_callback( $args ) {
 
 		$options = get_option( 'wpmake_advance_user_avatar_settings' );
@@ -177,13 +192,20 @@ class Admin {
 			$cropping_interface = esc_html( $options['cropping_interface'] );
 		}
 
-		echo '<input type="checkbox"  name="wpmake_advance_user_avatar_settings[cropping_interface]" value="1"' . checked( 1, $cropping_interface, false ) . '/>';
-		echo '<p class="wpmake-advance-user-avatar-setting-desc" >' . esc_html__( 'This option will enable avatar cropping interface', 'wpmake-advance-user-avatar' ) . '</p>';
+		ob_start();
+		?>
+			<input type="checkbox"  name="wpmake_advance_user_avatar_settings[cropping_interface]" value="1" <?php echo checked( 1, $cropping_interface, false ); ?> />
+			<p class="wpmake-advance-user-avatar-setting-desc" ><?php esc_html_e( 'This option will enable avatar cropping interface', 'wpmake-advance-user-avatar' ); ?></p>
+		<?php
+		$settings = ob_get_clean();
+		echo wp_kses( $settings, wpmake_aua_get_allowed_html_tags() );
 	}
 
-		/**
-		 *  Capture picture.
-		 */
+	/**
+	 *  Capture picture.
+	 *
+	 * @param array $args Arguments.
+	 */
 	public function wpmake_advance_user_avatar_settings_capture_picture_callback( $args ) {
 
 		$options = get_option( 'wpmake_advance_user_avatar_settings' );
@@ -193,7 +215,12 @@ class Admin {
 			$capture_picture = esc_html( $options['capture_picture'] );
 		}
 
-		echo '<input type="checkbox"  name="wpmake_advance_user_avatar_settings[capture_picture]" value="1"' . checked( 1, $capture_picture, false ) . '/>';
-		echo '<p class="wpmake-advance-user-avatar-setting-desc" >' . esc_html__( 'This option will enable taking picture using webcam. Note that your site must be secure', 'wpmake-advance-user-avatar' ) . '</p>';
+		ob_start();
+		?>
+		<input type="checkbox"  name="wpmake_advance_user_avatar_settings[capture_picture]" value="1" <?php echo checked( 1, $capture_picture, false ); ?> />
+		<p class="wpmake-advance-user-avatar-setting-desc" ><?php esc_html_e( 'This option will enable taking picture using webcam. Note that your site must be secure', 'wpmake-advance-user-avatar' ); ?></p>
+		<?php
+		$settings = ob_get_clean();
+		echo wp_kses( $settings, wpmake_aua_get_allowed_html_tags() );
 	}
 }

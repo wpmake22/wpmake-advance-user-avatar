@@ -82,3 +82,49 @@ if ( ! function_exists( 'wpmake_advance_user_avatar_replace_gravatar_image' ) ) 
 		return $avatar;
 	}
 }
+
+if ( ! function_exists( 'wpmake_aua_get_allowed_html_tags' ) ) {
+	/**
+	 * WPMAKE AUA KSES.
+	 *
+	 * @since 1.0.0
+	 */
+	function wpmake_aua_get_allowed_html_tags() {
+
+		$post_tags = wp_kses_allowed_html( 'post' );
+
+		return wp_parse_args(
+			$post_tags,
+			array(
+				'input'    => array(
+					'type'        => true,
+					'name'        => true,
+					'value'       => true,
+					'checked'     => true,
+					'class'       => true,
+					'placeholder' => true,
+				),
+				'select'   => array(
+					'name'     => true,
+					'id'       => true,
+					'class'    => true,
+					'multiple' => true,
+				),
+				'option'   => array(
+					'value'    => true,
+					'selected' => true,
+					'class'    => true,
+				),
+				'textarea' => array(
+					'style' => true,
+				),
+				'label'    => array(
+					'for' => array(),
+				),
+				'p'        => array(
+					'class' => true,
+				),
+			)
+		);
+	}
+}

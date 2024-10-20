@@ -104,7 +104,7 @@ class Ajax {
 		$upload = isset( $_FILES['file'] ) ? $_FILES['file'] : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 		// valid extension for image.
-		$valid_extensions     = isset( $_REQUEST['valid_extension'] ) ? $_REQUEST['valid_extension'] : array();
+		$valid_extensions     = isset( $_REQUEST['valid_extension'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['valid_extension'] ) ) : array();
 		$valid_extension_type = explode( ',', $valid_extensions );
 		$valid_ext            = array();
 
@@ -129,9 +129,9 @@ class Ajax {
 		$max_size = size_format( $max_size );
 
 		// Retrieves cropped picture dimensions from ajax request.
-		$value                          = $_REQUEST['cropped_image'];
-		$cropped_image_size             = json_decode( stripslashes( $value ), true );
-		$max_uploaded_size_option_value = $_REQUEST['max_uploaded_size'];
+		$value                          = isset( $_REQUEST['cropped_image'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['cropped_image'] ) ) : '';
+		$cropped_image_size             = json_decode( $value, true );
+		$max_uploaded_size_option_value = isset( $_REQUEST['max_uploaded_size'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['max_uploaded_size'] ) ) : '';
 
 		if ( isset( $max_uploaded_size_option_value ) && '' !== $max_uploaded_size_option_value ) {
 			$max_upload_size_options_value = $max_uploaded_size_option_value * 1024;
