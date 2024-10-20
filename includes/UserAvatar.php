@@ -131,7 +131,7 @@ if ( ! class_exists( 'UserAvatar' ) ) :
 			$path = WP_CONTENT_DIR . '/uploads/wpmake_advance_user_avatar_uploads';
 
 			if ( ! is_dir( $path ) ) {
-				mkdir( $path, 0777, true );
+				mkdir( $path, 0777, true ); // phpcs:ignore
 			}
 		}
 
@@ -143,7 +143,7 @@ if ( ! class_exists( 'UserAvatar' ) ) :
 		 */
 		public function is_admin() {
 			$check_ajax    = defined( 'DOING_AJAX' ) && DOING_AJAX;
-			$check_context = isset( $_REQUEST['context'] ) && 'frontend' === $_REQUEST['context'];
+			$check_context = isset( $_REQUEST['context'] ) && 'frontend' === $_REQUEST['context']; // phpcs:ignore
 
 			return is_admin() && ! ( $check_ajax && $check_context );
 		}

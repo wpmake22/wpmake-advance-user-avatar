@@ -159,7 +159,7 @@ class Ajax {
 		$upload_dir  = wp_upload_dir();
 		$upload_path = apply_filters( 'wpmake_advance_user_avatar_upload_url', $upload_dir['basedir'] . '/wpmake_advance_user_avatar_uploads' ); /*Get path of upload dir of WordPress*/
 
-		if ( ! is_writable( $upload_path ) ) {  /*Check if upload dir is writable*/
+		if ( ! is_writable( $upload_path ) ) {  /*Check if upload dir is writable*/ // phpcs:ignore
 
 			wp_send_json_error(
 				array(
@@ -171,7 +171,7 @@ class Ajax {
 
 		$pic_path = $upload_path . '/' . sanitize_file_name( $upload['name'] );
 
-		if ( move_uploaded_file( $upload['tmp_name'], $pic_path ) ) {
+		if ( move_uploaded_file( $upload['tmp_name'], $pic_path ) ) { // phpcs:ignore
 
 			$attachment_id = wp_insert_attachment(
 				array(

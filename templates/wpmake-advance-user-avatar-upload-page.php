@@ -60,7 +60,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 							<button type="button" class="button wpmake-advance-user-avatar-remove hide-if-no-js"><?php esc_html_e( 'Remove', 'wpmake-advance-user-avatar' ); ?></button>
 
 							<?php
-							if ( aua_fs()->can_use_premium_code() && isset( $options['capture_picture'] ) && $options['capture_picture'] ) {
+							if ( aua_fs()->can_use_premium_code__premium_only() && isset( $options['capture_picture'] ) && $options['capture_picture'] ) {
 								?>
 							<button type="button" class="button wpmake_advance_user_avatar_take_snapshot hide-if-no-js" style="display:none"><?php esc_html_e( 'Take Picture', 'wpmake-advance-user-avatar' ); ?></button>
 								<?php
