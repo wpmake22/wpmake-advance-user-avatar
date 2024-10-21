@@ -1,4 +1,4 @@
-=== Advance User Avatar - User Avatar Uploader and Updater ===
+=== Advance User Avatar ===
 Contributors: wpmake
 Tags: profile picture, avatar, gravatar, picture, user avatar
 Requires at least: 5.2
