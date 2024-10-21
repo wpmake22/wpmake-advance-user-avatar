@@ -109,16 +109,6 @@ class Admin {
 			'wpmake_advance_user_avatar_setting_section'
 		);
 
-		if ( aua_fs()->can_use_premium_code__premium_only() ) {
-			add_settings_field(
-				'wpmake_advance_user_avatar_settings_capture_picture',
-				esc_html__( 'Capture Picture', 'wpmake-advance-user-avatar' ),
-				array( $this, 'wpmake_advance_user_avatar_settings_capture_picture_callback' ),
-				'wpmake_advance_user_avatar_settings',
-				'wpmake_advance_user_avatar_setting_section'
-			);
-		}
-
 		add_settings_field(
 			'wpmake_advance_user_avatar_settings_cropping_interface',
 			esc_html__( 'Cropping interface', 'wpmake-advance-user-avatar' ),
@@ -163,14 +153,6 @@ class Admin {
 		<select class='wpmake-advance-user-avatar-enhanced-select wpmake-advance-user-avatar-setting-field' name='wpmake_advance_user_avatar_settings[allowed_file_type][]' multiple='multiple' >
 			<option value='image/jpg' <?php echo esc_attr( selected( in_array( 'image/jpg', $allowed_file_type ), true, false ) ); ?> ><?php esc_html_e( 'JPG', 'wpmake-advance-user-avatar' ); ?></option>
 			<option value='image/jpeg' <?php echo esc_attr( selected( in_array( 'image/jpeg', $allowed_file_type ), true, false ) ); ?> ><?php esc_html_e( 'JPEG', 'wpmake-advance-user-avatar' ); ?></option>
-			<?php
-			if ( aua_fs()->can_use_premium_code__premium_only() ) {
-				?>
-				<option value='image/gif' <?php echo esc_attr( selected( in_array( 'image/gif', $allowed_file_type ), true, false ) ); ?> ><?php esc_html_e( 'GIF', 'wpmake-advance-user-avatar' ); ?></option>
-				<option value='image/png' <?php echo esc_attr( selected( in_array( 'image/png', $allowed_file_type ), true, false ) ); ?> ><?php esc_html_e( 'PNG', 'wpmake-advance-user-avatar' ); ?></option>
-				<?php
-			}
-			?>
 		</select>
 		<p class="wpmake-advance-user-avatar-setting-desc" ><?php esc_html_e( 'Choose valid file types allowed for avatar upload', 'wpmake-advance-user-avatar' ); ?></p>
 		<?php
