@@ -5,7 +5,7 @@
  * Description: User avatar uploader and updater plugin for WordPress.
  * Version: 1.0.0
  * Author: WPMake
- * Author URI: https://wpmake.net
+ * Author URI: https://www.wpmake.net
  * Text Domain: wpmake-advance-user-avatar
  * Domain Path: /languages/
  *

@@ -31,7 +31,7 @@
 		"phpcbf -p"
 	  ],
 	  "makepot-audit": [
-		"wp --allow-root i18n make-pot . --exclude=\"github,.wordpress-org,bin,node_modules,vendor,tests, build\" --headers='{\"Report-Msgid-Bugs-To\":\"wpmake22@gmail.com\"}' --slug=wpmake-advance-user-avatar"
+		"wp --allow-root i18n make-pot . --exclude=\"github,.wordpress-org,bin,node_modules,vendor,tests, build\" --headers='{\"Report-Msgid-Bugs-To\":\"dev@wpmake.net\"}' --slug=wpmake-advance-user-avatar"
 	  ],
 	  "makepot": [
 		"@makepot-audit --skip-audit"
