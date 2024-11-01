@@ -10,17 +10,19 @@
  * @version  1.0.0
  */
 
+defined( 'ABSPATH' ) || exit;
+
 add_filter( 'get_avatar', 'wpmake_advance_user_avatar_replace_gravatar_image', 99, 6 );
 
 if ( ! function_exists( 'wpmake_advance_user_avatar_replace_gravatar_image' ) ) {
 	/**
 	 * Custom function to override get_gavatar function.
 	 *
-	 * @param [type] $avatar Avatar of user.
-	 * @param [type] $id_or_email ID or email of user.
-	 * @param [type] $size Size of avatar.
-	 * @param [type] $default Default avatar.
-	 * @param [type] $alt Alt.
+	 * @param string $avatar Avatar of user.
+	 * @param string $id_or_email ID or email of user.
+	 * @param string $size Size of avatar.
+	 * @param string $default Default avatar.
+	 * @param string $alt Alt.
 	 * @param array  $args Args.
 	 */
 	function wpmake_advance_user_avatar_replace_gravatar_image( $avatar, $id_or_email, $size, $default, $alt, $args = array() ) {

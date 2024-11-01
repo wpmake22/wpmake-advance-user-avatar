@@ -28,7 +28,7 @@ class Shortcodes {
 		);
 
 		foreach ( $shortcodes as $shortcode => $function ) {
-			add_shortcode( apply_filters( "{$shortcode}_shortcode_tag", $shortcode ), $function );
+			add_shortcode( apply_filters( "wpmake_advance_user_avatar_{$shortcode}_shortcode_tag", $shortcode ), $function );
 		}
 	}
 

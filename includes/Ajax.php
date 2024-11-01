@@ -169,19 +169,26 @@ class Ajax {
 
 		}
 
-		$pic_path = $upload_path . '/' . sanitize_file_name( $upload['name'] );
+		$overrides = array(
+			'test_form' => false,
+		);
 
-		if ( move_uploaded_file( $upload['tmp_name'], $pic_path ) ) { // phpcs:ignore
+		$upload = wp_handle_upload( $upload, $overrides );
+
+		if ( $upload && ! isset( $upload['error'] ) ) {
+			$file_url  = $upload['url'];
+			$file_path = $upload['file'];
+			$file_type = $upload['type'];
 
 			$attachment_id = wp_insert_attachment(
 				array(
-					'guid'           => $pic_path,
-					'post_mime_type' => $file_extension,
-					'post_title'     => preg_replace( '/\.[^.]+$/', '', sanitize_file_name( $upload['name'] ) ),
+					'guid'           => $file_url,
+					'post_mime_type' => $file_type,
+					'post_title'     => preg_replace( '/\.[^.]+$/', '', basename( $file_path ) ),
 					'post_content'   => '',
 					'post_status'    => 'inherit',
 				),
-				$pic_path
+				$file_path
 			);
 
 			if ( is_wp_error( $attachment_id ) ) {
@@ -196,7 +203,7 @@ class Ajax {
 			include_once ABSPATH . 'wp-admin/includes/image.php';
 
 			// Generate and save the attachment metas into the database.
-			wp_update_attachment_metadata( $attachment_id, wp_generate_attachment_metadata( $attachment_id, $pic_path ) );
+			wp_update_attachment_metadata( $attachment_id, wp_generate_attachment_metadata( $attachment_id, $file_path ) );
 
 			$url = wp_get_attachment_url( $attachment_id );
 
@@ -204,18 +211,18 @@ class Ajax {
 
 			if ( isset( $options['cropping_interface'] ) && $options['cropping_interface'] ) {
 				// Retrieves original picture height and width.
-				list( $original_image_width, $original_image_height ) = getimagesize( $pic_path );
+				list( $original_image_width, $original_image_height ) = getimagesize( $file_path );
 
 				// Determines the type of uploaded picture and treats them differently.
 				switch ( $upload['type'] ) {
 					case 'image/png':
-						$img_r = imagecreatefrompng( $pic_path );
+						$img_r = imagecreatefrompng( $file_path );
 						break;
 					case 'image/gif':
-						$img_r = imagecreatefromgif( $pic_path );
+						$img_r = imagecreatefromgif( $file_path );
 						break;
 					default:
-						$img_r = imagecreatefromjpeg( $pic_path );
+						$img_r = imagecreatefromjpeg( $file_path );
 				}
 
 				$cropped_image_holder_width  = rtrim( $cropped_image_size['holder_width'], 'px' );
@@ -232,12 +239,12 @@ class Ajax {
 				imagecopyresampled( $dst_r, $img_r, 0, 0, $cropped_image_left, $cropped_image_right, $original_image_width, $original_image_height, $cropped_image_width, $cropped_image_height );
 
 				// Retrieves and Resizes the cropped picture to a size defined by user in filter or default of 150 by 150.
-				list( $image_width, $image_height ) = apply_filters( 'user_registration_cropped_image_size', array( 150, 150 ) );
+				list( $image_width, $image_height ) = apply_filters( 'wpmake_advance_user_avatar_cropped_image_size', array( 150, 150 ) );
 				$dest_r                             = wp_imageCreateTrueColor( $image_width, $image_height );
 				imagecopyresampled( $dest_r, $dst_r, 0, 0, 0, 0, $image_width, $image_height, $original_image_width, $original_image_height );
 
 				// Replaces the original picture with the cropped picture.
-				$img_r = imagejpeg( $dest_r, $pic_path );
+				$img_r = imagejpeg( $dest_r, $file_path );
 			}
 
 			if ( empty( $url ) ) {

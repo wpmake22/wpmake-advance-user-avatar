@@ -4,7 +4,7 @@
 *.lock
 bin/
 build/
-composer.*
+composer.lock
 Gruntfile.js
 webpack.config.js
 node_modules/

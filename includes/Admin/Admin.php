@@ -39,7 +39,7 @@ class Admin {
 
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 		wp_enqueue_script( 'wpmake-advance-user-avatar-admin-script', WPMAKE_ADVANCE_USER_AVATAR_ASSETS_URL . '/js/admin/wpmake-advance-user-avatar-admin' . $suffix . '.js', array( 'jquery' ), WPMAKE_ADVANCE_USER_AVATAR_VERSION, false );
-		wp_enqueue_script( 'select2', WPMAKE_ADVANCE_USER_AVATAR_ASSETS_URL . '/js/select2/select2.min.js', array( 'jquery' ), '10.16.7', false );
+		wp_enqueue_script( 'select2', WPMAKE_ADVANCE_USER_AVATAR_ASSETS_URL . '/js/select2/select2.min.js', array( 'jquery' ), '4.1.0', false );
 		wp_enqueue_style( 'wpmake-advance-user-avatar-select2-style', WPMAKE_ADVANCE_USER_AVATAR_ASSETS_URL . '/css/select2/select2.css', array(), WPMAKE_ADVANCE_USER_AVATAR_VERSION );
 		wp_enqueue_style( 'wpmake-advance-user-avatar-admin-style', WPMAKE_ADVANCE_USER_AVATAR_ASSETS_URL . '/css/wpmake-advance-user-avatar-admin.css', array(), WPMAKE_ADVANCE_USER_AVATAR_VERSION );
 	}
@@ -84,7 +84,13 @@ class Admin {
 		 *  Init the User Avatar Settings.
 		 */
 	public function wpmake_advance_user_avatar_setting() {
-		register_setting( 'wpmake_advance_user_avatar_settings', 'wpmake_advance_user_avatar_settings' );
+		register_setting(
+			'wpmake_advance_user_avatar_settings',
+			'wpmake_advance_user_avatar_settings',
+			array(
+				'sanitize_callback' => array( $this, 'wpmake_advance_user_avatar_sanitize_settings' ),
+			)
+		);
 
 		add_settings_section(
 			'wpmake_advance_user_avatar_setting_section',
@@ -118,9 +124,41 @@ class Admin {
 		);
 	}
 
-		/**
-		 *  Max avatar size setting.
-		 */
+	/**
+	 * Sanitize settings options before save.
+	 *
+	 * @param array $options Settings options.
+	 */
+	public function wpmake_advance_user_avatar_sanitize_settings( $options ) {
+
+		$sanitized_option = array();
+
+		if ( isset( $options['max_size'] ) ) {
+			$sanitized_option['max_size'] = absint( $options['max_size'] );
+		}
+
+		if ( isset( $options['allowed_file_type'] ) ) {
+			foreach ( $options['allowed_file_type'] as $key => $value ) {
+				$options['allowed_file_type'][ $key ] = sanitize_text_field( $value );
+			}
+
+			$sanitized_option['allowed_file_type'] = $options['allowed_file_type'];
+		}
+
+		if ( isset( $options['cropping_interface'] ) ) {
+			$sanitized_option['cropping_interface'] = sanitize_text_field( $options['cropping_interface'] );
+		}
+
+		if ( isset( $options['capture_picture'] ) ) {
+			$sanitized_option['capture_picture'] = sanitize_text_field( $options['capture_picture'] );
+		}
+
+		return $sanitized_option;
+	}
+
+	/**
+	 *  Max avatar size setting.
+	 */
 	public function wpmake_advance_user_avatar_setting_max_size_callback() {
 		$options = get_option( 'wpmake_advance_user_avatar_settings', array() );
 
