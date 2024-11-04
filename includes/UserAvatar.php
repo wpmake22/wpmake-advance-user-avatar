@@ -128,7 +128,7 @@ if ( ! class_exists( 'UserAvatar' ) ) :
 			}
 
 			// Create a folder to store avatars if not present.
-			$path = WP_CONTENT_DIR . '/uploads/wpmake_advance_user_avatar_uploads';
+			$path = wp_upload_dir()['basedir'] . '/wpmake-advance-user-avatar';
 
 			if ( ! is_dir( $path ) ) {
 				mkdir( $path, 0777, true ); // phpcs:ignore

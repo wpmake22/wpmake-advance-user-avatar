@@ -157,7 +157,7 @@ class Ajax {
 		}
 
 		$upload_dir  = wp_upload_dir();
-		$upload_path = apply_filters( 'wpmake_advance_user_avatar_upload_url', $upload_dir['basedir'] . '/wpmake_advance_user_avatar_uploads' ); /*Get path of upload dir of WordPress*/
+		$upload_path = apply_filters( 'wpmake_advance_user_avatar_upload_url', $upload_dir['basedir'] . '/wpmake-advance-user-avatar' ); /*Get path of upload dir of WordPress*/
 
 		if ( ! is_writable( $upload_path ) ) {  /*Check if upload dir is writable*/ // phpcs:ignore
 
@@ -169,16 +169,31 @@ class Ajax {
 
 		}
 
+		$custom_subdir = '/wpmake-advance-user-avatar';
+		$custom_path   = $upload_dir['basedir'] . $custom_subdir;
+		$custom_url    = $upload_dir['baseurl'] . $custom_subdir;
+
+		add_filter(
+			'upload_dir',
+			function ( $dirs ) use ( $custom_path, $custom_url, $custom_subdir ) {
+				$dirs['path']   = $custom_path;
+				$dirs['url']    = $custom_url;
+				$dirs['subdir'] = $custom_subdir;
+				return $dirs;
+			}
+		);
+
 		$overrides = array(
 			'test_form' => false,
 		);
 
-		$upload = wp_handle_upload( $upload, $overrides );
+		$uploaded = wp_handle_upload( $upload, $overrides );
+		remove_filter( 'upload_dir', '__return_true' );
 
-		if ( $upload && ! isset( $upload['error'] ) ) {
-			$file_url  = $upload['url'];
-			$file_path = $upload['file'];
-			$file_type = $upload['type'];
+		if ( $uploaded && ! isset( $uploaded['error'] ) ) {
+			$file_url  = $uploaded['url'];
+			$file_path = $uploaded['file'];
+			$file_type = $uploaded['type'];
 
 			$attachment_id = wp_insert_attachment(
 				array(
