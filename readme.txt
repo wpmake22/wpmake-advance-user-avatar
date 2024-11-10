@@ -21,8 +21,8 @@ WordPress doesn't provide a direct way to upload user avatars, relying instead o
 The Advance User Avatar plugin includes the following features:
 
 * **Shortcode Support:**
-  * `[wpmake_user_avatar]`: Displays the avatar uploaded by the user anywhere you want.
-  * `[wpmake_user_avatar_upload]`: Provides an interface for users to upload or remove their avatar.
+  * `[wpmake_advance_user_avatar]`: Displays the avatar uploaded by the user anywhere you want.
+  * `[wpmake_advance_user_avatar_upload]`: Provides an interface for users to upload or remove their avatar.
 
 * **Gutenberg Block Support:** The plugin supports Gutenberg blocks.
 
