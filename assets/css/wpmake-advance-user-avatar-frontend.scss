@@ -19,6 +19,10 @@
 	}
 
 	.wpmake-advance-user-avatar-upload {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+
 		.wpmake-advance-user-avatar-upload-node {
 			height: 0;
 			width: 0;
@@ -28,19 +32,56 @@
 			border: 0;
 			overflow: hidden;
 		}
+
+		button {
+			padding: 10px;
+			border: none;
+			border-radius: 3.75px;
+			color: white;
+
+			&.wpmake_advance_user_avatar_upload {
+				background-color: #475BD9;
+
+				&:hover {
+					background-color: #76add4;
+				}
+			}
+
+			&.wpmake-advance-user-avatar-remove {
+				background-color: #ff030b;
+			}
+		}
 	}
 
 	.wpmake-advance-user-avatar-error {
-		border-top-color:#ff4f55;
 		background:rgba(255,79,85,.1);
 		color:#ff030b;
-		font-size: 18px;
+		font-size: 14px;
+		border: 2px solid #ff4f55;
+		padding: 10px;
+		border-radius: 10px;
+		display: flex;
+		justify-content: center;
+		gap: 15px;
+
+		img {
+			flex: 13%;
+		}
 	}
 
 	.wpmake-advance-user-avatar-success {
-		border-top-color:green;
-		background:rgba(255,79,85,.1);
+		background:rgba(0,128,0,.1);
 		color:green;
-		font-size: 18px;
+		font-size: 14px;
+		border: 2px solid green;
+		padding: 10px;
+		border-radius: 10px;
+		display: flex;
+		justify-content: center;
+		gap: 15px;
+
+		img {
+			flex: 13%;
+		}
 	}
 }

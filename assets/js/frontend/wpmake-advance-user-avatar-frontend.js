@@ -41,8 +41,8 @@ jQuery(function ($) {
 									wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_cancel_button,
 								customClass: {
 									container:
-										"wpmake-advance-user-avatar-swal2-container",
-								},
+										"wpmake-advance-user-avatar-swal2-container"
+								}
 							});
 
 							$(".swal2-cancel ").on("click", function () {
@@ -78,7 +78,7 @@ jQuery(function ($) {
 				onSelect: function (c) {
 					size = { x: c.x, y: c.y, w: c.w, h: c.h };
 				},
-				setSelect: [100, 100, 50, 50],
+				setSelect: [100, 100, 50, 50]
 			});
 
 			$(".swal2-confirm").on("click", function () {
@@ -88,7 +88,7 @@ jQuery(function ($) {
 					w: size.w,
 					h: size.h,
 					holder_width: $("#crop_container").css("width"),
-					holder_height: $("#crop_container").css("height"),
+					holder_height: $("#crop_container").css("height")
 				};
 				$(".cropped_image_size").val(
 					JSON.stringify(cropped_image_size)
@@ -143,7 +143,7 @@ jQuery(function ($) {
 						.closest(".wpmake-advance-user-avatar-upload")
 						.find('input[type="file"]')
 						.off("click");
-				},
+				}
 			});
 		},
 		/**
@@ -197,7 +197,7 @@ jQuery(function ($) {
 
 			var upload_node = $node
 				.closest(".wpmake-advance-user-avatar-upload")
-				.find(".wp_wpmake_advance_user_avatar_upload");
+				.find(".wpmake_advance_user_avatar_upload");
 			var upload_node_value = upload_node.text();
 			$.ajax({
 				url: url,
@@ -226,7 +226,12 @@ jQuery(function ($) {
 						.closest(".wpmake-advance-user-avatar-upload")
 						.find(".wpmake-advance-user-avatar-input")
 						.val("");
+					var error_icon =
+						'<img src="' +
+						wpmake_advance_user_avatar_params.wpmake_assets_url +
+						'/images/error.png" width="30px" />';
 
+					var error = false;
 					try {
 						var response_obj = JSON.parse(
 							ajax_response.responseText
@@ -238,17 +243,21 @@ jQuery(function ($) {
 						) {
 							throw wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_something_wrong;
 						}
-						message = response_obj.data.message;
 
+						message = response_obj.data.message;
 						if (!response_obj.success) {
-							message =
-								'<p class="wpmake-advance-user-avatar-file-error">' +
-								message +
-								"</p>";
+							message = error_icon + message;
+							error = true;
 						}
 
+						var success_icon =
+							'<img src="' +
+							wpmake_advance_user_avatar_params.wpmake_assets_url +
+							'/images/success.png" width="30px" />';
+
 						if (response_obj.success) {
-							message = "";
+							var success_message =
+								wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_upload_success_message;
 							attachment_id = response_obj.data.attachment_id;
 
 							// Gets the profile picture url and displays the picture on frontend
@@ -277,28 +286,43 @@ jQuery(function ($) {
 								.closest(".wpmake-advance-user-avatar-upload")
 								.find(".wpmake_advance_user_avatar_upload ")
 								.attr("style", "display:none");
+
+							$node
+								.closest(".wpmake-advance-user-avatar-upload")
+								.find(".wpmake-advance-user-avatar-error")
+								.remove();
+
+							$node
+								.closest(".wpmake-advance-user-avatar-upload")
+								.append(
+									'<div class="wpmake-advance-user-avatar-success">' +
+										success_icon +
+										success_message +
+										"</div>"
+								);
 						}
 					} catch (e) {
 						message =
+							error_icon +
 							wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_something_wrong;
+						error = true;
 					}
 
-					// Finds and removes any prevaling errors and appends new errors occured during picture upload
-					$node
-						.closest(".wpmake-advance-user-avatar-upload")
-						.find(".wpmake-advance-user-avatar-error")
-						.remove();
-					$node
-						.closest(".wpmake-advance-user-avatar-upload")
-						.find(".wpmake-advance-user-avatar-file-error")
-						.remove();
-					$node
-						.closest(".wpmake-advance-user-avatar-upload")
-						.append(
-							'<span class="wpmake-advance-user-avatar-error">' +
-								message +
-								"</span>"
-						);
+					if (error) {
+						// Finds and removes any prevaling errors and appends new errors occured during picture upload
+						$node
+							.closest(".wpmake-advance-user-avatar-upload")
+							.find(".wpmake-advance-user-avatar-error")
+							.remove();
+
+						$node
+							.closest(".wpmake-advance-user-avatar-upload")
+							.append(
+								'<div class="wpmake-advance-user-avatar-error">' +
+									message +
+									"</div>"
+							);
+					}
 
 					if (attachment_id > 0) {
 						$node
@@ -307,7 +331,11 @@ jQuery(function ($) {
 							.val(attachment_id);
 					}
 					upload_node.text(upload_node_value);
-				},
+
+					$(document).trigger(
+						"wpmake_advance_user_avatar_ajax_complete"
+					);
+				}
 			});
 		},
 		dataURItoBlob: function (dataURI) {
@@ -331,7 +359,7 @@ jQuery(function ($) {
 			}
 
 			return new Blob([ia], { type: mimeString });
-		},
+		}
 	};
 
 	WPMake_Advance_User_Avatar_Frontend.init(jQuery);
@@ -359,8 +387,8 @@ jQuery(function ($) {
 				cancelButtonText:
 					wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_cancel_button,
 				customClass: {
-					container: "wpmake-advance-user-avatar-swal2-container",
-				},
+					container: "wpmake-advance-user-avatar-swal2-container"
+				}
 			});
 
 			// Standard image frame size for bigger screen devices
@@ -388,7 +416,7 @@ jQuery(function ($) {
 				crop_width: width,
 				crop_height: height,
 				image_format: "jpeg",
-				jpeg_quality: 90,
+				jpeg_quality: 90
 			});
 
 			var error_exist = false;
@@ -419,8 +447,8 @@ jQuery(function ($) {
 						wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_cancel_button_confirmation,
 					cancelButtonColor: "#236bb0",
 					customClass: {
-						container: "wpmake-advance-user-avatar-swal2-container",
-					},
+						container: "wpmake-advance-user-avatar-swal2-container"
+					}
 				});
 			});
 
@@ -451,8 +479,8 @@ jQuery(function ($) {
 									wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_cancel_button,
 								customClass: {
 									container:
-										"wpmake-advance-user-avatar-swal2-container",
-								},
+										"wpmake-advance-user-avatar-swal2-container"
+								}
 							});
 							$(".swal2-html-container").attr(
 								"style",
@@ -500,5 +528,15 @@ jQuery(function ($) {
 
 	$(document).on("click", ".wpmake-advance-user-avatar-remove", function () {
 		WPMake_Advance_User_Avatar_Frontend.remove_avatar($(this));
+	});
+
+	$(document).on("wpmake_advance_user_avatar_ajax_complete", function () {
+		setTimeout(() => {
+			$(document)
+				.find(
+					".wpmake-advance-user-avatar-error, .wpmake-advance-user-avatar-success"
+				)
+				.remove();
+		}, 5000);
 	});
 });
