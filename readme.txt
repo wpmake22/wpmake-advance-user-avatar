@@ -1,9 +1,9 @@
 === Advance User Avatar ===
 Contributors: wpmakedev
 Tags: profile picture, avatar, gravatar, picture, user avatar
-Requires at least: 5.2
-Tested up to: 6.6.2
-Stable tag: 1.0.0
+Requires at least: 5.5
+Tested up to: 6.7.1
+Stable tag: 1.0.1
 Requires PHP: 7.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -56,6 +56,12 @@ The Advance User Avatar plugin includes the following features:
 4. Error Display
 
 == Changelog ==
+
+= 1.0.1      - 21-09-2024 =
+* Enhance    - Mime type selection design in settings.
+* Enhance    - Avatar upload error and success message design .
+* Dev 		 - Added WordPress v6.7 compatibility.
+* Dev        - Updated WordPress minimum version requirement to 5.5 for better Gutenberg block support.
 
 = 1.0.0 = 11-09-2024
 * Initial Release

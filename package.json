@@ -1,7 +1,7 @@
 {
   "name": "wpmake-advance-user-avatar",
   "title": "WPMake Advance User Avatar",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "homepage": "https://wpmake.net/plugins/wpmake-advance-user-avatar/",
   "license": "GPL-3.0+",
   "main": "Gruntfile.js",
