@@ -35,6 +35,7 @@ class Ajax {
 		$ajax_events = array(
 			'method_upload' => true,
 			'remove_avatar' => true,
+			'rated'         => false,
 		);
 		foreach ( $ajax_events as $ajax_event => $nopriv ) {
 
@@ -282,5 +283,18 @@ class Ajax {
 				)
 			);
 		}
+	}
+
+	/**
+	 * Triggered when clicking the rating footer.
+	 *
+	 * @since 1.0.2
+	 */
+	public static function rated() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( - 1 );
+		}
+		update_option( 'wpmake_advance_user_avatar_admin_footer_text_rated', 1 );
+		wp_die();
 	}
 }

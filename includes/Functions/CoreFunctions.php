@@ -130,3 +130,44 @@ if ( ! function_exists( 'wpmake_aua_get_allowed_html_tags' ) ) {
 		);
 	}
 }
+
+/**
+ * Print js script by properly sanitizing and escaping.
+ *
+ * @since 1.0.2
+ * Output any queued javascript code in the footer.
+ */
+function wpmake_aua_print_js() {
+	global $wpmake_aua_queued_js;
+
+	if ( ! empty( $wpmake_aua_queued_js ) ) {
+		// Sanitize.
+		$wpmake_aua_queued_js = wp_check_invalid_utf8( $wpmake_aua_queued_js );
+		$wpmake_aua_queued_js = preg_replace( '/&#(x)?0*(?(1)27|39);?/i', "'", $wpmake_aua_queued_js );
+		$wpmake_aua_queued_js = str_replace( "\r", '', $wpmake_aua_queued_js );
+
+		$js = "<!-- WPMake AUA JavaScript -->\n<script type=\"text/javascript\">\njQuery(function($) { $wpmake_aua_queued_js });\n</script>\n";
+
+		echo wp_kses( apply_filters( 'wpmake_aua_queued_js', $js ), array( 'script' => array( 'type' => true ) ) );
+
+		unset( $wpmake_aua_queued_js );
+	}
+}
+
+/**
+ * Enqueue WPMake AUA js.
+ *
+ * @since 1.0.2
+ * Queue some JavaScript code to be output in the footer.
+ *
+ * @param string $code Code to enqueue.
+ */
+function wpmake_aua_enqueue_js( $code ) {
+	global $wpmake_aua_queued_js;
+
+	if ( empty( $wpmake_aua_queued_js ) ) {
+		$wpmake_aua_queued_js = '';
+	}
+
+	$wpmake_aua_queued_js .= "\n" . $code . "\n";
+}

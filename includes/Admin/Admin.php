@@ -24,6 +24,8 @@ class Admin {
 	public function __construct() {
 
 		$this->init_hooks();
+		add_filter( 'admin_footer_text', array( $this, 'admin_footer_text' ), 1 );
+		add_action( 'admin_footer', 'wpmake_aua_print_js', 25 );
 	}
 
 	/**
@@ -242,5 +244,51 @@ class Admin {
 		<?php
 		$settings = ob_get_clean();
 		echo wp_kses( $settings, wpmake_aua_get_allowed_html_tags() );
+	}
+
+	/**
+	 * Change the admin footer text on setting page.
+	 *
+	 * @since  1.0.2
+	 *
+	 * @param  string $footer_text Advance User Avatar Plugin footer text.
+	 *
+	 * @return string
+	 */
+	public function admin_footer_text( $footer_text ) {
+		if ( ! isset( $_GET['page'] ) || ( isset( $_GET['page'] ) && 'wpmake-advance-user-avatar' !== $_GET['page'] ) ) {
+			return $footer_text;
+		}
+
+		/**
+		 * Filter to display admin footer text
+		 *
+		 * @param boolean Whether current screen is a settings page of the plugin
+		 */
+		if ( 'wpmake-advance-user-avatar' === $_GET['page'] ) {
+			// Change the footer text.
+			if ( ! get_option( 'wpmake_advance_user_avatar_admin_footer_text_rated' ) ) {
+				$footer_text = wp_kses_post(
+					sprintf(
+						/* translators: 1: Advance User Avatar 2:: five stars */
+						__( 'If you like %1$s please leave us a %2$s rating. A huge thanks in advance!', 'wpmake-advance-user-avatar' ),
+						sprintf( '<strong>%s</strong>', esc_html( 'Advance User Avatar' ) ),
+						'<a href="https://wordpress.org/support/plugin/wpmake-advance-user-avatar/reviews?rate=5#new-post" rel="noreferrer noopener" target="_blank" class="wpmake-aua-rating-link" data-rated="' . esc_attr__( 'Thank You!', 'wpmake-advance-user-avatar' ) . '">&#9733;&#9733;&#9733;&#9733;&#9733;</a>'
+					)
+				);
+				wpmake_aua_enqueue_js(
+					"
+				jQuery( 'a.wpmake-aua-rating-link' ).on('click', function() {
+						jQuery.post( '" . admin_url( 'admin-ajax.php', 'relative' ) . "', { action: 'wpmake_advance_user_avatar_upload_rated' } );
+						jQuery( this ).parent().text( jQuery( this ).data( 'rated' ) );
+					});
+				"
+				);
+			} else {
+				$footer_text = esc_html__( 'Thank you for using Advance User Avatar.', 'wpmake-advance-user-avatar' );
+			}
+		}
+
+		return $footer_text;
 	}
 }
