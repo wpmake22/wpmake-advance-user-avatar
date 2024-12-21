@@ -3,7 +3,7 @@
  * Plugin Name: Advance User Avatar
  * Plugin URI: https://www.wpmake.net/user-avatar-demo/
  * Description: User avatar uploader and updater plugin for WordPress.
- * Version: 1.0.1
+ * Version: 1.0.2
  * Author: WPMake
  * Author URI: https://www.wpmake.net
  * Text Domain: wpmake-advance-user-avatar
@@ -25,7 +25,7 @@ if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
 use WPMake\WPMakeAdvanceUserAvatar\UserAvatar;
 
 if ( ! defined( 'WPMAKE_ADVANCE_USER_AVATAR_VERSION' ) ) {
-	define( 'WPMAKE_ADVANCE_USER_AVATAR_VERSION', '1.0.1' );
+	define( 'WPMAKE_ADVANCE_USER_AVATAR_VERSION', '1.0.2' );
 }
 
 // Define WPMAKE_ADVANCE_USER_AVATAR_PLUGIN_FILE.
