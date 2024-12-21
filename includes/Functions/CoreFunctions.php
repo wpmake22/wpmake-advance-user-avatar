@@ -171,3 +171,53 @@ function wpmake_aua_enqueue_js( $code ) {
 
 	$wpmake_aua_queued_js .= "\n" . $code . "\n";
 }
+
+
+if ( ! function_exists( 'review_notice_content' ) ) {
+
+	/**
+	 * Review Content.
+	 *
+	 * @return bool
+	 */
+	function review_notice_content() {
+		return wp_kses_post(
+			sprintf(
+				"<p>%s</p><p class='extra-pad'>%s</p>",
+				__( 'We hope you’re enjoying a great experience with the <strong>Advance User Avatar</strong> plugin! We kindly request you to consider leaving a positive review for the plugin.', 'wpmake-advance-user-avatar' ),
+				__(
+					'Your review motivates us to continue providing regular updates with new features and bug fixes, ensuring the plugin works seamlessly for you. It also supports us in offering free assistance, just as we always have. <span class="dashicons dashicons-smiley smile-icon"></span><br>',
+					'wpmake-advance-user-avatar'
+				)
+			)
+		);
+	}
+}
+
+if ( ! function_exists( 'wpmake_aua_check_activation_date' ) ) {
+
+	/**
+	 * Check for plugin activation date.
+	 *
+	 * @param int $days Number of days to check for activation.
+	 *
+	 * @since 1.0.2
+	 *
+	 * @return bool
+	 */
+	function wpmake_aua_check_activation_date( $days ) {
+
+		// Plugin Activation Time.
+		$activation_date  = get_option( 'wpmake_aua_activated' );
+		$days_to_validate = strtotime( 'now' ) - $days * DAY_IN_SECONDS;
+		$days_to_validate = date_i18n( 'Y-m-d', $days_to_validate );
+
+		if ( ! empty( $activation_date ) ) {
+			if ( $activation_date < $days_to_validate ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+}

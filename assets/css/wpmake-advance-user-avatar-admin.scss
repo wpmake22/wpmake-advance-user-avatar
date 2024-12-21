@@ -63,3 +63,139 @@ body.users_page_wpmake-advance-user-avatar {
 		}
 	}
 }
+
+#wpmake-aua-review-notice {
+	border-left-color: #475BD9;
+}
+
+.wpmake-aua-notice {
+	padding: 15px 15px 15px 0 !important;
+	background-color: #fff !important;
+	margin-top: 15px !important;
+
+	.notice-dismiss {
+		margin-left: 2px;
+		&:before {
+			display: none;
+		}
+	}
+
+	&.is-dismissible {
+		.notice-dismiss {
+			&::before {
+				display: block;
+			}
+		}
+	}
+
+	.wpmake-aua-notice-thumbnail {
+		float: left;
+		text-align: center;
+		margin: 5px 25px;
+		width: 80px;
+
+		img {
+			border-radius: 5px;
+			vertical-align: middle;
+			width: 100%;
+		}
+	}
+
+	.wpmake-aua-notice-text {
+		overflow: hidden;
+
+		.wpmake-aua-notice-header {
+			display: flex;
+			justify-content: space-between;
+
+			h3 {
+				font-size: 18px;
+				margin: 0;
+				line-height: 1;
+			}
+
+			.close-btn {
+				font-size: 30px;
+				color: darkgray;
+				cursor: pointer;
+				text-decoration: none;
+				position: relative;
+			}
+		}
+
+		.ur-error {
+			color: #d63638;
+		}
+
+		p {
+			font-size: 14px;
+			margin: 0;
+			padding: 0 0 10px 0;
+		}
+	}
+
+	.extra-pad {
+		padding-bottom: 20px;
+	}
+
+	.wpmake-aua-notice-links {
+		display: flex;
+		justify-content: center;
+
+		a {
+			position: relative;
+			text-decoration: none;
+		}
+
+		.wpmake-aua-notice-ul {
+			margin: 0;
+			padding: 0;
+
+			li {
+				display: inline-block;
+				margin-right: 10px;
+
+				a {
+					display: inline-block;
+					text-decoration: none;
+					position: relative;
+
+					span {
+						margin-right: 5px;
+						margin-top: 4px;
+					}
+				}
+
+			}
+			.button-primary {
+				background: #475BD9;
+				border-color: #475BD9;
+			}
+			.button-primary:focus,
+			.button-primary:hover {
+				background: #2e44a1;
+				border-color: #2e44a1;
+			}
+			.button.button-secondary {
+				border-color: #475BD9;
+				color: #475BD9;
+				box-shadow: none;
+			}
+		}
+	}
+
+	#wpmake-aua-notice .wpmake-aua-notice-ul li a span {
+		padding: 4px 0px;
+	}
+	.wpmake-aua-notice-text span.dashicons.dashicons-smiley.smile-icon {
+		background: #f7e143;
+		border-radius: 50%;
+		font-size: 15px;
+		border: 1px solid;
+		width: 17px;
+		height: 17px;
+	}
+}
+#toplevel_page_wpmake-aua ul li a[href="admin.php?page=wpmake-aua-members"] {
+	display: none;
+}

@@ -33,9 +33,10 @@ class Ajax {
 	public static function add_ajax_events() {
 
 		$ajax_events = array(
-			'method_upload' => true,
-			'remove_avatar' => true,
-			'rated'         => false,
+			'method_upload'  => true,
+			'remove_avatar'  => true,
+			'rated'          => false,
+			'dismiss_notice' => false,
 		);
 		foreach ( $ajax_events as $ajax_event => $nopriv ) {
 
@@ -295,6 +296,21 @@ class Ajax {
 			wp_die( - 1 );
 		}
 		update_option( 'wpmake_advance_user_avatar_admin_footer_text_rated', 1 );
+		wp_die();
+	}
+
+	/**
+	 * Dismiss notices.
+	 *
+	 * @since 1.0.2
+	 *
+	 * @return void
+	 **/
+	public static function dismiss_notice() {
+		check_admin_referer( 'notice_nonce', 'security' );
+		if ( ! empty( $_POST['dismissed'] ) ) {
+			update_option( 'wpmake_aua_review_notice_dismissed', true );
+		}
 		wp_die();
 	}
 }

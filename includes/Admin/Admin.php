@@ -26,6 +26,7 @@ class Admin {
 		$this->init_hooks();
 		add_filter( 'admin_footer_text', array( $this, 'admin_footer_text' ), 1 );
 		add_action( 'admin_footer', 'wpmake_aua_print_js', 25 );
+		add_action( 'admin_notices', array( $this, 'review_notice' ) );
 	}
 
 	/**
@@ -44,6 +45,15 @@ class Admin {
 		wp_enqueue_script( 'select2', WPMAKE_ADVANCE_USER_AVATAR_ASSETS_URL . '/js/select2/select2.min.js', array( 'jquery' ), '4.1.0', false );
 		wp_enqueue_style( 'wpmake-advance-user-avatar-select2-style', WPMAKE_ADVANCE_USER_AVATAR_ASSETS_URL . '/css/select2/select2.css', array(), WPMAKE_ADVANCE_USER_AVATAR_VERSION );
 		wp_enqueue_style( 'wpmake-advance-user-avatar-admin-style', WPMAKE_ADVANCE_USER_AVATAR_ASSETS_URL . '/css/wpmake-advance-user-avatar-admin.css', array(), WPMAKE_ADVANCE_USER_AVATAR_VERSION );
+
+		wp_localize_script(
+			'wpmake-advance-user-avatar-admin-script',
+			'wpmake_aua_admin_params',
+			array(
+				'ajax_url'     => admin_url( 'admin-ajax.php' ),
+				'notice_nonce' => wp_create_nonce( 'notice_nonce' ),
+			)
+		);
 	}
 
 	/**
@@ -290,5 +300,60 @@ class Admin {
 		}
 
 		return $footer_text;
+	}
+
+	/**
+	 * Review notice on header.
+	 *
+	 * @since  1.0.2
+	 * @return void
+	 */
+	public function review_notice() {
+
+		// Show only to Admins.
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return false;
+		}
+
+		$notice_dismissed = get_option( 'wpmake_aua_review_notice_dismissed', false );
+
+		if ( $notice_dismissed ) {
+			return;
+		}
+
+		// Return if activation date is less than 1 day.
+		if ( wpmake_aua_check_activation_date( '1' ) === false ) {
+			return;
+		}
+
+		$notice_target_link = 'https://wordpress.org/support/plugin/wpmake-advance-user-avatar/reviews/#postform';
+		$notice_content     = review_notice_content();
+
+		ob_start();
+		?>
+		<div id="wpmake-aua-review-notice" class="notice notice-info wpmake-aua-notice" data-purpose="notice-info" data-notice-id="review">
+			<div class="wpmake-aua-notice-thumbnail">
+				<img src="<?php echo esc_url( WPMAKE_ADVANCE_USER_AVATAR_URL . '/assets/images/icon.png' ); ?>" alt="">
+			</div>
+			<div class="wpmake-aua-notice-text">
+
+				<div class="wpmake-aua-notice-body">
+					<?php
+					echo wp_kses_post( $notice_content );
+					?>
+				</div>
+				<div class="wpmake-aua-notice-links">
+					<ul class="wpmake-aua-notice-ul">
+						<li><a class="button button-primary notice-link-visit" href="<?php echo esc_url( $notice_target_link ); ?>" target="_blank"><span class="dashicons dashicons-external"></span><?php esc_html_e( 'Sure, I\'d love to!', 'wpmake-advance-user-avatar' ); ?></a></li>
+						<li><a href="#" class="button button-secondary notice-dismiss notice-dismiss-permanently"><span  class="dashicons dashicons-smiley"></span><?php esc_html_e( 'I already did!', 'wpmake-advance-user-avatar' ); ?></a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<?php
+
+		$notice = ob_get_clean();
+
+		echo $notice;
 	}
 }

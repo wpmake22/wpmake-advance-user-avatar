@@ -108,6 +108,15 @@ if ( ! class_exists( 'UserAvatar' ) ) :
 			add_filter( 'plugin_action_links_' . plugin_basename( WPMAKE_ADVANCE_USER_AVATAR_PLUGIN_FILE ), array( $this, 'plugin_action_links' ) );
 			add_action( 'init', array( $this, 'includes' ) );
 			$this->gutenberg = new Gutenberg();
+
+			$installed_date = get_option( 'wpmake_aua_activated' );
+
+			if ( empty( $installed_date ) ) {
+				update_option( 'wpmake_aua_activated', current_time( 'Y-m-d' ) );
+				update_option( 'wpmake_aua_updated_at', current_time( 'Y-m-d' ) );
+			} else {
+				update_option( 'wpmake_aua_updated_at', current_time( 'Y-m-d' ) );
+			}
 		}
 
 		/**
