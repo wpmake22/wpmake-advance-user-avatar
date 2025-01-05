@@ -39,8 +39,16 @@
 			border-radius: 3.75px;
 			color: white;
 
-			&.wpmake_advance_user_avatar_upload {
+			&.wpmake_advance_user_avatar_take_snapshot {
 				background-color: #475BD9;
+
+				&:hover {
+					background-color: #76add4;
+				}
+			}
+
+			&.wpmake_advance_user_avatar_upload {
+				background-color: #0693e3;
 
 				&:hover {
 					background-color: #76add4;

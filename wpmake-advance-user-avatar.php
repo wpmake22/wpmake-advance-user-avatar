@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Advance User Avatar
  * Plugin URI: https://www.wpmake.net/user-avatar-demo/
- * Description: User avatar uploader and updater plugin for WordPress.
+ * Description: Adds an avatar upload field through a simple shortcode or block to let your site users upload a custom profile picture (avatar) directly from their device.
  * Version: 1.0.2
  * Author: WPMake
  * Author URI: https://www.wpmake.net

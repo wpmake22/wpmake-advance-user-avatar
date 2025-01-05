@@ -219,12 +219,9 @@ class Ajax {
 
 			include_once ABSPATH . 'wp-admin/includes/image.php';
 
-			// Generate and save the attachment metas into the database.
-			wp_update_attachment_metadata( $attachment_id, wp_generate_attachment_metadata( $attachment_id, $file_path ) );
+			$options = get_option( 'wpmake_advance_user_avatar_settings', array() );
 
 			$url = wp_get_attachment_url( $attachment_id );
-
-			$options = get_option( 'wpmake_advance_user_avatar_settings', array() );
 
 			if ( isset( $options['cropping_interface'] ) && $options['cropping_interface'] ) {
 				// Retrieves original picture height and width.
@@ -255,9 +252,16 @@ class Ajax {
 				$dst_r = wp_imageCreateTrueColor( $original_image_width, $original_image_height );
 				imagecopyresampled( $dst_r, $img_r, 0, 0, $cropped_image_left, $cropped_image_right, $original_image_width, $original_image_height, $cropped_image_width, $cropped_image_height );
 
-				// Retrieves and Resizes the cropped picture to a size defined by user in filter or default of 150 by 150.
-				list( $image_width, $image_height ) = apply_filters( 'wpmake_advance_user_avatar_cropped_image_size', array( 150, 150 ) );
-				$dest_r                             = wp_imageCreateTrueColor( $image_width, $image_height );
+				// Retrieves and Resizes the cropped picture to a size defined by user in filter or default 500 by 500.
+				$image_width  = 500;
+				$image_height = 500;
+
+				if ( isset( $options['uploaded_image_size'] ) ) {
+					$image_width  = $options['uploaded_image_size']['width'];
+					$image_height = $options['uploaded_image_size']['height'];
+				}
+
+				$dest_r = wp_imageCreateTrueColor( $image_width, $image_height );
 				imagecopyresampled( $dest_r, $dst_r, 0, 0, 0, 0, $image_width, $image_height, $original_image_width, $original_image_height );
 
 				// Replaces the original picture with the cropped picture.
@@ -266,6 +270,11 @@ class Ajax {
 
 			if ( empty( $url ) ) {
 				$url = home_url() . '/wp-includes/images/media/text.png';
+			}
+
+			if ( ! isset( $options['thumbnail_size'] ) || ( isset( $options['thumbnail_size'] ) && $options['thumbnail_size'] ) ) {
+				// Generate and save the attachment metas into the database .
+				wp_update_attachment_metadata( $attachment_id, wp_generate_attachment_metadata( $attachment_id, get_attached_file( $attachment_id ) ) );
 			}
 
 			$user_id = get_current_user_id();

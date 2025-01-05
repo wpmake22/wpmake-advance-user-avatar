@@ -112,6 +112,14 @@ class Admin {
 		);
 
 		add_settings_field(
+			'wpmake_advance_user_avatar_settings_thumbnail_size',
+			wp_kses_post( __( 'Store avatar in different thumbnail sizes <span style="color:#0693e3;">( New )</span>', 'wpmake-advance-user-avatar' ) ),
+			array( $this, 'wpmake_advance_user_avatar_setting_thumbnail_size_callback' ),
+			'wpmake_advance_user_avatar_settings',
+			'wpmake_advance_user_avatar_setting_section'
+		);
+
+		add_settings_field(
 			'wpmake_advance_user_avatar_settings_max_size',
 			esc_html__( 'Max Avatar Size Allowed', 'wpmake-advance-user-avatar' ),
 			array( $this, 'wpmake_advance_user_avatar_setting_max_size_callback' ),
@@ -128,9 +136,25 @@ class Admin {
 		);
 
 		add_settings_field(
+			'wpmake_advance_user_avatar_settings_capture_picture',
+			wp_kses_post( __( 'Capture Picture <span style="color:#0693e3;">( New )</span>', 'wpmake-advance-user-avatar' ) ),
+			array( $this, 'wpmake_advance_user_avatar_settings_capture_picture_callback' ),
+			'wpmake_advance_user_avatar_settings',
+			'wpmake_advance_user_avatar_setting_section'
+		);
+
+		add_settings_field(
 			'wpmake_advance_user_avatar_settings_cropping_interface',
 			esc_html__( 'Cropping interface', 'wpmake-advance-user-avatar' ),
 			array( $this, 'wpmake_advance_user_avatar_settings_cropping_interface_callback' ),
+			'wpmake_advance_user_avatar_settings',
+			'wpmake_advance_user_avatar_setting_section'
+		);
+
+		add_settings_field(
+			'wpmake_advance_user_avatar_settings_uploaded_image_size',
+			wp_kses_post( __( 'Uploaded Image Size <span style="color:#0693e3;">( New )</span>', 'wpmake-advance-user-avatar' ) ),
+			array( $this, 'wpmake_advance_user_avatar_settings_uploaded_image_size_callback' ),
 			'wpmake_advance_user_avatar_settings',
 			'wpmake_advance_user_avatar_setting_section'
 		);
@@ -144,6 +168,24 @@ class Admin {
 	public function wpmake_advance_user_avatar_sanitize_settings( $options ) {
 
 		$sanitized_option = array();
+
+		if ( isset( $options['thumbnail_size'] ) ) {
+			$sanitized_option['thumbnail_size'] = sanitize_text_field( $options['thumbnail_size'] );
+		} else {
+			$sanitized_option['thumbnail_size'] = false;
+		}
+
+		if ( isset( $options['uploaded_image_size'] ) ) {
+			$sanitized_option['uploaded_image_size'] = array(
+				'width'  => sanitize_text_field( $options['uploaded_image_size']['width'] ),
+				'height' => sanitize_text_field( $options['uploaded_image_size']['height'] ),
+			);
+		} else {
+			$sanitized_option['uploaded_image_size'] = array(
+				'width'  => 500,
+				'height' => 500,
+			);
+		}
 
 		if ( isset( $options['max_size'] ) ) {
 			$sanitized_option['max_size'] = absint( $options['max_size'] );
@@ -161,11 +203,38 @@ class Admin {
 			$sanitized_option['cropping_interface'] = sanitize_text_field( $options['cropping_interface'] );
 		}
 
+		if ( isset( $options['thumbnail_size'] ) ) {
+			$sanitized_option['thumbnail_size'] = sanitize_text_field( $options['thumbnail_size'] );
+		}
+
 		if ( isset( $options['capture_picture'] ) ) {
 			$sanitized_option['capture_picture'] = sanitize_text_field( $options['capture_picture'] );
 		}
 
 		return $sanitized_option;
+	}
+
+	/**
+	 *  Store avatars different thumbnail sizes setting.
+	 */
+	public function wpmake_advance_user_avatar_setting_thumbnail_size_callback() {
+		$options = get_option( 'wpmake_advance_user_avatar_settings' );
+
+		$thumbnail_size = '';
+
+		if ( isset( $options['thumbnail_size'] ) ) {
+			$thumbnail_size = esc_html( $options['thumbnail_size'] );
+		} else {
+			$thumbnail_size = true;
+		}
+
+		ob_start();
+		?>
+			<input type="checkbox"  name="wpmake_advance_user_avatar_settings[thumbnail_size]" value="1" <?php echo checked( 1, $thumbnail_size, false ); ?> />
+			<p class="wpmake-advance-user-avatar-setting-desc" ><?php esc_html_e( 'Stores avatar in different thumbnail sizes so that a perfect avatar will be dislayed anywhere in your site.', 'wpmake-advance-user-avatar' ); ?></p>
+		<?php
+		$settings = ob_get_clean();
+		echo wp_kses( $settings, wpmake_aua_get_allowed_html_tags() );
 	}
 
 	/**
@@ -188,9 +257,40 @@ class Admin {
 		echo wp_kses( $settings, wpmake_aua_get_allowed_html_tags() );
 	}
 
-		/**
-		 *  Allowed file type setting.
-		 */
+	/**
+	 *  Uploaded Image Size setting.
+	 */
+	public function wpmake_advance_user_avatar_settings_uploaded_image_size_callback() {
+		$options = get_option( 'wpmake_advance_user_avatar_settings', array() );
+
+		$uploaded_image_size = array();
+
+		if ( isset( $options['uploaded_image_size'] ) ) {
+			$uploaded_image_size = $options['uploaded_image_size'];
+		} else {
+			$uploaded_image_size = array(
+				'width'  => 500,
+				'height' => 500,
+			);
+		}
+
+		ob_start();
+		?>
+		<span>
+			<input name="wpmake_advance_user_avatar_settings[uploaded_image_size][width]" type="text" value="<?php echo esc_attr( $uploaded_image_size['width'] ); ?>" class="wpmake-advance-user-avatar-setting-field" placeholder="" />
+			by
+			<input name="wpmake_advance_user_avatar_settings[uploaded_image_size][height]" type="text" value="<?php echo esc_attr( $uploaded_image_size['height'] ); ?>" class="wpmake-advance-user-avatar-setting-field" placeholder="" />
+			px
+		</span>
+		<p class="wpmake-advance-user-avatar-setting-desc" ><?php esc_html_e( 'The size of the final uploaded image, defaults to 500 width by 500 height.', 'wpmake-advance-user-avatar' ); ?></p>
+		<?php
+		$settings = ob_get_clean();
+		echo wp_kses( $settings, wpmake_aua_get_allowed_html_tags() );
+	}
+
+	/**
+	 *  Allowed file type setting.
+	 */
 	public function wpmake_advance_user_avatar_settings_allowed_file_type_callback() {
 		$options           = get_option( 'wpmake_advance_user_avatar_settings', array() );
 		$allowed_file_type = array();
@@ -203,8 +303,10 @@ class Admin {
 		<select class='wpmake-advance-user-avatar-enhanced-select wpmake-advance-user-avatar-setting-field' name='wpmake_advance_user_avatar_settings[allowed_file_type][]' multiple='multiple' >
 			<option value='image/jpg' <?php echo esc_attr( selected( in_array( 'image/jpg', $allowed_file_type ), true, false ) ); ?> ><?php esc_html_e( 'JPG', 'wpmake-advance-user-avatar' ); ?></option>
 			<option value='image/jpeg' <?php echo esc_attr( selected( in_array( 'image/jpeg', $allowed_file_type ), true, false ) ); ?> ><?php esc_html_e( 'JPEG', 'wpmake-advance-user-avatar' ); ?></option>
+			<option value='image/gif' <?php echo esc_attr( selected( in_array( 'image/gif', $allowed_file_type ), true, false ) ); ?> ><?php esc_html_e( 'GIF', 'wpmake-advance-user-avatar' ); ?></option>
+			<option value='image/png' <?php echo esc_attr( selected( in_array( 'image/png', $allowed_file_type ), true, false ) ); ?> ><?php esc_html_e( 'PNG', 'wpmake-advance-user-avatar' ); ?></option>
 		</select>
-		<p class="wpmake-advance-user-avatar-setting-desc" ><?php esc_html_e( 'Choose valid file types allowed for avatar upload', 'wpmake-advance-user-avatar' ); ?></p>
+		<p class="wpmake-advance-user-avatar-setting-desc" ><?php esc_html_e( 'Choose valid file types allowed for avatar upload.', 'wpmake-advance-user-avatar' ); ?></p>
 		<?php
 		$settings = ob_get_clean();
 		echo wp_kses( $settings, wpmake_aua_get_allowed_html_tags() );
@@ -227,7 +329,7 @@ class Admin {
 		ob_start();
 		?>
 			<input type="checkbox"  name="wpmake_advance_user_avatar_settings[cropping_interface]" value="1" <?php echo checked( 1, $cropping_interface, false ); ?> />
-			<p class="wpmake-advance-user-avatar-setting-desc" ><?php esc_html_e( 'This option will enable avatar cropping interface', 'wpmake-advance-user-avatar' ); ?></p>
+			<p class="wpmake-advance-user-avatar-setting-desc" ><?php esc_html_e( 'Allow user to crop selected or captured image.', 'wpmake-advance-user-avatar' ); ?></p>
 		<?php
 		$settings = ob_get_clean();
 		echo wp_kses( $settings, wpmake_aua_get_allowed_html_tags() );
@@ -250,7 +352,7 @@ class Admin {
 		ob_start();
 		?>
 		<input type="checkbox"  name="wpmake_advance_user_avatar_settings[capture_picture]" value="1" <?php echo checked( 1, $capture_picture, false ); ?> />
-		<p class="wpmake-advance-user-avatar-setting-desc" ><?php esc_html_e( 'This option will enable taking picture using webcam. Note that your site must be secure', 'wpmake-advance-user-avatar' ); ?></p>
+		<p class="wpmake-advance-user-avatar-setting-desc" ><?php esc_html_e( 'This option will enable taking picture using webcam. Note that your site must have valid SSL enabled.', 'wpmake-advance-user-avatar' ); ?></p>
 		<?php
 		$settings = ob_get_clean();
 		echo wp_kses( $settings, wpmake_aua_get_allowed_html_tags() );

@@ -8,6 +8,10 @@ body.users_page_wpmake-advance-user-avatar {
 		font-style: italic;
 	}
 
+	th {
+		width: 25%;
+		padding: 15px 10px;
+	}
 	td {
 		display: flex;
 		flex-direction: column;
@@ -16,12 +20,26 @@ body.users_page_wpmake-advance-user-avatar {
 		vertical-align: middle;
 		flex: 0 0 60%;
 
+		span {
+			display: flex;
+			align-items: center;
+			gap: 15px;
+
+			input {
+				width: 8% !important;
+			}
+		}
+
+		span.selection {
+			width: 100%;
+		}
 		.select2-selection--multiple {
 			min-height: 28px;
 			border-radius: 4px;
 			line-height: 1.5;
 			border: 1px solid #ddd !important;
 			padding-left: 4px;
+			width: 200px;
 
 			.select2-search--inline {
 				display: none;

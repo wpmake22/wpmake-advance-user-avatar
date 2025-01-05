@@ -34,7 +34,7 @@ The plugin also includes useful features like file type and size validation, so 
 
 * **Image Cropping Interface:** Users can crop their profile picture to fit perfectly as an avatar.
 
-* **[Premium] Webcam Capture:** Let users capture a profile picture directly from their webcam with optional cropping.
+* **Webcam Capture:** Let users capture a profile picture directly from their webcam with optional cropping.
 
 ### How to Use the Plugin
 
@@ -44,7 +44,7 @@ The plugin also includes useful features like file type and size validation, so 
 
    * **Max Avatar Size Allowed**: Set a size limit for uploaded images (e.g., 20KB). Users won’t be able to upload files that exceed this size.
 
-   * **Allowed File Types**: Choose which file types are allowed for profile pictures (e.g., JPG, JPEG). The free version supports JPG/JPEG, while the PRO version adds PNG and GIF.
+   * **Allowed File Types**: Choose which file types are allowed for profile pictures (e.g., JPG, JPEG, PNG and GIF ).
 
    * **Cropping Interface**: Enable this option so users can crop their profile picture before setting it as their avatar.
 
