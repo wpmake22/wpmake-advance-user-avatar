@@ -231,7 +231,7 @@ class Admin {
 		ob_start();
 		?>
 			<input type="checkbox"  name="wpmake_advance_user_avatar_settings[thumbnail_size]" value="1" <?php echo checked( 1, $thumbnail_size, false ); ?> />
-			<p class="wpmake-advance-user-avatar-setting-desc" ><?php esc_html_e( 'Stores avatar in different thumbnail sizes so that a perfect avatar will be dislayed anywhere in your site.', 'wpmake-advance-user-avatar' ); ?></p>
+			<p class="wpmake-advance-user-avatar-setting-desc" ><?php esc_html_e( 'Stores avatar in different thumbnail sizes so that a perfect avatar will be displayed anywhere in your site.', 'wpmake-advance-user-avatar' ); ?></p>
 		<?php
 		$settings = ob_get_clean();
 		echo wp_kses( $settings, wpmake_aua_get_allowed_html_tags() );

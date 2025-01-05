@@ -3,7 +3,7 @@ Contributors: wpmakedev
 Tags: profile picture, avatar, gravatar, picture, user avatar, user profile picture, profile, picture upload
 Requires at least: 5.5
 Tested up to: 6.7.1
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 Requires PHP: 7.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -28,13 +28,17 @@ The plugin also includes useful features like file type and size validation, so 
 
 * **Gutenberg Block Support:** Seamlessly add the avatar upload feature using the block editor.
 
-* **File Type Validation:**  Admins can control which file types (JPG, JPEG, PNG) are allowed for profile pictures.
+* **File Type Validation:**  Admins can choose which file types (like JPG, JPEG, PNG) are allowed for profile pictures. This stops users from uploading unsupported file types, ensuring only valid images are used for avatars.
 
-* **Max File Size Limit:** Set a maximum file size for uploaded avatars to ensure your site runs smoothly.
+* **Max File Size Limit:** Admins can set a maximum file size for uploaded avatars to keep the site running smoothly. This prevents slow loading times by stopping oversized images from being uploaded.
 
-* **Image Cropping Interface:** Users can crop their profile picture to fit perfectly as an avatar.
+* **Image Cropping Interface:** Users can crop their profile picture to make sure it fits well as an avatar. This lets users adjust their image so it looks just right in the avatar space.
 
-* **Webcam Capture:** Let users capture a profile picture directly from their webcam with optional cropping.
+* **Webcam Capture:**  Users can take a profile picture directly from their webcam, with optional cropping. This allows users to capture a photo quickly, without needing to upload one from their device.
+
+* **Different size images:** The plugin creates several sizes of the uploaded image to make sure the avatar displays correctly across the site. It automatically adjusts the image for different parts of the site to keep it looking consistent.
+
+* **Uploaded Image Size:** Site owners can set specific width and height for the uploaded images. This ensures all avatars are the same size, keeping the site’s appearance uniform.
 
 ### How to Use the Plugin
 
@@ -42,11 +46,17 @@ The plugin also includes useful features like file type and size validation, so 
 
 2. You’ll see these settings:
 
-   * **Max Avatar Size Allowed**: Set a size limit for uploaded images (e.g., 20KB). Users won’t be able to upload files that exceed this size.
+   * **Store avatar in different thumbnail sizes**: Saves the avatar in various sizes so it looks perfect wherever it's displayed on your site.
 
-   * **Allowed File Types**: Choose which file types are allowed for profile pictures (e.g., JPG, JPEG, PNG and GIF ).
+   * **Max Avatar Size Allowed**:  Set a limit on how large uploaded images can be (e.g., 20KB). Users can’t upload files over this limit.
 
-   * **Cropping Interface**: Enable this option so users can crop their profile picture before setting it as their avatar.
+   * **Allowed File Types**: Choose which image file types (JPG, JPEG, PNG, GIF) are allowed for profile pictures.
+
+   * **Capture Picture**: Allow users to capture picture using webcam.
+
+   * **Cropping Interface**: Enable this option to let users crop their picture before setting it as their avatar.
+
+   * **Uploaded Image Size**: Control the width and height of the uploaded images.
 
 == Screenshots ==
 
@@ -58,6 +68,12 @@ The plugin also includes useful features like file type and size validation, so 
 6. Error Messages for Invalid Files
 
 == Changelog ==
+
+= 1.0.3   - 05-01-2025 =
+* Feature - Store avatar in different thumbnail sizes.
+* Feature - Allow users to use camera or webcam to capture picture.
+* Feature - Ability for site owner to change uploaded image's width and height.
+* Tweak   - Updated Readme.
 
 = 1.0.2 - 21-10-2024 =
 * Tweak - Added a review prompt.
