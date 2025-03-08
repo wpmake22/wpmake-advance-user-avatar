@@ -34,6 +34,13 @@ class Frontend {
 	 */
 	private function init_hooks() {
 		add_action( 'wp_enqueue_scripts', array( $this, 'load_scripts' ), 10, 2 );
+		$options = get_option( 'wpmake_advance_user_avatar_settings', array() );
+
+		if ( isset( $options['woocommerce_integration'] ) && $options['woocommerce_integration'] ) {
+			add_action( 'woocommerce_account_page_endpoint', array( $this, 'wpmake_insert_avatar_viewer_in_woocommerce_account_dashboard' ) );
+			add_action( 'woocommerce_before_edit_account_form', array( $this, 'wpmake_insert_avatar_uploader_in_woocommerce_account_dashboard' ) );
+		}
+
 	}
 
 	/**
@@ -79,5 +86,35 @@ class Frontend {
 				'wpmake_advance_user_avatar_upload_success_message' => esc_html__( 'Avatar has been uploaded successfully.', 'wpmake-advance-user-avatar' ),
 			)
 		);
+	}
+
+	/**
+	 * Insert avatar viewer in WooCommerce account dashboard.
+	 */
+	public function wpmake_insert_avatar_viewer_in_woocommerce_account_dashboard() {
+		$options = get_option( 'wpmake_advance_user_avatar_settings', array() );
+
+		if ( isset( $options['woocommerce_integration'] ) && $options['woocommerce_integration'] ) {
+
+			echo apply_shortcodes( '[wpmake_advance_user_avatar]' );
+
+			wc_get_template(
+				'myaccount/dashboard.php',
+				array(
+					'current_user' => get_user_by( 'id', get_current_user_id() ),
+				)
+			);
+		}
+	}
+
+	/**
+	 * Insert avatar uploader in WooCommerce account dashboard.
+	 */
+	public function wpmake_insert_avatar_uploader_in_woocommerce_account_dashboard() {
+		$options = get_option( 'wpmake_advance_user_avatar_settings', array() );
+
+		if ( isset( $options['woocommerce_integration'] ) && $options['woocommerce_integration'] ) {
+			echo apply_shortcodes( '[wpmake_advance_user_avatar_upload]' );
+		}
 	}
 }

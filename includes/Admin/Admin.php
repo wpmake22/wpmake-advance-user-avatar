@@ -158,6 +158,14 @@ class Admin {
 			'wpmake_advance_user_avatar_settings',
 			'wpmake_advance_user_avatar_setting_section'
 		);
+
+		add_settings_field(
+			'wpmake_advance_user_avatar_settings_woocommerce_integration',
+			wp_kses_post( __( 'WooCommerce Integration', 'wpmake-advance-user-avatar' ) ),
+			array( $this, 'wpmake_advance_user_avatar_settings_woocommerce_integration_callback' ),
+			'wpmake_advance_user_avatar_settings',
+			'wpmake_advance_user_avatar_setting_section'
+		);
 	}
 
 	/**
@@ -209,6 +217,10 @@ class Admin {
 
 		if ( isset( $options['capture_picture'] ) ) {
 			$sanitized_option['capture_picture'] = sanitize_text_field( $options['capture_picture'] );
+		}
+
+		if ( isset( $options['woocommerce_integration'] ) ) {
+			$sanitized_option['woocommerce_integration'] = sanitize_text_field( $options['woocommerce_integration'] );
 		}
 
 		return $sanitized_option;
@@ -330,6 +342,29 @@ class Admin {
 		?>
 			<input type="checkbox"  name="wpmake_advance_user_avatar_settings[cropping_interface]" value="1" <?php echo checked( 1, $cropping_interface, false ); ?> />
 			<p class="wpmake-advance-user-avatar-setting-desc" ><?php esc_html_e( 'Allow user to crop selected or captured image.', 'wpmake-advance-user-avatar' ); ?></p>
+		<?php
+		$settings = ob_get_clean();
+		echo wp_kses( $settings, wpmake_aua_get_allowed_html_tags() );
+	}
+
+	/**
+	 * Option to enable Woocommerce Integration.
+	 *
+	 * @param array $args Arguments.
+	 */
+	public function wpmake_advance_user_avatar_settings_woocommerce_integration_callback( $args ) {
+
+		$options = get_option( 'wpmake_advance_user_avatar_settings' );
+
+		$woocommerce_integration = '';
+		if ( isset( $options['woocommerce_integration'] ) ) {
+			$woocommerce_integration = esc_html( $options['woocommerce_integration'] );
+		}
+
+		ob_start();
+		?>
+			<input type="checkbox"  name="wpmake_advance_user_avatar_settings[woocommerce_integration]" value="1" <?php echo checked( 1, $woocommerce_integration, false ); ?> />
+			<p class="wpmake-advance-user-avatar-setting-desc" ><?php esc_html_e( 'Display user avatar in dashboard and uploader in account details of WooCommerce My Account.', 'wpmake-advance-user-avatar' ); ?></p>
 		<?php
 		$settings = ob_get_clean();
 		echo wp_kses( $settings, wpmake_aua_get_allowed_html_tags() );
