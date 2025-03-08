@@ -161,8 +161,16 @@ class Admin {
 
 		add_settings_field(
 			'wpmake_advance_user_avatar_settings_woocommerce_integration',
-			wp_kses_post( __( 'WooCommerce Integration', 'wpmake-advance-user-avatar' ) ),
+			wp_kses_post( __( 'WooCommerce Integration <span style="color:#0693e3;">( New )</span>', 'wpmake-advance-user-avatar' ) ),
 			array( $this, 'wpmake_advance_user_avatar_settings_woocommerce_integration_callback' ),
+			'wpmake_advance_user_avatar_settings',
+			'wpmake_advance_user_avatar_setting_section'
+		);
+
+		add_settings_field(
+			'wpmake_advance_user_avatar_settings_buddypress_integration',
+			wp_kses_post( __( 'BuddyPress Integration <span style="color:#0693e3;">( New )</span>', 'wpmake-advance-user-avatar' ) ),
+			array( $this, 'wpmake_advance_user_avatar_settings_buddypress_integration_callback' ),
 			'wpmake_advance_user_avatar_settings',
 			'wpmake_advance_user_avatar_setting_section'
 		);
@@ -221,6 +229,13 @@ class Admin {
 
 		if ( isset( $options['woocommerce_integration'] ) ) {
 			$sanitized_option['woocommerce_integration'] = sanitize_text_field( $options['woocommerce_integration'] );
+		}
+
+		if ( isset( $options['buddypress_integration'] ) ) {
+			$sanitized_option['buddypress_integration'] = sanitize_text_field( $options['buddypress_integration'] );
+			update_option( 'bp-disable-avatar-uploads', $sanitized_option['buddypress_integration']);
+		} else {
+			update_option( 'bp-disable-avatar-uploads', '');
 		}
 
 		return $sanitized_option;
@@ -365,6 +380,29 @@ class Admin {
 		?>
 			<input type="checkbox"  name="wpmake_advance_user_avatar_settings[woocommerce_integration]" value="1" <?php echo checked( 1, $woocommerce_integration, false ); ?> />
 			<p class="wpmake-advance-user-avatar-setting-desc" ><?php esc_html_e( 'Display user avatar in dashboard and uploader in account details of WooCommerce My Account.', 'wpmake-advance-user-avatar' ); ?></p>
+		<?php
+		$settings = ob_get_clean();
+		echo wp_kses( $settings, wpmake_aua_get_allowed_html_tags() );
+	}
+
+	/**
+	 * Option to enable BuddyPress Integration.
+	 *
+	 * @param array $args Arguments.
+	 */
+	public function wpmake_advance_user_avatar_settings_buddypress_integration_callback( $args ) {
+
+		$options = get_option( 'wpmake_advance_user_avatar_settings' );
+
+		$buddypress_integration = '';
+		if ( isset( $options['buddypress_integration'] ) ) {
+			$buddypress_integration = esc_html( $options['buddypress_integration'] );
+		}
+
+		ob_start();
+		?>
+			<input type="checkbox"  name="wpmake_advance_user_avatar_settings[buddypress_integration]" value="1" <?php echo checked( 1, $buddypress_integration, false ); ?> />
+			<p class="wpmake-advance-user-avatar-setting-desc" ><?php esc_html_e( 'Display user avatar in BuddyPress avatar areas and uploader in Change Avatar section of BuddyPress Profile section.', 'wpmake-advance-user-avatar' ); ?></p>
 		<?php
 		$settings = ob_get_clean();
 		echo wp_kses( $settings, wpmake_aua_get_allowed_html_tags() );
