@@ -209,11 +209,12 @@ if ( ! function_exists( 'wpmake_aua_check_activation_date' ) ) {
 
 		// Plugin Activation Time.
 		$activation_date  = get_option( 'wpmake_aua_activated' );
+
 		$days_to_validate = strtotime( 'now' ) - $days * DAY_IN_SECONDS;
 		$days_to_validate = date_i18n( 'Y-m-d', $days_to_validate );
 
 		if ( ! empty( $activation_date ) ) {
-			if ( $activation_date < $days_to_validate ) {
+			if ( $activation_date <= $days_to_validate ) {
 				return true;
 			}
 		}
