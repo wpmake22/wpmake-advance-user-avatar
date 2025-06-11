@@ -1,24 +1,24 @@
-=== Advance User Avatar | Custom Profile Picture Uploader for WordPress, WooCommerce, and BuddyPress ===
+=== Advanced User Avatar | Custom Profile Picture Uploader for WordPress, WooCommerce, and BuddyPress ===
 Contributors: wpmakedev
-Tags: profile picture, avatar, gravatar, user avatar, custom avatar, profile image upload, WooCommerce avatar, BuddyPress avatar, WordPress avatar uploader
+Tags: profile picture, avatar, gravatar, user avatar, custom avatar
 Requires at least: 5.5
-Tested up to: 6.7.2
-Stable tag: 1.1.0
+Tested up to: 6.8
+Stable tag: 1.1.1
 Requires PHP: 7.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-Adds an avatar upload field through a simple shortcode or block to let your site users upload a custom profile picture (avatar) directly from their device. Provides file type and size validation, plus image cropping flexibility to ensure a perfect avatar.
+Adds an avatar upload field through a simple shortcode or block to let your site users upload a custom profile picture (avatar) directly from their device.
 
 == Description ==
 
-**Advance User Avatar – The Ultimate Plugin for Custom Profile Picture Uploads in WordPress, WooCommerce, and BuddyPress**
+**Advanced User Avatar – The Ultimate Plugin for Custom Profile Picture Uploads in WordPress, WooCommerce, and BuddyPress**
 
-Are you tired of the default Gravatar system on WordPress, where users must create a Gravatar account to upload their profile picture? Many users find this a hassle and end up with a generic avatar. This can result in a less personalized user experience and hinder site engagement. With the **Advance User Avatar** plugin, you can easily allow users to upload their own custom profile picture (avatar) directly from their device.
+Are you tired of the default Gravatar system on WordPress, where users must create a Gravatar account to upload their profile picture? Many users find this a hassle and end up with a generic avatar. This can result in a less personalized user experience and hinder site engagement. With the **Advanced User Avatar** plugin, you can easily allow users to upload their own custom profile picture (avatar) directly from their device.
 
-The **Advance User Avatar** plugin solves plugin eliminates the need for a Gravatar account by offering a seamless solution to upload, crop, and display avatars on your WordPress site. Whether it’s for a personal photo, logo, or any other image, this plugin gives users full control over their avatar. You can easily add an avatar uploader field anywhere on your site using a simple shortcode or Gutenberg block.
+The **Advanced User Avatar** plugin solves plugin eliminates the need for a Gravatar account by offering a seamless solution to upload, crop, and display avatars on your WordPress site. Whether it’s for a personal photo, logo, or any other image, this plugin gives users full control over their avatar. You can easily add an avatar uploader field anywhere on your site using a simple shortcode or Gutenberg block.
 
-The plugin also includes useful features like file type and size validation, so users won’t upload unsupported or oversized images. Plus, users can crop their profile picture to make sure it fits perfectly as their avatar. This gives them more flexibility and control over their profile picture’s appearance. By making it easy for users to upload their own avatar and customize it, the **Advance User Avatar** plugin creates a more personalized and engaging experience for everyone on your site.
+The plugin also includes useful features like file type and size validation, so users won’t upload unsupported or oversized images. Plus, users can crop their profile picture to make sure it fits perfectly as their avatar. This gives them more flexibility and control over their profile picture’s appearance. By making it easy for users to upload their own avatar and customize it, the **Advanced User Avatar** plugin creates a more personalized and engaging experience for everyone on your site.
 
 Plus, it’s not just about uploads; the plugin integrates perfectly with WooCommerce and BuddyPress, allowing you to display avatars in My Account pages, member profiles, and more, creating a fully personalized experience across your WordPress site.
 
@@ -75,7 +75,7 @@ Plus, it’s not just about uploads; the plugin integrates perfectly with WooCom
 
 == Frequently Asked Questions ==
 
-= Do I need to have coding skills to use the Advance User Avatar Plugin? =
+= Do I need to have coding skills to use the Advanced User Avatar Plugin? =
 
 No, you don't need any coding skills. You are just a click away from setting up a avatar uploader for your site users.
 
@@ -85,17 +85,17 @@ Yes, the plugin is designed to work with any themes that have been coded followi
 
 = Is this plugin fully responsive ?
 
-Yes, the **Advance User Avatar** plugin design is fully responsive. So you can use plugin's avatar uploader and viewer from any devices of any screensize.
+Yes, the **Advanced User Avatar** plugin design is fully responsive. So you can use plugin's avatar uploader and viewer from any devices of any screensize.
 
 = Are all your plugins support translation ready? ?
 
 Yes, Any user facing text may that be title, message or notices, all of them are made translation ready. You will have no problem setting up the translations with with translations plugins like Locotranslate, WPML or PolyLang.
 
 = Does the plugin work with any WooCommerce?
-Yes, the **Advance User Avatar** plugin is fully compatible with WooCommerce. It integrates seamlessly with your WooCommerce store, allowing users to upload and display their custom avatars in their My Account Dashboard and Account Details page. This adds a personalized touch to the WooCommerce user experience.
+Yes, the **Advanced User Avatar** plugin is fully compatible with WooCommerce. It integrates seamlessly with your WooCommerce store, allowing users to upload and display their custom avatars in their My Account Dashboard and Account Details page. This adds a personalized touch to the WooCommerce user experience.
 
 = Does the plugin work with any BuddyPress?
-Yes, the **Advance User Avatar** plugin works perfectly with BuddyPress. It replaces the default BuddyPress avatar uploader with its own customizable uploader and ensures that users’ custom avatars are displayed throughout BuddyPress member pages, offering a more personalized experience for your community.
+Yes, the **Advanced User Avatar** plugin works perfectly with BuddyPress. It replaces the default BuddyPress avatar uploader with its own customizable uploader and ensures that users’ custom avatars are displayed throughout BuddyPress member pages, offering a more personalized experience for your community.
 
 == Screenshots ==
 
@@ -113,6 +113,10 @@ Yes, the **Advance User Avatar** plugin works perfectly with BuddyPress. It repl
 12. Avatar Viewer in BuddyPress's Member Area
 
 == Changelog ==
+
+= 1.1.1   - 11-06-2025 =
+* Dev     - WordPress 6.8 Compatibility.
+* Tweak   - Plugin Name Typo.
 
 = 1.1.0   - 08-03-2025 =
 * Feature - WooCommerce Integration.

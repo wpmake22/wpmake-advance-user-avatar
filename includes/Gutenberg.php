@@ -70,7 +70,7 @@ class Gutenberg {
 			_doing_it_wrong(
 				__CLASS__,
 				/* Translators: 1: Block name */
-				esc_html( sprintf( __( 'Metadata file for %s block does not exist.', 'wpmake-advance-user-avatar' ), 'Advance User Avatar' ) ),
+				esc_html( sprintf( __( 'Metadata file for %s block does not exist.', 'wpmake-advance-user-avatar' ), 'Advanced User Avatar' ) ),
 				'2.0.9'
 			);
 			return;
@@ -103,7 +103,7 @@ class Gutenberg {
 	}
 
 	/**
-	 * Advance Avatar content.
+	 * Advanced Avatar content.
 	 *
 	 * @param array $attributes Block Attributes.
 	 */

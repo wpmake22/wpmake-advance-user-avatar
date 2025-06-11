@@ -184,7 +184,7 @@ if ( ! function_exists( 'review_notice_content' ) ) {
 		return wp_kses_post(
 			sprintf(
 				"<p>%s</p><p class='extra-pad'>%s</p>",
-				__( 'We hope you’re enjoying a great experience with the <strong>Advance User Avatar</strong> plugin! We kindly request you to consider leaving a positive review for the plugin.', 'wpmake-advance-user-avatar' ),
+				__( 'We hope you’re enjoying a great experience with the <strong>Advanced User Avatar</strong> plugin! We kindly request you to consider leaving a positive review for the plugin.', 'wpmake-advance-user-avatar' ),
 				__(
 					'Your review motivates us to continue providing regular updates with new features and bug fixes, ensuring the plugin works seamlessly for you. It also supports us in offering free assistance, just as we always have. <span class="dashicons dashicons-smiley smile-icon"></span><br>',
 					'wpmake-advance-user-avatar'

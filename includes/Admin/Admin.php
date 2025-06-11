@@ -62,7 +62,7 @@ class Admin {
 	public function wpmake_advance_user_avatar_menu() {
 		$template_page = add_submenu_page(
 			'users.php',
-			esc_html__( 'Advance Users Avatar', 'wpmake-advance-user-avatar' ),
+			esc_html__( 'Advanced Users Avatar', 'wpmake-advance-user-avatar' ),
 			esc_html__( 'Users Avatar', 'wpmake-advance-user-avatar' ),
 			'manage_options',
 			'wpmake-advance-user-avatar',
@@ -436,7 +436,7 @@ class Admin {
 	 *
 	 * @since  1.0.2
 	 *
-	 * @param  string $footer_text Advance User Avatar Plugin footer text.
+	 * @param  string $footer_text Advanced User Avatar Plugin footer text.
 	 *
 	 * @return string
 	 */
@@ -455,9 +455,9 @@ class Admin {
 			if ( ! get_option( 'wpmake_advance_user_avatar_admin_footer_text_rated' ) ) {
 				$footer_text = wp_kses_post(
 					sprintf(
-						/* translators: 1: Advance User Avatar 2:: five stars */
+						/* translators: 1: Advanced User Avatar 2:: five stars */
 						__( 'If you like %1$s please leave us a %2$s rating. A huge thanks in advance!', 'wpmake-advance-user-avatar' ),
-						sprintf( '<strong>%s</strong>', esc_html( 'Advance User Avatar' ) ),
+						sprintf( '<strong>%s</strong>', esc_html( 'Advanced User Avatar' ) ),
 						'<a href="https://wordpress.org/support/plugin/wpmake-advance-user-avatar/reviews?rate=5#new-post" rel="noreferrer noopener" target="_blank" class="wpmake-aua-rating-link" data-rated="' . esc_attr__( 'Thank You!', 'wpmake-advance-user-avatar' ) . '">&#9733;&#9733;&#9733;&#9733;&#9733;</a>'
 					)
 				);
@@ -470,7 +470,7 @@ class Admin {
 				"
 				);
 			} else {
-				$footer_text = esc_html__( 'Thank you for using Advance User Avatar.', 'wpmake-advance-user-avatar' );
+				$footer_text = esc_html__( 'Thank you for using Advanced User Avatar.', 'wpmake-advance-user-avatar' );
 			}
 		}
 

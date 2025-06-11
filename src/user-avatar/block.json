@@ -3,7 +3,7 @@
   "apiVersion": 3,
   "name": "wpmake-aua/user-avatar",
   "version": "1.0.0",
-  "title": "Advance User Avatar",
+  "title": "Advanced User Avatar",
   "category": "common",
   "description": "This block allows user to upload their avatar",
   "keywords": [

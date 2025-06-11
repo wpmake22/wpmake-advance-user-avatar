@@ -1,4 +1,4 @@
-Advance User Avatar - Easily allows to update user avatar.
+Advanced User Avatar - Easily allows to update user avatar.
 
 Copyright 2016 by the contributors
 
@@ -18,11 +18,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 This program incorporates work covered by the following copyright and
 permission notices:
 
-  Advance User Avatar - Easily allows to update user avatar.
+  Advanced User Avatar - Easily allows to update user avatar.
 
-  Advance User Avatar is Copyright (c) 2024 WPMake
+  Advanced User Avatar is Copyright (c) 2024 WPMake
 
-  Advance User Avatar is released under the GPL
+  Advanced User Avatar is released under the GPL
 
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
