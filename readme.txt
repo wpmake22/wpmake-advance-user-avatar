@@ -1,8 +1,8 @@
 === Advanced User Avatar | Custom Profile Picture Uploader for WordPress, WooCommerce, and BuddyPress ===
-Contributors: wpmakedev
+Contributors: wpmakedev, iamprazol
 Tags: profile picture, avatar, gravatar, user avatar, custom avatar
 Requires at least: 5.5
-Tested up to: 6.8
+Tested up to: 6.8.3
 Stable tag: 1.1.1
 Requires PHP: 7.4
 License: GPLv3
