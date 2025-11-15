@@ -3,7 +3,7 @@ Contributors: wpmakedev, iamprazol
 Tags: profile picture, avatar, gravatar, user avatar, custom avatar
 Requires at least: 5.5
 Tested up to: 6.8.3
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 Requires PHP: 7.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -113,6 +113,11 @@ Yes, the **Advanced User Avatar** plugin works perfectly with BuddyPress. It rep
 12. Avatar Viewer in BuddyPress's Member Area
 
 == Changelog ==
+
+= 1.1.2   - 15-11-2025 =
+* Enhance - EXIF orientation metadata support.
+* Dev     - Brand Assets Updated.
+* Fix     - Images rotated when cropping from mobile phones.
 
 = 1.1.1   - 11-06-2025 =
 * Dev     - WordPress 6.8 Compatibility.

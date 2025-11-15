@@ -2,14 +2,14 @@
 # This file is distributed under the GNU General Public License v3.0.
 msgid ""
 msgstr ""
-"Project-Id-Version: Advanced User Avatar 1.1.1\n"
+"Project-Id-Version: Advanced User Avatar 1.1.2\n"
 "Report-Msgid-Bugs-To: dev@wpmake.net\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-11-15T08:07:33+00:00\n"
+"POT-Creation-Date: 2025-11-15T09:51:47+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: wpmake-advance-user-avatar\n"
@@ -267,31 +267,37 @@ msgstr ""
 msgid "Display Avatar"
 msgstr ""
 
+#: chunks/user-avatar/block.json
 #: src/user-avatar/block.json
 msgctxt "block title"
 msgid "Advanced User Avatar"
 msgstr ""
 
+#: chunks/user-avatar/block.json
 #: src/user-avatar/block.json
 msgctxt "block description"
 msgid "This block allows user to upload their avatar"
 msgstr ""
 
+#: chunks/user-avatar/block.json
 #: src/user-avatar/block.json
 msgctxt "block keyword"
 msgid "user avatar"
 msgstr ""
 
+#: chunks/user-avatar/block.json
 #: src/user-avatar/block.json
 msgctxt "block keyword"
 msgid "avatar"
 msgstr ""
 
+#: chunks/user-avatar/block.json
 #: src/user-avatar/block.json
 msgctxt "block keyword"
 msgid "profile picture"
 msgstr ""
 
+#: chunks/user-avatar/block.json
 #: src/user-avatar/block.json
 msgctxt "block keyword"
 msgid "picture"
