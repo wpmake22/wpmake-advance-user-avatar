@@ -197,6 +197,9 @@ class Ajax {
 			$file_path = $uploaded['file'];
 			$file_type = $uploaded['type'];
 
+			// Fix image EXIF orientation before processing further
+			self::fix_image_orientation( $file_path );
+
 			$attachment_id = wp_insert_attachment(
 				array(
 					'guid'           => $file_url,
@@ -321,5 +324,56 @@ class Ajax {
 			update_option( 'wpmake_aua_review_notice_dismissed', true );
 		}
 		wp_die();
+	}
+
+	/**
+	 * Fix image orientation based on EXIF data.
+	 *
+	 * @param string $file_path Path to the image file.
+	 * @return bool True if orientation was fixed, false otherwise.
+	 */
+	private static function fix_image_orientation( $file_path ) {
+		if ( ! function_exists( 'exif_read_data' ) ) {
+			return false;
+		}
+
+		// Only JPEG images contain EXIF orientation
+		$mime_type = mime_content_type( $file_path );
+		if ( strpos( $mime_type, 'jpeg' ) === false && strpos( $mime_type, 'jpg' ) === false ) {
+			return false;
+		}
+
+		$exif = @exif_read_data( $file_path );
+		if ( ! $exif || ! isset( $exif['Orientation'] ) ) {
+			return false;
+		}
+
+		$image = wp_get_image_editor( $file_path );
+		if ( is_wp_error( $image ) ) {
+			return false;
+		}
+
+		$rotated = false;
+
+		switch ( $exif['Orientation'] ) {
+			case 3:
+				$image->rotate( 180 );
+				$rotated = true;
+				break;
+			case 6:
+				$image->rotate( -90 );
+				$rotated = true;
+				break;
+			case 8:
+				$image->rotate( 90 );
+				$rotated = true;
+				break;
+		}
+
+		if ( $rotated ) {
+			$image->save( $file_path );
+		}
+
+		return $rotated;
 	}
 }
