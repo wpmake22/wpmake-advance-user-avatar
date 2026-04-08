@@ -47,6 +47,9 @@ class Frontend {
 			add_filter( 'bp_core_fetch_avatar', array( $this, 'wpmake_advance_user_avatar_replace_bbpress_avatar_image' ), 10, 9 );
 		}
 
+		// Better Messages integration — no-op if Better Messages is not active.
+		add_filter( 'better_messages_rest_user_item', array( $this, 'wpmake_advance_user_avatar_better_messages_avatar' ), 10, 3 );
+
 	}
 
 	/**
@@ -196,5 +199,40 @@ class Frontend {
 		}
 
 		return $image;
+	}
+
+	/**
+	 * Replace Better Messages avatar with the user's custom avatar.
+	 *
+	 * Better Messages does not use get_avatar() in its REST responses, so the
+	 * standard get_avatar filter is bypassed. This hooks into the plugin's own
+	 * better_messages_rest_user_item filter to supply the correct avatar URL.
+	 *
+	 * @param array $item             User item data array (includes 'avatar' key).
+	 * @param int   $user_id          The user ID.
+	 * @param bool  $include_personal Whether personal data is included.
+	 *
+	 * @return array Modified user item with custom avatar URL, or unchanged if none found.
+	 */
+	public function wpmake_advance_user_avatar_better_messages_avatar( $item, $user_id, $include_personal ) {
+		$attachment_id = get_user_meta( $user_id, 'wpmake_advance_user_avatar_attachment_id', true );
+
+		if ( ! $attachment_id ) {
+			return $item;
+		}
+
+		$avatar_url = wp_get_attachment_url( $attachment_id );
+
+		if ( ! $avatar_url ) {
+			return $item;
+		}
+
+		if ( is_ssl() ) {
+			$avatar_url = set_url_scheme( $avatar_url, 'https' );
+		}
+
+		$item['avatar'] = $avatar_url;
+
+		return $item;
 	}
 }
