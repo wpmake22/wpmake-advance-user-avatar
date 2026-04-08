@@ -157,7 +157,7 @@ class Frontend {
 				esc_attr( $params['alt'] ),
 				esc_url( $profile_picture_url ),
 				esc_url( $profile_picture_url ),
-				esc_attr( join( ' ', $class ) ),
+				esc_attr( implode( ' ', $class ) ),
 				esc_attr( $params['height'] ),
 				esc_attr( $params['width'] ),
 				esc_attr( $params['extra_attr'] )
@@ -184,7 +184,7 @@ class Frontend {
 			return $image;
 		}
 
-		$profile_picture_url = wp_get_attachment_thumb_url( get_user_meta( $user->ID, 'wpmake_advance_user_avatar_attachment_id', true ) );
+		$profile_picture_url = wp_get_attachment_image_url( get_user_meta( $user->ID, 'wpmake_advance_user_avatar_attachment_id', true ), 'thumbnail' );
 
 		if ( $profile_picture_url ) {
 			$image = $profile_picture_url;

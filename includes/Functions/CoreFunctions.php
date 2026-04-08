@@ -60,7 +60,7 @@ if ( ! function_exists( 'wpmake_advance_user_avatar_replace_gravatar_image' ) ) 
 			$class[] = 'avatar-default';
 		}
 
-		if ( $args['class'] ) {
+		if ( ! empty( $args['class'] ) ) {
 			if ( is_array( $args['class'] ) ) {
 				$class = array_merge( $class, $args['class'] );
 			} else {
@@ -74,7 +74,7 @@ if ( ! function_exists( 'wpmake_advance_user_avatar_replace_gravatar_image' ) ) 
 				esc_attr( $args['alt'] ),
 				esc_url( $profile_picture_url ),
 				esc_url( $profile_picture_url ) . ' 2x',
-				esc_attr( join( ' ', $class ) ),
+				esc_attr( implode( ' ', $class ) ),
 				(int) $args['height'],
 				(int) $args['width'],
 				$args['extra_attr']
@@ -211,7 +211,7 @@ if ( ! function_exists( 'wpmake_aua_check_activation_date' ) ) {
 		$activation_date  = get_option( 'wpmake_aua_activated' );
 
 		$days_to_validate = strtotime( 'now' ) - $days * DAY_IN_SECONDS;
-		$days_to_validate = date_i18n( 'Y-m-d', $days_to_validate );
+		$days_to_validate = wp_date( 'Y-m-d', $days_to_validate );
 
 		if ( ! empty( $activation_date ) ) {
 			if ( $activation_date <= $days_to_validate ) {

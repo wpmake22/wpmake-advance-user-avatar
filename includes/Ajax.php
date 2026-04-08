@@ -60,20 +60,17 @@ class Ajax {
 	 */
 	public static function remove_avatar() {
 		check_ajax_referer( 'wpmake_advance_user_avatar_remove_nonce', 'security' );
-		$nonce = isset( $_REQUEST['security'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['security'] ) ) : false;
 
-		$flag = wp_verify_nonce( $nonce, 'wpmake_advance_user_avatar_remove_nonce' );
+		$user_id = get_current_user_id();
 
-		if ( true != $flag || is_wp_error( $flag ) ) {
-
+		if ( ! $user_id ) {
 			wp_send_json_error(
 				array(
-					'message' => esc_html__( 'Nonce error, please reload.', 'wpmake-advance-user-avatar' ),
+					'message' => esc_html__( 'You must be logged in to remove your avatar.', 'wpmake-advance-user-avatar' ),
 				)
 			);
 		}
 
-		$user_id = get_current_user_id();
 		update_user_meta( $user_id, 'wpmake_advance_user_avatar_attachment_id', '' );
 
 		wp_send_json_success(
@@ -89,19 +86,6 @@ class Ajax {
 	public static function method_upload() {
 
 		check_ajax_referer( 'wpmake_advance_user_avatar_upload_nonce', 'security' );
-
-		$nonce = isset( $_REQUEST['security'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['security'] ) ) : false;
-
-		$flag = wp_verify_nonce( $nonce, 'wpmake_advance_user_avatar_upload_nonce' );
-
-		if ( true != $flag || is_wp_error( $flag ) ) {
-
-			wp_send_json_error(
-				array(
-					'message' => esc_html__( 'Nonce error, please reload.', 'wpmake-advance-user-avatar' ),
-				)
-			);
-		}
 
 		$upload = isset( $_FILES['file'] ) ? $_FILES['file'] : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
@@ -127,26 +111,24 @@ class Ajax {
 			);
 		}
 
-		$max_size = wp_max_upload_size();
-		$max_size = size_format( $max_size );
+		$server_max_bytes = wp_max_upload_size();
 
 		// Retrieves cropped picture dimensions from ajax request.
 		$value                          = isset( $_REQUEST['cropped_image'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['cropped_image'] ) ) : '';
 		$cropped_image_size             = json_decode( $value, true );
 		$max_uploaded_size_option_value = isset( $_REQUEST['max_uploaded_size'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['max_uploaded_size'] ) ) : '';
 
-		if ( isset( $max_uploaded_size_option_value ) && '' !== $max_uploaded_size_option_value ) {
+		if ( '' !== $max_uploaded_size_option_value ) {
 			$max_upload_size_options_value = $max_uploaded_size_option_value * 1024;
 		} else {
-			$max_upload_size_options_value = $max_size;
+			$max_upload_size_options_value = $server_max_bytes;
 		}
 
-		if ( ! isset( $upload['size'] ) || ( isset( $upload['size'] ) && $upload['size'] < 1 ) ) {
+		if ( ! isset( $upload['size'] ) || $upload['size'] < 1 ) {
 
 			wp_send_json_error(
 				array(
-					/* translators: %s - Max Size */
-					'message' => sprintf( esc_html__( 'Please upload a picture with size less than %s', 'wpmake-advance-user-avatar' ), size_format( $max_size ) ),
+					'message' => esc_html__( 'No file was received. Please select a file and try again.', 'wpmake-advance-user-avatar' ),
 				)
 			);
 		} elseif ( $upload['size'] > $max_upload_size_options_value ) {
@@ -175,22 +157,21 @@ class Ajax {
 		$custom_path   = $upload_dir['basedir'] . $custom_subdir;
 		$custom_url    = $upload_dir['baseurl'] . $custom_subdir;
 
-		add_filter(
-			'upload_dir',
-			function ( $dirs ) use ( $custom_path, $custom_url, $custom_subdir ) {
-				$dirs['path']   = $custom_path;
-				$dirs['url']    = $custom_url;
-				$dirs['subdir'] = $custom_subdir;
-				return $dirs;
-			}
-		);
+		$upload_dir_filter = static function ( $dirs ) use ( $custom_path, $custom_url, $custom_subdir ) {
+			$dirs['path']   = $custom_path;
+			$dirs['url']    = $custom_url;
+			$dirs['subdir'] = $custom_subdir;
+			return $dirs;
+		};
+
+		add_filter( 'upload_dir', $upload_dir_filter );
 
 		$overrides = array(
 			'test_form' => false,
 		);
 
 		$uploaded = wp_handle_upload( $upload, $overrides );
-		remove_filter( 'upload_dir', '__return_true' );
+		remove_filter( 'upload_dir', $upload_dir_filter );
 
 		if ( $uploaded && ! isset( $uploaded['error'] ) ) {
 			$file_url  = $uploaded['url'];

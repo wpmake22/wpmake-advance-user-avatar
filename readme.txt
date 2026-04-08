@@ -1,9 +1,9 @@
 === Advanced User Avatar | Custom Profile Picture Uploader for WordPress, WooCommerce, and BuddyPress ===
 Contributors: wpmakedev, iamprazol
 Tags: profile picture, avatar, gravatar, user avatar, custom avatar
-Requires at least: 5.5
+Requires at least: 6.0
 Tested up to: 6.8.3
-Stable tag: 1.1.2
+Stable tag: 1.1.3
 Requires PHP: 7.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -47,6 +47,8 @@ Plus, it’s not just about uploads; the plugin integrates perfectly with WooCom
 * **BuddyPress Integration:**
   * Replace the default BuddyPress Avatar Uploader with the plugin’s avatar upload functionality.
   * Seamlessly display custom user avatars on BuddyPress member pages, giving your community a more personalized experience.
+
+* **Better Messages Integration:** Automatically display custom user avatars inside the Better Messages chat interface, replacing the default Gravatar with the user’s uploaded avatar.
 
 ### How to Use the Plugin
 
@@ -97,6 +99,12 @@ Yes, the **Advanced User Avatar** plugin is fully compatible with WooCommerce. I
 = Does the plugin work with any BuddyPress?
 Yes, the **Advanced User Avatar** plugin works perfectly with BuddyPress. It replaces the default BuddyPress avatar uploader with its own customizable uploader and ensures that users’ custom avatars are displayed throughout BuddyPress member pages, offering a more personalized experience for your community.
 
+= Does the plugin work with Better Messages?
+Yes. The plugin automatically integrates with Better Messages. Once a user uploads a custom avatar, it will appear inside the Better Messages chat interface instead of the default Gravatar. No additional configuration is needed.
+
+= Does the plugin work with Bricks Builder?
+Yes. The WooCommerce integration is fully compatible with Bricks Builder. The plugin inserts the avatar viewer and uploader without interfering with Bricks Builder’s template rendering system.
+
 == Screenshots ==
 
 1. Avatar Upload Interface
@@ -113,6 +121,22 @@ Yes, the **Advanced User Avatar** plugin works perfectly with BuddyPress. It rep
 12. Avatar Viewer in BuddyPress's Member Area
 
 == Changelog ==
+
+= 1.1.3   - 08-04-2026 =
+* Feature - Better Messages integration: custom avatars now appear in the Better Messages chat interface.
+* Fix     - WooCommerce integration conflicting with Bricks Builder and other page builders due to duplicate dashboard template rendering.
+* Fix     - Review notice not dismissing after clicking "Sure, I'd love to!" — the notice kept reappearing on every admin page.
+* Fix     - `wp_get_attachment_thumb_url()` replaced with `wp_get_attachment_image_url()` (deprecated since WordPress 6.0).
+* Fix     - `date_i18n()` replaced with `wp_date()` (deprecated since WordPress 5.3).
+* Fix     - `upload_dir` filter was never properly removed after file upload due to an anonymous closure reference mismatch.
+* Fix     - `size_format()` was called on an already-formatted string, producing incorrect upload limit messages.
+* Fix     - `remove_avatar()` no longer runs when no user is logged in.
+* Fix     - Removed redundant double nonce verification in AJAX upload and remove handlers.
+* Fix     - `maybe_later` dismiss action now uses a transient; `dismiss_notice()` now includes a capability check.
+* Fix     - Leading space typo in `WPMAKE_ADVANCE_USER_AVATAR_TEMPLATE_PATH` constant definition.
+* Dev     - Updated minimum WordPress version requirement to 6.0.
+* Fix     - `join()` replaced with `implode()` throughout (PHPCS standard).
+* Fix     - `$args['class']` now guarded with `empty()` to prevent PHP notices on non-standard calls.
 
 = 1.1.2   - 15-11-2025 =
 * Enhance - EXIF orientation metadata support.
