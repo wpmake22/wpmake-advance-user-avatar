@@ -487,48 +487,45 @@ class Admin {
 
 		// Show only to Admins.
 		if ( ! current_user_can( 'manage_options' ) ) {
-			return false;
-		}
-
-		$notice_dismissed = get_option( 'wpmake_aua_review_notice_dismissed', false );
-
-		if ( $notice_dismissed ) {
 			return;
 		}
 
-		// Return if activation date is less than 1 day.
-		if ( wpmake_aua_check_activation_date( '1' ) === false ) {
+		// Permanently dismissed or already rated.
+		if ( get_option( 'wpmake_aua_review_notice_dismissed', false ) ) {
+			return;
+		}
+
+		// Snoozed via "Maybe Later" — hidden until the transient expires.
+		if ( get_transient( 'wpmake_aua_review_notice_snoozed' ) ) {
+			return;
+		}
+
+		// Wait 14 days after activation before showing the notice.
+		if ( wpmake_aua_check_activation_date( '14' ) === false ) {
 			return;
 		}
 
 		$notice_target_link = 'https://wordpress.org/support/plugin/wpmake-advance-user-avatar/reviews/#postform';
 		$notice_content     = review_notice_content();
 
-		ob_start();
 		?>
 		<div id="wpmake-aua-review-notice" class="notice notice-info wpmake-aua-notice" data-purpose="notice-info" data-notice-id="review">
 			<div class="wpmake-aua-notice-thumbnail">
 				<img src="<?php echo esc_url( WPMAKE_ADVANCE_USER_AVATAR_URL . '/assets/images/icon.png' ); ?>" alt="">
 			</div>
 			<div class="wpmake-aua-notice-text">
-
 				<div class="wpmake-aua-notice-body">
-					<?php
-					echo wp_kses_post( $notice_content );
-					?>
+					<?php echo wp_kses_post( $notice_content ); ?>
 				</div>
 				<div class="wpmake-aua-notice-links">
 					<ul class="wpmake-aua-notice-ul">
-						<li><a class="button button-primary notice-link-visit" href="<?php echo esc_url( $notice_target_link ); ?>" target="_blank"><span class="dashicons dashicons-external"></span><?php esc_html_e( 'Sure, I\'d love to!', 'wpmake-advance-user-avatar' ); ?></a></li>
-						<li><a href="#" class="button button-secondary notice-dismiss notice-dismiss-permanently"><span  class="dashicons dashicons-smiley"></span><?php esc_html_e( 'I already did!', 'wpmake-advance-user-avatar' ); ?></a></li>
+						<li><a class="button button-primary notice-link-visit notice-dismiss" data-dismiss-type="rated" href="<?php echo esc_url( $notice_target_link ); ?>" target="_blank"><span class="dashicons dashicons-external"></span><?php esc_html_e( 'Sure, I\'d love to!', 'wpmake-advance-user-avatar' ); ?></a></li>
+						<li><a href="#" class="button button-secondary notice-dismiss notice-later" data-dismiss-type="later"><span class="dashicons dashicons-clock"></span><?php esc_html_e( 'Maybe Later', 'wpmake-advance-user-avatar' ); ?></a></li>
+						<li><a href="#" class="button button-secondary notice-dismiss notice-dismiss-permanently" data-dismiss-type="rated"><span class="dashicons dashicons-smiley"></span><?php esc_html_e( 'I already did!', 'wpmake-advance-user-avatar' ); ?></a></li>
 					</ul>
 				</div>
 			</div>
 		</div>
 		<?php
-
-		$notice = ob_get_clean();
-
-		echo $notice;
 	}
 }

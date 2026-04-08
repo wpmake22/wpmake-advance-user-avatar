@@ -314,15 +314,36 @@ class Ajax {
 	/**
 	 * Dismiss notices.
 	 *
+	 * Handles three dismissal types sent via $_POST['type']:
+	 *   - 'rated'  → permanently hides the notice (user reviewed or already did).
+	 *   - 'later'  → snoozes the notice for 14 days via a transient.
+	 *   - Anything else is treated as 'rated' for safety.
+	 *
 	 * @since 1.0.2
 	 *
 	 * @return void
 	 **/
 	public static function dismiss_notice() {
 		check_admin_referer( 'notice_nonce', 'security' );
-		if ( ! empty( $_POST['dismissed'] ) ) {
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( -1 );
+		}
+
+		if ( empty( $_POST['dismissed'] ) ) {
+			wp_die();
+		}
+
+		$type = isset( $_POST['type'] ) ? sanitize_text_field( wp_unslash( $_POST['type'] ) ) : 'rated';
+
+		if ( 'later' === $type ) {
+			// Re-show the notice after 14 days.
+			set_transient( 'wpmake_aua_review_notice_snoozed', true, 14 * DAY_IN_SECONDS );
+		} else {
+			// Permanently suppress the notice.
 			update_option( 'wpmake_aua_review_notice_dismissed', true );
 		}
+
 		wp_die();
 	}
 
