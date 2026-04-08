@@ -101,15 +101,7 @@ class Frontend {
 	 * Insert avatar viewer in WooCommerce account dashboard.
 	 */
 	public function wpmake_insert_avatar_viewer_in_woocommerce_account_dashboard() {
-
 		echo apply_shortcodes( '[wpmake_advance_user_avatar]' );
-
-		wc_get_template(
-			'myaccount/dashboard.php',
-			array(
-				'current_user' => get_user_by( 'id', get_current_user_id() ),
-			)
-		);
 	}
 
 	/**
