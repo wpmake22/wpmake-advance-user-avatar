@@ -106,7 +106,11 @@ class Ajax {
 		if ( ! in_array( $file_extension, $valid_ext ) ) {
 			wp_send_json_error(
 				array(
-					'message' => esc_html__( 'Invalid file type, please contact with site administrator.', 'wpmake-advance-user-avatar' ),
+					/* translators: %s: comma-separated list of accepted file types e.g. JPG, PNG, GIF */
+					'message' => sprintf(
+						esc_html__( 'Invalid file type. Accepted: %s.', 'wpmake-advance-user-avatar' ),
+						strtoupper( implode( ', ', $valid_ext ) )
+					),
 				)
 			);
 		}

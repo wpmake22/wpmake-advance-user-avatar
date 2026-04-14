@@ -28,7 +28,9 @@ jQuery(function ($) {
 							wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_enable_cropping_interface
 						) {
 							var message_body =
-								'<img id="crop_container" src="#" alt="your image" class="img"/><input type="hidden" name="cropped_image" class="cropped_image_size"/>';
+								'<img id="crop_container" src="#" alt="your image" class="img"/>' +
+								'<p class="wpmake-crop-ratio-label">' + wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_crop_ratio_label + '</p>' +
+								'<input type="hidden" name="cropped_image" class="cropped_image_size"/>';
 
 							Swal.fire({
 								title: wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_crop_picture_title,
@@ -437,17 +439,26 @@ jQuery(function ($) {
 				}
 
 				error_exist = true;
-				swal.fire({
+				Swal.fire({
 					icon: "warning",
 					title: title,
 					html: error_msg,
-					showConfirmButton: false,
+					showConfirmButton: true,
+					confirmButtonText:
+						wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_use_upload_instead,
 					showCancelButton: true,
 					cancelButtonText:
 						wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_cancel_button_confirmation,
-					cancelButtonColor: "#236bb0",
+					cancelButtonColor: "#6c757d",
 					customClass: {
 						container: "wpmake-advance-user-avatar-swal2-container"
+					}
+				}).then(function (result) {
+					if (result.isConfirmed) {
+						$this
+							.closest(".wpmake-advance-user-avatar-upload")
+							.find(".wpmake_advance_user_avatar_upload")
+							.trigger("click");
 					}
 				});
 			});
@@ -466,7 +477,9 @@ jQuery(function ($) {
 						) {
 							// display results in page
 							var messages =
-								'<img id="crop_container" src="#" alt="your image" class="img"/><input type="hidden" name="cropped_image" class="cropped_image_size"/>';
+								'<img id="crop_container" src="#" alt="your image" class="img"/>' +
+								'<p class="wpmake-crop-ratio-label">' + wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_crop_ratio_label + '</p>' +
+								'<input type="hidden" name="cropped_image" class="cropped_image_size"/>';
 
 							Swal.fire({
 								title: wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_crop_picture_title,
@@ -526,8 +539,36 @@ jQuery(function ($) {
 		}
 	);
 
-	$(document).on("click", ".wpmake-advance-user-avatar-remove", function () {
-		WPMake_Advance_User_Avatar_Frontend.remove_avatar($(this));
+	$(document).on("click", ".wpmake-advance-user-avatar-remove:not(.wpmake-confirming)", function () {
+		var $btn = $(this);
+		$btn.addClass("wpmake-confirming");
+
+		var $confirmBar = $(
+			'<span class="wpmake-remove-confirm">' +
+				'<span class="wpmake-remove-confirm-text">' +
+					wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_remove_confirm_text +
+				"</span>" +
+				' <button type="button" class="button wpmake-remove-yes">' +
+					wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_remove_yes +
+				"</button>" +
+				' <button type="button" class="button wpmake-remove-no">' +
+					wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_cancel_button +
+				"</button>" +
+			"</span>"
+		);
+
+		$btn.hide().after($confirmBar);
+
+		$confirmBar.find(".wpmake-remove-yes").one("click", function () {
+			$confirmBar.remove();
+			$btn.removeClass("wpmake-confirming").show();
+			WPMake_Advance_User_Avatar_Frontend.remove_avatar($btn);
+		});
+
+		$confirmBar.find(".wpmake-remove-no").one("click", function () {
+			$confirmBar.remove();
+			$btn.removeClass("wpmake-confirming").show();
+		});
 	});
 
 	$(document).on("wpmake_advance_user_avatar_ajax_complete", function () {

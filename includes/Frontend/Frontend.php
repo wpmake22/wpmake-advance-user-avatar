@@ -317,6 +317,10 @@ class Frontend {
 				'wpmake_advance_user_avatar_enable_cropping_interface' => $options['cropping_interface'] ?? false,
 				'wpmake_assets_url'                        => WPMAKE_ADVANCE_USER_AVATAR_ASSETS_URL,
 				'wpmake_advance_user_avatar_upload_success_message' => esc_html__( 'Avatar has been uploaded successfully.', 'wpmake-advance-user-avatar' ),
+				'wpmake_advance_user_avatar_remove_confirm_text' => esc_html__( 'Remove your avatar?', 'wpmake-advance-user-avatar' ),
+				'wpmake_advance_user_avatar_remove_yes'    => esc_html__( 'Yes, remove', 'wpmake-advance-user-avatar' ),
+				'wpmake_advance_user_avatar_use_upload_instead' => esc_html__( 'Use Upload instead', 'wpmake-advance-user-avatar' ),
+				'wpmake_advance_user_avatar_crop_ratio_label' => esc_html__( 'Square crop (1:1)', 'wpmake-advance-user-avatar' ),
 			)
 		);
 	}

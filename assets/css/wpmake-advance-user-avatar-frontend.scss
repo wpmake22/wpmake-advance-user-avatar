@@ -34,29 +34,93 @@
 		}
 
 		button {
-			padding: 10px;
-			border: none;
-			border-radius: 3.75px;
-			color: white;
+			padding: 8px 16px;
+			border-radius: 4px;
+			cursor: pointer;
+			font-size: 14px;
+			transition: background-color .15s, border-color .15s, color .15s;
 
-			&.wpmake_advance_user_avatar_take_snapshot {
-				background-color: #475BD9;
-
-				&:hover {
-					background-color: #76add4;
-				}
-			}
-
+			// Primary: solid blue — the main action
 			&.wpmake_advance_user_avatar_upload {
 				background-color: #0693e3;
+				border: 2px solid #0693e3;
+				color: #fff;
 
 				&:hover {
-					background-color: #76add4;
+					background-color: #0578c1;
+					border-color: #0578c1;
 				}
 			}
 
+			// Secondary: outlined — lower-weight action
+			&.wpmake_advance_user_avatar_take_snapshot {
+				background-color: transparent;
+				border: 2px solid #475BD9;
+				color: #475BD9;
+
+				&:hover {
+					background-color: #475BD9;
+					color: #fff;
+				}
+			}
+
+			// Neutral outlined — resting state for Remove
 			&.wpmake-advance-user-avatar-remove {
-				background-color: #ff030b;
+				background-color: transparent;
+				border: 2px solid #888;
+				color: #555;
+
+				&:hover {
+					background-color: #f0f0f0;
+					border-color: #666;
+				}
+			}
+		}
+
+		// Inline remove confirmation bar
+		.wpmake-remove-confirm {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			flex-wrap: wrap;
+			margin-top: 4px;
+
+			.wpmake-remove-confirm-text {
+				font-size: 14px;
+				color: #555;
+			}
+
+			// Destructive confirm — red outlined
+			.wpmake-remove-yes {
+				background-color: transparent;
+				border: 2px solid #dc3232;
+				color: #dc3232;
+				padding: 6px 14px;
+				border-radius: 4px;
+				cursor: pointer;
+				font-size: 14px;
+				transition: background-color .15s, color .15s;
+
+				&:hover {
+					background-color: #dc3232;
+					color: #fff;
+				}
+			}
+
+			// Cancel — gray outlined
+			.wpmake-remove-no {
+				background-color: transparent;
+				border: 2px solid #aaa;
+				color: #555;
+				padding: 6px 14px;
+				border-radius: 4px;
+				cursor: pointer;
+				font-size: 14px;
+				transition: background-color .15s;
+
+				&:hover {
+					background-color: #f0f0f0;
+				}
 			}
 		}
 	}
