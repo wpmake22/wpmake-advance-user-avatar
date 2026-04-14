@@ -3,7 +3,7 @@
 // =============================================================================
 
 .wpmake-aua-settings-page {
-	max-width: 900px;
+	max-width: 1400px;
 
 	// Page title with icon
 	.wpmake-aua-page-title {
@@ -344,6 +344,158 @@
 	.wpmake-aua-thumbnail-label {
 		font-size: 12.5px;
 		color: #374151;
+	}
+
+	// -----------------------------------------------------------------------
+	// Two-column layout
+	// -----------------------------------------------------------------------
+
+	.wpmake-aua-layout {
+		display: flex;
+		align-items: flex-start;
+		gap: 24px;
+	}
+
+	.wpmake-aua-layout-main {
+		flex: 0 0 70%;
+		min-width: 0;
+	}
+
+	.wpmake-aua-layout-sidebar {
+		flex: 0 0 28%;
+		position: sticky;
+		top: 32px;
+	}
+
+	// Sidebar card
+	.wpmake-aua-sidebar-card {
+		background: #fff;
+		border: 1px solid #e5e7eb;
+		border-radius: 10px;
+		overflow: hidden;
+	}
+
+	.wpmake-aua-sidebar-card-header {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 14px 18px;
+		border-bottom: 1px solid #e5e7eb;
+		font-size: 14px;
+		font-weight: 600;
+		color: #111827;
+
+		.dashicons {
+			font-size: 18px;
+			width: 18px;
+			height: 18px;
+			color: #2563eb;
+		}
+	}
+
+	.wpmake-aua-sidebar-card-body {
+		padding: 4px 0;
+	}
+
+	.wpmake-aua-shortcode-list {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.wpmake-aua-shortcode-item {
+		padding: 12px 18px;
+		border-bottom: 1px solid #f3f4f6;
+
+		&:last-child {
+			border-bottom: none;
+		}
+
+		p {
+			margin: 6px 0 0;
+			font-size: 11.5px;
+			color: #6b7280;
+			line-height: 1.5;
+		}
+	}
+
+	.wpmake-aua-shortcode-copy {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		width: 100%;
+		background: #f3f4f6;
+		border: 1px solid #e5e7eb;
+		border-radius: 5px;
+		padding: 6px 10px;
+		cursor: pointer;
+		text-align: left;
+		transition: background 0.15s;
+		gap: 8px;
+
+		code {
+			font-size: 11.5px;
+			color: #1d4ed8;
+			font-family: monospace;
+			word-break: break-all;
+			flex: 1;
+		}
+
+		.wpmake-aua-copy-icon {
+			font-size: 14px;
+			width: 14px;
+			height: 14px;
+			color: #9ca3af;
+			flex-shrink: 0;
+		}
+
+		&:hover {
+			background: #e9eef8;
+			border-color: #bfdbfe;
+
+			.wpmake-aua-copy-icon {
+				color: #2563eb;
+			}
+		}
+
+		&.wpmake-aua-copied {
+			background: #d1fae5;
+			border-color: #6ee7b7;
+
+			code {
+				color: #065f46;
+			}
+
+			.wpmake-aua-copy-icon {
+				color: #059669;
+			}
+		}
+	}
+
+	.wpmake-aua-sidebar-card-footer {
+		padding: 12px 18px;
+		border-top: 1px solid #e5e7eb;
+		background: #f9fafb;
+	}
+
+	.wpmake-aua-docs-link {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		font-size: 12.5px;
+		color: #2563eb;
+		text-decoration: none;
+
+		.dashicons {
+			font-size: 14px;
+			width: 14px;
+			height: 14px;
+		}
+
+		&:hover {
+			color: #1d4ed8;
+			text-decoration: underline;
+		}
 	}
 
 	// -----------------------------------------------------------------------

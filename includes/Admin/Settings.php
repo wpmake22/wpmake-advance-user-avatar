@@ -187,54 +187,111 @@ class Settings
         <div class="wrap wpmake-aua-settings-page">
             <h1 class="wpmake-aua-page-title">
                 <img src="<?php echo esc_url(WPMAKE_ADVANCE_USER_AVATAR_ASSETS_URL . '/images/icon.png'); ?>" width="50px" height="50px"/>
-        <?php esc_html_e('Users Avatar', 'wpmake-advance-user-avatar'); ?>
+                <?php esc_html_e('Users Avatar', 'wpmake-advance-user-avatar'); ?>
             </h1>
 
-            <form method="post" action="options.php">
-        <?php settings_fields(self::OPTION_KEY); ?>
+            <div class="wpmake-aua-layout">
+                <div class="wpmake-aua-layout-main">
+                    <form method="post" action="options.php">
+                        <?php settings_fields(self::OPTION_KEY); ?>
 
-        <?php foreach ( $sections as $section_id => $section ) : ?>
-                    <div class="wpmake-aua-section">
-                        <div class="wpmake-aua-section-header">
-                            <h2 class="wpmake-aua-section-title">
-            <?php echo esc_html($section['title']); ?>
-            <?php if (! empty($section['badge']) ) : ?>
-                                    <span class="wpmake-aua-badge"><?php echo esc_html($section['badge']); ?></span>
-            <?php endif; ?>
-                            </h2>
-                        </div>
-
-                        <div class="wpmake-aua-section-body">
-            <?php foreach ( $section['fields'] as $field_key => $field ) : ?>
-                                <div class="wpmake-aua-field-row">
-                                    <div class="wpmake-aua-field-label">
-                                        <strong>
-                <?php echo esc_html($field['label']); ?>
-                <?php if (! empty($field['badge']) ) : ?>
-                                                <span class="wpmake-aua-badge"><?php echo esc_html($field['badge']); ?></span>
-                <?php endif; ?>
-                                        </strong>
-                <?php if (! empty($field['description']) ) : ?>
-                                            <p><?php echo esc_html($field['description']); ?></p>
-                <?php endif; ?>
-                                    </div>
-                                    <div class="wpmake-aua-field-control">
-                <?php $this->render_field($field_key, $field, $options); ?>
-                                    </div>
+                        <?php foreach ( $sections as $section_id => $section ) : ?>
+                            <div class="wpmake-aua-section">
+                                <div class="wpmake-aua-section-header">
+                                    <h2 class="wpmake-aua-section-title">
+                                        <?php echo esc_html($section['title']); ?>
+                                        <?php if (! empty($section['badge']) ) : ?>
+                                            <span class="wpmake-aua-badge"><?php echo esc_html($section['badge']); ?></span>
+                                        <?php endif; ?>
+                                    </h2>
                                 </div>
-            <?php endforeach; ?>
-                        </div>
-                    </div>
-        <?php endforeach; ?>
 
-                <div class="wpmake-aua-form-actions">
-        <?php submit_button(__('Save Changes', 'wpmake-advance-user-avatar'), 'primary wpmake-aua-save-btn', 'submit', false); ?>
-                    <button type="button" class="button button-secondary wpmake-aua-cancel-btn"
-                        onclick="window.history.back();">
-        <?php esc_html_e('Cancel', 'wpmake-advance-user-avatar'); ?>
-                    </button>
+                                <div class="wpmake-aua-section-body">
+                                    <?php foreach ( $section['fields'] as $field_key => $field ) : ?>
+                                        <div class="wpmake-aua-field-row">
+                                            <div class="wpmake-aua-field-label">
+                                                <strong>
+                                                    <?php echo esc_html($field['label']); ?>
+                                                    <?php if (! empty($field['badge']) ) : ?>
+                                                        <span class="wpmake-aua-badge"><?php echo esc_html($field['badge']); ?></span>
+                                                    <?php endif; ?>
+                                                </strong>
+                                                <?php if (! empty($field['description']) ) : ?>
+                                                    <p><?php echo esc_html($field['description']); ?></p>
+                                                <?php endif; ?>
+                                            </div>
+                                            <div class="wpmake-aua-field-control">
+                                                <?php $this->render_field($field_key, $field, $options); ?>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+
+                        <div class="wpmake-aua-form-actions">
+                            <?php submit_button(__('Save Changes', 'wpmake-advance-user-avatar'), 'primary wpmake-aua-save-btn', 'submit', false); ?>
+                            <button type="button" class="button button-secondary wpmake-aua-cancel-btn"
+                                onclick="window.history.back();">
+                                <?php esc_html_e('Cancel', 'wpmake-advance-user-avatar'); ?>
+                            </button>
+                        </div>
+                    </form>
                 </div>
-            </form>
+
+                <div class="wpmake-aua-layout-sidebar">
+                    <?php $this->render_sidebar(); ?>
+                </div>
+            </div>
+        </div>
+        <?php
+    }
+
+    /**
+     * Renders the static sidebar card with shortcodes and documentation link.
+     */
+    private function render_sidebar(): void
+    {
+        $shortcodes = array(
+            array(
+                'code'        => '[wpmake_advance_user_avatar]',
+                'description' => __('Add a profile picture upload form, allowing users to upload or remove their avatar image.', 'wpmake-advance-user-avatar'),
+            ),
+            array(
+                'code'        => '[wpmake_advance_user_avatar_upload]',
+                'description' => __('Display the avatar upload form for the logged-in user.', 'wpmake-advance-user-avatar'),
+            ),
+        );
+        ?>
+        <div class="wpmake-aua-sidebar-card">
+            <div class="wpmake-aua-sidebar-card-header">
+                <span class="dashicons dashicons-shortcode"></span>
+                <?php esc_html_e('Available Shortcodes', 'wpmake-advance-user-avatar'); ?>
+            </div>
+            <div class="wpmake-aua-sidebar-card-body">
+                <ul class="wpmake-aua-shortcode-list">
+                    <?php foreach ( $shortcodes as $shortcode ) : ?>
+                        <li class="wpmake-aua-shortcode-item">
+                            <button
+                                type="button"
+                                class="wpmake-aua-shortcode-copy"
+                                data-code="<?php echo esc_attr($shortcode['code']); ?>"
+                                title="<?php esc_attr_e('Copy shortcode', 'wpmake-advance-user-avatar'); ?>"
+                            >
+                                <code><?php echo esc_html($shortcode['code']); ?></code>
+                                <span class="wpmake-aua-copy-icon dashicons dashicons-clipboard"></span>
+                            </button>
+                            <p><?php echo esc_html($shortcode['description']); ?></p>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+            <div class="wpmake-aua-sidebar-card-footer">
+                <a href="https://wpmake.net" target="_blank" rel="noopener noreferrer" class="wpmake-aua-docs-link">
+                    <span class="dashicons dashicons-external"></span>
+                    <?php esc_html_e('Visit wpmake.net for full documentation', 'wpmake-advance-user-avatar'); ?>
+                </a>
+            </div>
         </div>
         <?php
     }
