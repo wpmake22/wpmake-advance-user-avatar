@@ -20,13 +20,12 @@ if (! defined('ABSPATH') ) {
  * WordPress option registration, and sanitization.
  *
  * To add a new setting:
- *  1. Add a field entry inside get_sections() under the relevant section.
+ *  1. Add a field entry inside get_sections() (or get_woocommerce_section() for WC fields).
  *  2. Add a sanitize rule in sanitize().
- *  That's it — rendering is handled automatically based on the field 'type'.
+ *  Rendering is handled automatically based on the field 'type'.
  *
- * To add a new section:
- *  1. Add a new top-level key to get_sections() with 'title', optional 'badge',
- *     and a 'fields' array following the same pattern.
+ * Supported field types:
+ *   toggle | text | select | image_size | thumbnail_size | checkbox_group
  */
 class Settings
 {
@@ -42,118 +41,178 @@ class Settings
     }
 
     // -------------------------------------------------------------------------
+    // WooCommerce helpers
+    // -------------------------------------------------------------------------
+
+    /**
+     * Whether WooCommerce is currently active.
+     */
+    private function is_woocommerce_active(): bool
+    {
+        return class_exists('WooCommerce');
+    }
+
+    /**
+     * Returns the WooCommerce-specific section definition.
+     * Pulled out to keep get_sections() readable.
+     */
+    private function get_woocommerce_section(): array
+    {
+        return array(
+        'title'  => __('WooCommerce Display', 'wpmake-advance-user-avatar'),
+        'badge'  => array(
+        'text' => __('WooCommerce', 'wpmake-advance-user-avatar'),
+        'icon' => 'dashicons-cart',
+        'type' => 'woocommerce',
+        ),
+        'fields' => array(
+        'woo_display_locations'   => array(
+                    'type'        => 'checkbox_group',
+                    'label'       => __('Display avatar on', 'wpmake-advance-user-avatar'),
+                    'description' => __('Choose where avatars appear in your store', 'wpmake-advance-user-avatar'),
+                    'choices'     => array(
+                        'my_account_dashboard' => array(
+                            'label'    => __('My Account dashboard', 'wpmake-advance-user-avatar'),
+                            'sublabel' => __('Account page header', 'wpmake-advance-user-avatar'),
+                        ),
+                        'account_details_tab'  => array(
+                            'label'    => __('Account details tab', 'wpmake-advance-user-avatar'),
+                            'sublabel' => __('Edit profile section', 'wpmake-advance-user-avatar'),
+                        ),
+                        'order_history'        => array(
+                            'label'    => __('Order history', 'wpmake-advance-user-avatar'),
+                            'sublabel' => __('Next to each order', 'wpmake-advance-user-avatar'),
+                        ),
+                        'product_reviews'      => array(
+                            'label'    => __('Product reviews', 'wpmake-advance-user-avatar'),
+                            'sublabel' => __('Replaces Gravatar', 'wpmake-advance-user-avatar'),
+                        ),
+                        'checkout_page'        => array(
+                            'label'    => __('Checkout page', 'wpmake-advance-user-avatar'),
+                            'sublabel' => __('Logged-in customer area', 'wpmake-advance-user-avatar'),
+                        ),
+                        'wishlist'             => array(
+                            'label'    => __('Wishlist (if active)', 'wpmake-advance-user-avatar'),
+                            'sublabel' => __('WooCommerce Wishlists', 'wpmake-advance-user-avatar'),
+                        ),
+        ),
+        ),
+        'woo_my_account_uploader' => array(
+                    'type'        => 'toggle',
+                    'label'       => __('My Account uploader', 'wpmake-advance-user-avatar'),
+                    'description' => __('Show the avatar upload widget inside My Account', 'wpmake-advance-user-avatar'),
+        ),
+        ),
+        );
+    }
+
+    // -------------------------------------------------------------------------
     // Section / Field Definitions
     // -------------------------------------------------------------------------
 
     /**
      * Returns all settings sections and their fields.
-     *
-     * Field schema:
-     *   type        (string)  — 'toggle' | 'text' | 'select' | 'image_size' | 'thumbnail_size'
-     *   label       (string)  — Visible field label.
-     *   description (string)  — Helper text shown below the label.
-     *   badge       (string)  — Optional inline badge next to the label (e.g. 'New').
-     *   default     (mixed)   — Default value used when option is absent.
-     *   suffix      (string)  — Unit label shown after a text input (e.g. 'KB', 'px').
-     *   placeholder (string)  — Input placeholder text.
-     *   choices     (array)   — Key/value pairs for 'select' type.
-     *   warning     (string)  — Warning message shown below a 'toggle' control.
-     *   thumbnails  (array)   — Preview entries for 'thumbnail_size' type.
+     * The WooCommerce section is automatically prepended when WooCommerce is active.
      *
      * @return array
      */
     public function get_sections(): array
     {
-        return array(
-        'upload_image'    => array(
+        $sections = array();
+
+        $woo_section = $this->get_woocommerce_section();
+        if (! $this->is_woocommerce_active() ) {
+            $woo_section['locked'] = true;
+        }
+        $sections['woocommerce_display'] = $woo_section;
+
+        $sections['upload_image'] = array(
         'title'  => __('Upload & Image', 'wpmake-advance-user-avatar'),
         'badge'  => null,
         'fields' => array(
         'max_size'            => array(
-         'type'        => 'text',
-         'label'       => __('Max Avatar Size Allowed', 'wpmake-advance-user-avatar'),
-         'description' => __('Enter file size in KB. Leave empty for no restriction.', 'wpmake-advance-user-avatar'),
-         'suffix'      => 'KB',
-         'default'     => '1024',
-         'placeholder' => '',
-                    ),
-                    'allowed_file_type'   => array(
-                        'type'        => 'select',
-                        'label'       => __('Allowed File Type', 'wpmake-advance-user-avatar'),
-                        'description' => __('Choose valid file types allowed for avatar upload', 'wpmake-advance-user-avatar'),
-                        'choices'     => array(
-                            'image/jpg'  => 'JPG',
-                            'image/jpeg' => 'JPEG',
-                            'image/png'  => 'PNG',
-                            'image/webp' => 'WEBP',
-                            'image/gif'  => 'GIF',
-                    ),
-                    ),
-                    'uploaded_image_size' => array(
-                        'type'        => 'image_size',
-                        'label'       => __('Uploaded Image Size', 'wpmake-advance-user-avatar'),
-                        'description' => __('The size of the final uploaded image (width × height)', 'wpmake-advance-user-avatar'),
-                        'default'     => array(
-                            'width'  => 500,
-                            'height' => 500,
-                    ),
-                    ),
-                    'thumbnail_size'      => array(
-                        'type'        => 'thumbnail_size',
-                        'label'       => __('Store in thumbnail sizes', 'wpmake-advance-user-avatar'),
-                        'badge'       => __('New', 'wpmake-advance-user-avatar'),
-                        'description' => __('Generate 32px, 64px and 96px variants for different page contexts', 'wpmake-advance-user-avatar'),
-                        'thumbnails'  => array(
-                            array(
-                                'size'    => 32,
-                                'context' => __('admin bar, comments', 'wpmake-advance-user-avatar'),
-                            ),
-                            array(
-                                'size'    => 48,
-                                'context' => __('My Account header', 'wpmake-advance-user-avatar'),
-                            ),
-                            array(
-                                'size'    => 64,
-                                'context' => __('product reviews', 'wpmake-advance-user-avatar'),
-                            ),
-                        ),
-                    ),
-                    'cropping_interface'  => array(
-                        'type'        => 'toggle',
-                        'label'       => __('Cropping Interface', 'wpmake-advance-user-avatar'),
-                        'description' => __('Allow user to crop selected or captured image', 'wpmake-advance-user-avatar'),
-                    ),
+                    'type'        => 'text',
+                    'label'       => __('Max Avatar Size Allowed', 'wpmake-advance-user-avatar'),
+                    'description' => __('Enter file size in KB. Leave empty for no restriction.', 'wpmake-advance-user-avatar'),
+                    'suffix'      => 'KB',
+                    'default'     => '1024',
+                    'placeholder' => '',
+        ),
+        'allowed_file_type'   => array(
+        'type'        => 'select',
+        'label'       => __('Allowed File Type', 'wpmake-advance-user-avatar'),
+        'description' => __('Choose valid file types allowed for avatar upload', 'wpmake-advance-user-avatar'),
+        'choices'     => array(
+                        'image/jpg'  => 'JPG',
+                        'image/jpeg' => 'JPEG',
+                        'image/png'  => 'PNG',
+                        'image/webp' => 'WEBP',
+                        'image/gif'  => 'GIF',
         ),
         ),
-        'capture_picture' => array(
-        'title'  => __('Capture Picture', 'wpmake-advance-user-avatar'),
-        'badge'  => __('New', 'wpmake-advance-user-avatar'),
-        'fields' => array(
-                    'capture_picture' => array(
-                        'type'        => 'toggle',
-                        'label'       => __('Webcam capture', 'wpmake-advance-user-avatar'),
-                        'description' => __('Enable taking a photo directly from the customer\'s webcam', 'wpmake-advance-user-avatar'),
-                        'warning'     => __('Requires valid SSL (HTTPS) on your domain', 'wpmake-advance-user-avatar'),
+        'uploaded_image_size' => array(
+        'type'        => 'image_size',
+        'label'       => __('Uploaded Image Size', 'wpmake-advance-user-avatar'),
+        'description' => __('The size of the final uploaded image (width × height)', 'wpmake-advance-user-avatar'),
+        'default'     => array(
+                        'width'  => 500,
+                        'height' => 500,
         ),
         ),
+        'thumbnail_size'      => array(
+        'type'        => 'thumbnail_size',
+        'label'       => __('Store in thumbnail sizes', 'wpmake-advance-user-avatar'),
+        'badge'       => __('New', 'wpmake-advance-user-avatar'),
+        'description' => __('Generate 32px, 64px and 96px variants for different page contexts', 'wpmake-advance-user-avatar'),
+        'thumbnails'  => array(
+                        array(
+                            'size'    => 32,
+                            'context' => __('admin bar, comments', 'wpmake-advance-user-avatar'),
+         ),
+         array(
+          'size'    => 48,
+          'context' => __('My Account header', 'wpmake-advance-user-avatar'),
+         ),
+         array(
+          'size'    => 64,
+          'context' => __('product reviews', 'wpmake-advance-user-avatar'),
+         ),
         ),
-        'integrations'    => array(
-        'title'  => __('Integrations', 'wpmake-advance-user-avatar'),
-        'badge'  => __('New', 'wpmake-advance-user-avatar'),
-        'fields' => array(
-                    'buddypress_integration'  => array(
-                        'type'        => 'toggle',
-                        'label'       => __('BuddyPress Integration', 'wpmake-advance-user-avatar'),
-                        'description' => __('Display user avatar in BuddyPress avatar areas and Change Avatar section', 'wpmake-advance-user-avatar'),
         ),
-        'woocommerce_integration' => array(
-         'type'        => 'toggle',
-         'label'       => __('WooCommerce', 'wpmake-advance-user-avatar'),
-         'description' => __('Show avatar upload field on WooCommerce', 'wpmake-advance-user-avatar'),
-        ),
+        'cropping_interface'  => array(
+        'type'        => 'toggle',
+        'label'       => __('Cropping Interface', 'wpmake-advance-user-avatar'),
+        'description' => __('Allow user to crop selected or captured image', 'wpmake-advance-user-avatar'),
         ),
         ),
         );
+
+        $sections['capture_picture'] = array(
+        'title'  => __('Capture Picture', 'wpmake-advance-user-avatar'),
+        'badge'  => __('New', 'wpmake-advance-user-avatar'),
+        'fields' => array(
+        'capture_picture' => array(
+                    'type'        => 'toggle',
+                    'label'       => __('Webcam capture', 'wpmake-advance-user-avatar'),
+                    'description' => __("Enable taking a photo directly from the customer's webcam", 'wpmake-advance-user-avatar'),
+                    'warning'     => __('Requires valid SSL (HTTPS) on your domain', 'wpmake-advance-user-avatar'),
+        ),
+        ),
+        );
+
+        $sections['integrations'] = array(
+        'title'  => __('Integrations', 'wpmake-advance-user-avatar'),
+        'badge'  => __('New', 'wpmake-advance-user-avatar'),
+        'fields' => array(
+        'buddypress_integration'  => array(
+                    'type'        => 'toggle',
+                    'label'       => __('BuddyPress Integration', 'wpmake-advance-user-avatar'),
+                    'description' => __('Display user avatar in BuddyPress avatar areas and Change Avatar section', 'wpmake-advance-user-avatar'),
+        ),
+        ),
+        );
+
+        return $sections;
     }
 
     // -------------------------------------------------------------------------
@@ -173,6 +232,42 @@ class Settings
     }
 
     // -------------------------------------------------------------------------
+    // Backward Compatibility Migration
+    // -------------------------------------------------------------------------
+
+    /**
+     * One-time migration for users who had the legacy woocommerce_integration
+     * toggle enabled before the granular WooCommerce Display section existed.
+     *
+     * On first load after the update:
+     *  - woo_display_locations is seeded with [my_account_dashboard, account_details_tab]
+     *  - woo_my_account_uploader is set to '1'
+     *
+     * A flag option prevents this from running more than once.
+     */
+    private function maybe_migrate_woo_settings(): void
+    {
+        if (get_option('wpmake_aua_woo_migrated_v2') ) {
+            return;
+        }
+
+        $options = (array) get_option(self::OPTION_KEY, array());
+
+        // Only migrate users who had the old toggle enabled.
+        if (! empty($options['woocommerce_integration']) ) {
+            if (empty($options['woo_display_locations']) ) {
+                $options['woo_display_locations'] = array( 'my_account_dashboard', 'account_details_tab' );
+            }
+            if (! isset($options['woo_my_account_uploader']) ) {
+                $options['woo_my_account_uploader'] = '1';
+            }
+            update_option(self::OPTION_KEY, $options);
+        }
+
+        update_option('wpmake_aua_woo_migrated_v2', '1');
+    }
+
+    // -------------------------------------------------------------------------
     // Page Rendering
     // -------------------------------------------------------------------------
 
@@ -181,56 +276,87 @@ class Settings
      */
     public function render_page(): void
     {
+        $this->maybe_migrate_woo_settings();
+
         $options  = (array) get_option(self::OPTION_KEY, array());
         $sections = $this->get_sections();
         ?>
         <div class="wrap wpmake-aua-settings-page">
             <h1 class="wpmake-aua-page-title">
-                <img src="<?php echo esc_url(WPMAKE_ADVANCE_USER_AVATAR_ASSETS_URL . '/images/icon.png'); ?>" width="50px" height="50px"/>
-                <?php esc_html_e('Users Avatar', 'wpmake-advance-user-avatar'); ?>
+                <img src="<?php echo esc_url(WPMAKE_ADVANCE_USER_AVATAR_ASSETS_URL . '/images/icon.png'); ?>" width="50" height="50" alt="" />
+        <?php esc_html_e('Users Avatar', 'wpmake-advance-user-avatar'); ?>
             </h1>
+
+        <?php if ($this->is_woocommerce_active() ) : ?>
+                <div class="wpmake-aua-woo-banner">
+                    <span class="dashicons dashicons-cart wpmake-aua-woo-banner-icon"></span>
+                    <p>
+                        <strong><?php esc_html_e('WooCommerce detected.', 'wpmake-advance-user-avatar'); ?></strong>
+            <?php esc_html_e("Avatar settings below are applied to your store's My Account page, product reviews, and checkout — giving customers a personalised shopping experience.", 'wpmake-advance-user-avatar'); ?>
+                    </p>
+                </div>
+        <?php endif; ?>
 
             <div class="wpmake-aua-layout">
                 <div class="wpmake-aua-layout-main">
                     <form method="post" action="options.php">
-                        <?php settings_fields(self::OPTION_KEY); ?>
+        <?php settings_fields(self::OPTION_KEY); ?>
 
-                        <?php foreach ( $sections as $section_id => $section ) : ?>
-                            <div class="wpmake-aua-section">
+        <?php foreach ( $sections as $section_id => $section ) : ?>
+            <?php $is_locked = ! empty($section['locked']); ?>
+                            <div class="wpmake-aua-section<?php echo $is_locked ? ' wpmake-aua-section--locked' : ''; ?>">
                                 <div class="wpmake-aua-section-header">
                                     <h2 class="wpmake-aua-section-title">
-                                        <?php echo esc_html($section['title']); ?>
-                                        <?php if (! empty($section['badge']) ) : ?>
-                                            <span class="wpmake-aua-badge"><?php echo esc_html($section['badge']); ?></span>
-                                        <?php endif; ?>
+            <?php echo esc_html($section['title']); ?>
+            <?php if (! empty($section['badge']) ) : ?>
+                <?php if (is_array($section['badge']) ) : ?>
+                                                <span class="wpmake-aua-badge wpmake-aua-badge--<?php echo esc_attr($section['badge']['type']); ?>">
+                                                    <span class="dashicons <?php echo esc_attr($section['badge']['icon']); ?>"></span>
+                    <?php echo esc_html($section['badge']['text']); ?>
+                                                </span>
+                                            <?php else : ?>
+                                                <span class="wpmake-aua-badge"><?php echo esc_html($section['badge']); ?></span>
+                                            <?php endif; ?>
+            <?php endif; ?>
                                     </h2>
                                 </div>
 
-                                <div class="wpmake-aua-section-body">
-                                    <?php foreach ( $section['fields'] as $field_key => $field ) : ?>
-                                        <div class="wpmake-aua-field-row">
-                                            <div class="wpmake-aua-field-label">
-                                                <strong>
-                                                    <?php echo esc_html($field['label']); ?>
-                                                    <?php if (! empty($field['badge']) ) : ?>
-                                                        <span class="wpmake-aua-badge"><?php echo esc_html($field['badge']); ?></span>
-                                                    <?php endif; ?>
-                                                </strong>
-                                                <?php if (! empty($field['description']) ) : ?>
-                                                    <p><?php echo esc_html($field['description']); ?></p>
-                                                <?php endif; ?>
+                                <div class="wpmake-aua-section-body-wrap">
+                                    <div class="wpmake-aua-section-body">
+            <?php foreach ( $section['fields'] as $field_key => $field ) : ?>
+                                            <div class="wpmake-aua-field-row">
+                                                <div class="wpmake-aua-field-label">
+                                                    <strong>
+                <?php echo esc_html($field['label']); ?>
+                <?php if (! empty($field['badge']) && is_string($field['badge']) ) : ?>
+                                                            <span class="wpmake-aua-badge"><?php echo esc_html($field['badge']); ?></span>
+                <?php endif; ?>
+                                                    </strong>
+                <?php if (! empty($field['description']) ) : ?>
+                                                        <p><?php echo esc_html($field['description']); ?></p>
+                <?php endif; ?>
+                                                </div>
+                                                <div class="wpmake-aua-field-control">
+                <?php $this->render_field($field_key, $field, $options); ?>
+                                                </div>
                                             </div>
-                                            <div class="wpmake-aua-field-control">
-                                                <?php $this->render_field($field_key, $field, $options); ?>
+            <?php endforeach; ?>
+                                    </div>
+
+            <?php if ($is_locked ) : ?>
+                                        <div class="wpmake-aua-locked-overlay">
+                                            <div class="wpmake-aua-locked-message">
+                                                <span class="dashicons dashicons-lock"></span>
+                                                <p><?php esc_html_e('WooCommerce is required', 'wpmake-advance-user-avatar'); ?></p>
                                             </div>
                                         </div>
-                                    <?php endforeach; ?>
+            <?php endif; ?>
                                 </div>
                             </div>
-                        <?php endforeach; ?>
+        <?php endforeach; ?>
 
                         <div class="wpmake-aua-form-actions">
-                            <?php submit_button(__('Save Changes', 'wpmake-advance-user-avatar'), 'primary wpmake-aua-save-btn', 'submit', false); ?>
+        <?php submit_button(__('Save Changes', 'wpmake-advance-user-avatar'), 'primary wpmake-aua-save-btn', 'submit', false); ?>
                             <button type="button" class="button button-secondary wpmake-aua-cancel-btn"
                                 onclick="window.history.back();">
                                 <?php esc_html_e('Cancel', 'wpmake-advance-user-avatar'); ?>
@@ -240,7 +366,7 @@ class Settings
                 </div>
 
                 <div class="wpmake-aua-layout-sidebar">
-                    <?php $this->render_sidebar(); ?>
+        <?php $this->render_sidebar(); ?>
                 </div>
             </div>
         </div>
@@ -253,24 +379,24 @@ class Settings
     private function render_sidebar(): void
     {
         $shortcodes = array(
-            array(
-                'code'        => '[wpmake_advance_user_avatar]',
-                'description' => __('Add a profile picture upload form, allowing users to upload or remove their avatar image.', 'wpmake-advance-user-avatar'),
-            ),
-            array(
-                'code'        => '[wpmake_advance_user_avatar_upload]',
-                'description' => __('Display the avatar upload form for the logged-in user.', 'wpmake-advance-user-avatar'),
-            ),
+        array(
+        'code'        => '[wpmake_advance_user_avatar]',
+        'description' => __('Add a profile picture upload form, allowing users to upload or remove their avatar image.', 'wpmake-advance-user-avatar'),
+        ),
+        array(
+        'code'        => '[wpmake_advance_user_avatar_upload]',
+        'description' => __('Display the avatar upload form for the logged-in user.', 'wpmake-advance-user-avatar'),
+        ),
         );
         ?>
         <div class="wpmake-aua-sidebar-card">
             <div class="wpmake-aua-sidebar-card-header">
                 <span class="dashicons dashicons-shortcode"></span>
-                <?php esc_html_e('Available Shortcodes', 'wpmake-advance-user-avatar'); ?>
+        <?php esc_html_e('Available Shortcodes', 'wpmake-advance-user-avatar'); ?>
             </div>
             <div class="wpmake-aua-sidebar-card-body">
                 <ul class="wpmake-aua-shortcode-list">
-                    <?php foreach ( $shortcodes as $shortcode ) : ?>
+        <?php foreach ( $shortcodes as $shortcode ) : ?>
                         <li class="wpmake-aua-shortcode-item">
                             <button
                                 type="button"
@@ -283,13 +409,13 @@ class Settings
                             </button>
                             <p><?php echo esc_html($shortcode['description']); ?></p>
                         </li>
-                    <?php endforeach; ?>
+        <?php endforeach; ?>
                 </ul>
             </div>
             <div class="wpmake-aua-sidebar-card-footer">
                 <a href="https://wpmake.net" target="_blank" rel="noopener noreferrer" class="wpmake-aua-docs-link">
                     <span class="dashicons dashicons-external"></span>
-                    <?php esc_html_e('Visit wpmake.net for full documentation', 'wpmake-advance-user-avatar'); ?>
+        <?php esc_html_e('Visit wpmake.net for full documentation', 'wpmake-advance-user-avatar'); ?>
                 </a>
             </div>
         </div>
@@ -324,6 +450,9 @@ class Settings
             break;
         case 'thumbnail_size':
             $this->render_thumbnail_size($key, $field, $options);
+            break;
+        case 'checkbox_group':
+            $this->render_checkbox_group($key, $field, $options);
             break;
         }
     }
@@ -415,7 +544,7 @@ class Settings
     private function render_image_size( string $key, array $field, array $options ): void
     {
         $defaults = $field['default'] ?? array( 'width' => 500, 'height' => 500 );
-        $size     = isset($options[ $key ]) ? $options[ $key ] : $defaults;
+        $size     = $options[ $key ] ?? $defaults;
         $base     = self::OPTION_KEY . '[' . $key . ']';
         ?>
         <div class="wpmake-aua-image-size-wrap">
@@ -479,6 +608,38 @@ class Settings
         <?php endif;
     }
 
+    /**
+     * Renders a 2-column grid of checkboxes, each with a label and optional sub-label.
+     *
+     * Choices schema:
+     *   'value_key' => [ 'label' => '...', 'sublabel' => '...' ]
+     */
+    private function render_checkbox_group( string $key, array $field, array $options ): void
+    {
+        $checked_values = isset($options[ $key ]) ? (array) $options[ $key ] : array();
+        $base_name      = self::OPTION_KEY . '[' . $key . '][]';
+        ?>
+        <div class="wpmake-aua-checkbox-group">
+        <?php foreach ( $field['choices'] as $value => $choice ) : ?>
+                <label class="wpmake-aua-checkbox-item">
+                    <input
+                        type="checkbox"
+                        name="<?php echo esc_attr($base_name); ?>"
+                        value="<?php echo esc_attr($value); ?>"
+            <?php checked(in_array($value, $checked_values, true)); ?>
+                    />
+                    <span class="wpmake-aua-checkbox-text">
+                        <span class="wpmake-aua-checkbox-label"><?php echo esc_html($choice['label']); ?></span>
+            <?php if (! empty($choice['sublabel']) ) : ?>
+                            <span class="wpmake-aua-checkbox-sublabel"><?php echo esc_html($choice['sublabel']); ?></span>
+            <?php endif; ?>
+                    </span>
+                </label>
+        <?php endforeach; ?>
+        </div>
+        <?php
+    }
+
     // -------------------------------------------------------------------------
     // Sanitization
     // -------------------------------------------------------------------------
@@ -524,6 +685,25 @@ class Settings
         $output['cropping_interface']     = ! empty($input['cropping_interface']) ? '1' : '';
         $output['capture_picture']        = ! empty($input['capture_picture']) ? '1' : '';
         $output['woocommerce_integration'] = ! empty($input['woocommerce_integration']) ? '1' : '';
+
+        // WooCommerce Display — granular location checkboxes.
+        $allowed_locations = array(
+        'my_account_dashboard',
+        'account_details_tab',
+        'order_history',
+        'product_reviews',
+        'checkout_page',
+        'wishlist',
+        );
+        if (isset($input['woo_display_locations']) && is_array($input['woo_display_locations']) ) {
+            $output['woo_display_locations'] = array_values(
+                array_intersect($input['woo_display_locations'], $allowed_locations)
+            );
+        } else {
+            $output['woo_display_locations'] = array();
+        }
+
+        $output['woo_my_account_uploader'] = ! empty($input['woo_my_account_uploader']) ? '1' : '';
 
         // BuddyPress — also syncs the bp-disable-avatar-uploads option.
         if (! empty($input['buddypress_integration']) ) {

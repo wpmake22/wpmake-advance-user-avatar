@@ -347,6 +347,149 @@
 	}
 
 	// -----------------------------------------------------------------------
+	// WooCommerce detected banner
+	// -----------------------------------------------------------------------
+
+	.wpmake-aua-woo-banner {
+		display: flex;
+		align-items: flex-start;
+		gap: 12px;
+		background: #f5f3ff;
+		border: 1px solid #c4b5fd;
+		border-radius: 10px;
+		padding: 14px 18px;
+		margin-bottom: 20px;
+
+		.wpmake-aua-woo-banner-icon {
+			font-size: 20px;
+			width: 20px;
+			height: 20px;
+			color: #7c3aed;
+			flex-shrink: 0;
+			margin-top: 1px;
+		}
+
+		p {
+			margin: 0;
+			font-size: 13px;
+			color: #3b0764;
+			line-height: 1.6;
+
+			strong {
+				color: #5b21b6;
+			}
+		}
+	}
+
+	// Locked section (WooCommerce not active)
+	.wpmake-aua-section-body-wrap {
+		position: relative;
+	}
+
+	.wpmake-aua-section--locked .wpmake-aua-section-body {
+		filter: blur(3px);
+		pointer-events: none;
+		user-select: none;
+	}
+
+	.wpmake-aua-locked-overlay {
+		position: absolute;
+		inset: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: rgba(255, 255, 255, 0.45);
+		z-index: 10;
+	}
+
+	.wpmake-aua-locked-message {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 10px;
+		background: #fff;
+		border: 1px solid #e5e7eb;
+		border-radius: 10px;
+		padding: 20px 36px;
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+		text-align: center;
+
+		.dashicons {
+			font-size: 28px;
+			width: 28px;
+			height: 28px;
+			color: #9ca3af;
+		}
+
+		p {
+			margin: 0;
+			font-size: 13.5px;
+			font-weight: 600;
+			color: #374151;
+		}
+	}
+
+	// WooCommerce-flavoured section badge
+	.wpmake-aua-badge--woocommerce {
+		background: #f5f3ff;
+		color: #5b21b6;
+		border-color: #c4b5fd;
+
+		.dashicons {
+			font-size: 13px;
+			width: 13px;
+			height: 13px;
+			vertical-align: middle;
+			margin-top: -1px;
+		}
+	}
+
+	// -----------------------------------------------------------------------
+	// Checkbox group (2-column grid)
+	// -----------------------------------------------------------------------
+
+	.wpmake-aua-checkbox-group {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 12px 24px;
+	}
+
+	.wpmake-aua-checkbox-item {
+		display: flex;
+		align-items: flex-start;
+		gap: 10px;
+		cursor: pointer;
+
+		input[type="checkbox"] {
+			margin: 3px 0 0;
+			width: 16px;
+			height: 16px;
+			flex-shrink: 0;
+			accent-color: #2563eb;
+			cursor: pointer;
+		}
+	}
+
+	.wpmake-aua-checkbox-text {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+	}
+
+	.wpmake-aua-checkbox-label {
+		font-size: 13.5px;
+		color: #111827;
+		font-weight: 500;
+		line-height: 1.4;
+	}
+
+	.wpmake-aua-checkbox-sublabel {
+		font-size: 11.5px;
+		color: #6b7280;
+		line-height: 1.4;
+	}
+
+	// -----------------------------------------------------------------------
 	// Two-column layout
 	// -----------------------------------------------------------------------
 
