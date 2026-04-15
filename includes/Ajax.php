@@ -211,7 +211,7 @@ class Ajax {
 
 			$url = wp_get_attachment_url( $attachment_id );
 
-			if ( isset( $options['cropping_interface'] ) && $options['cropping_interface'] ) {
+			if ( isset( $options['cropping_interface'] ) && $options['cropping_interface'] && ! empty( $cropped_image_size ) ) {
 				// Retrieves original picture height and width.
 				list( $original_image_width, $original_image_height ) = getimagesize( $file_path );
 

@@ -287,14 +287,10 @@ class Frontend {
 		$suffix  = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 		$options = get_option( 'wpmake_advance_user_avatar_settings', array() );
 
-		wp_enqueue_script( 'wpmake-advance-user-avatar-frontend-script', WPMAKE_ADVANCE_USER_AVATAR_ASSETS_URL . '/js/frontend/wpmake-advance-user-avatar-frontend' . $suffix . '.js', array( 'jquery' ), WPMAKE_ADVANCE_USER_AVATAR_VERSION, false );
-		wp_enqueue_script( 'wpmake-sweetalert2', WPMAKE_ADVANCE_USER_AVATAR_ASSETS_URL . '/js/sweetalert2/sweetalert2.min.js', array( 'jquery' ), '11.4.8', false );
-		wp_enqueue_script( 'wpmake-advance-user-avatar-jcrop-script', WPMAKE_ADVANCE_USER_AVATAR_ASSETS_URL . '/js/jquery-Jcrop/jquery.Jcrop.min.js', array( 'jquery' ), WPMAKE_ADVANCE_USER_AVATAR_VERSION, false );
+		wp_enqueue_script( 'wpmake-advance-user-avatar-frontend-script', WPMAKE_ADVANCE_USER_AVATAR_ASSETS_URL . '/js/frontend/wpmake-advance-user-avatar-frontend' . $suffix . '.js', array( 'jquery' ), WPMAKE_ADVANCE_USER_AVATAR_VERSION, true );
 		wp_enqueue_script( 'wpmake-advance-user-avatar-webcam-script', WPMAKE_ADVANCE_USER_AVATAR_ASSETS_URL . '/js/webcam/webcam' . $suffix . '.js', array( 'jquery' ), WPMAKE_ADVANCE_USER_AVATAR_VERSION, true );
 
 		wp_enqueue_style( 'wpmake-advance-user-avatar-frontend-style', WPMAKE_ADVANCE_USER_AVATAR_ASSETS_URL . '/css/wpmake-advance-user-avatar-frontend.css', array(), WPMAKE_ADVANCE_USER_AVATAR_VERSION );
-		wp_enqueue_style( 'wpmake-sweetalert2', WPMAKE_ADVANCE_USER_AVATAR_ASSETS_URL . '/css/sweetalert2/sweetalert2.min.css', array(), '11.4.8' );
-		wp_enqueue_style( 'wpmake-advance-user-avatar-jcrop-style', WPMAKE_ADVANCE_USER_AVATAR_ASSETS_URL . '/css/jquery.Jcrop.min.css', array(), WPMAKE_ADVANCE_USER_AVATAR_VERSION );
 
 		wp_localize_script(
 			'wpmake-advance-user-avatar-frontend-script',
@@ -308,19 +304,22 @@ class Frontend {
 				'wpmake_advance_user_avatar_crop_picture_title' => esc_html__( 'Crop Your Picture', 'wpmake-advance-user-avatar' ),
 				'wpmake_advance_user_avatar_crop_picture_button' => esc_html__( 'Crop Picture', 'wpmake-advance-user-avatar' ),
 				'wpmake_advance_user_avatar_capture'       => esc_html__( 'Capture', 'wpmake-advance-user-avatar' ),
-				'wpmake_advance_user_avatar_ssl_error_title' => esc_html__( 'SSl Certificate Error', 'wpmake-advance-user-avatar' ),
-				'wpmake_advance_user_avatar_ssl_error_text' => esc_html__( 'The site must be secure. Please enable https connection.', 'wpmake-advance-user-avatar' ),
-				'wpmake_advance_user_avatar_permission_error_title' => esc_html__( 'Permission Error', 'wpmake-advance-user-avatar' ),
-				'wpmake_advance_user_avatar_permission_error_text' => esc_html__( 'Please allow access to webcam.', 'wpmake-advance-user-avatar' ),
+				'wpmake_advance_user_avatar_ssl_error_title' => esc_html__( 'Camera Unavailable', 'wpmake-advance-user-avatar' ),
+				'wpmake_advance_user_avatar_ssl_error_text' => esc_html__( 'Camera access requires a secure (HTTPS) connection. You can upload a photo from your device instead.', 'wpmake-advance-user-avatar' ),
+				'wpmake_advance_user_avatar_permission_error_title' => esc_html__( 'Camera Access Denied', 'wpmake-advance-user-avatar' ),
+				'wpmake_advance_user_avatar_permission_error_text' => esc_html__( 'Camera access was blocked. Allow it in your browser settings, or upload a photo instead.', 'wpmake-advance-user-avatar' ),
 				'wpmake_advance_user_avatar_cancel_button' => esc_html__( 'Cancel', 'wpmake-advance-user-avatar' ),
-				'wpmake_advance_user_avatar_cancel_button_confirmation' => esc_html__( 'OK', 'wpmake-advance-user-avatar' ),
+				'wpmake_advance_user_avatar_cancel_button_confirmation' => esc_html__( 'Close', 'wpmake-advance-user-avatar' ),
 				'wpmake_advance_user_avatar_enable_cropping_interface' => $options['cropping_interface'] ?? false,
 				'wpmake_assets_url'                        => WPMAKE_ADVANCE_USER_AVATAR_ASSETS_URL,
 				'wpmake_advance_user_avatar_upload_success_message' => esc_html__( 'Avatar has been uploaded successfully.', 'wpmake-advance-user-avatar' ),
 				'wpmake_advance_user_avatar_remove_confirm_text' => esc_html__( 'Remove your avatar?', 'wpmake-advance-user-avatar' ),
 				'wpmake_advance_user_avatar_remove_yes'    => esc_html__( 'Yes, remove', 'wpmake-advance-user-avatar' ),
-				'wpmake_advance_user_avatar_use_upload_instead' => esc_html__( 'Use Upload instead', 'wpmake-advance-user-avatar' ),
+				'wpmake_advance_user_avatar_use_upload_instead' => esc_html__( 'Upload a Photo', 'wpmake-advance-user-avatar' ),
 				'wpmake_advance_user_avatar_crop_ratio_label' => esc_html__( 'Square crop (1:1)', 'wpmake-advance-user-avatar' ),
+				'wpmake_advance_user_avatar_retake'        => esc_html__( 'Retake', 'wpmake-advance-user-avatar' ),
+				'wpmake_advance_user_avatar_reupload'      => esc_html__( 'Re-upload', 'wpmake-advance-user-avatar' ),
+				'wpmake_advance_user_avatar_save_avatar'   => esc_html__( 'Save avatar', 'wpmake-advance-user-avatar' ),
 			)
 		);
 	}

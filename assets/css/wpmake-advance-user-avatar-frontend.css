@@ -1,1 +1,531 @@
-.wpmake-advance-user-avatar-container{display:flex;flex-direction:column;justify-content:center;align-items:center;width:400px;height:300px;padding:30px}.wpmake-advance-user-avatar-container h4{color:#00008b;margin-bottom:50px}.wpmake-advance-user-avatar-container .profile-preview{max-width:96px;max-height:96px;margin-bottom:15px}.wpmake-advance-user-avatar-container .wpmake-advance-user-avatar-upload{display:flex;flex-direction:column;align-items:center}.wpmake-advance-user-avatar-container .wpmake-advance-user-avatar-upload .wpmake-advance-user-avatar-upload-node{height:0;width:0;margin:0;padding:0;float:left;border:0;overflow:hidden}.wpmake-advance-user-avatar-container .wpmake-advance-user-avatar-upload button{padding:8px 16px;border-radius:4px;cursor:pointer;font-size:14px;transition:background-color .15s,border-color .15s,color .15s}.wpmake-advance-user-avatar-container .wpmake-advance-user-avatar-upload button.wpmake_advance_user_avatar_upload{background-color:#0693e3;border:2px solid #0693e3;color:#fff}.wpmake-advance-user-avatar-container .wpmake-advance-user-avatar-upload button.wpmake_advance_user_avatar_upload:hover{background-color:#0578c1;border-color:#0578c1}.wpmake-advance-user-avatar-container .wpmake-advance-user-avatar-upload button.wpmake_advance_user_avatar_take_snapshot{background-color:transparent;border:2px solid #475bd9;color:#475bd9}.wpmake-advance-user-avatar-container .wpmake-advance-user-avatar-upload button.wpmake_advance_user_avatar_take_snapshot:hover{background-color:#475bd9;color:#fff}.wpmake-advance-user-avatar-container .wpmake-advance-user-avatar-upload button.wpmake-advance-user-avatar-remove{background-color:transparent;border:2px solid #888;color:#555}.wpmake-advance-user-avatar-container .wpmake-advance-user-avatar-upload button.wpmake-advance-user-avatar-remove:hover{background-color:#f0f0f0;border-color:#666}.wpmake-advance-user-avatar-upload .wpmake-remove-confirm{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:4px}.wpmake-advance-user-avatar-upload .wpmake-remove-confirm .wpmake-remove-confirm-text{font-size:14px;color:#555}.wpmake-advance-user-avatar-upload .wpmake-remove-confirm .wpmake-remove-yes{background-color:transparent;border:2px solid #dc3232;color:#dc3232;padding:6px 14px;border-radius:4px;cursor:pointer;font-size:14px;transition:background-color .15s,color .15s}.wpmake-advance-user-avatar-upload .wpmake-remove-confirm .wpmake-remove-yes:hover{background-color:#dc3232;color:#fff}.wpmake-advance-user-avatar-upload .wpmake-remove-confirm .wpmake-remove-no{background-color:transparent;border:2px solid #aaa;color:#555;padding:6px 14px;border-radius:4px;cursor:pointer;font-size:14px;transition:background-color .15s}.wpmake-advance-user-avatar-upload .wpmake-remove-confirm .wpmake-remove-no:hover{background-color:#f0f0f0}.wpmake-crop-ratio-label{font-size:12px;color:#666;margin:6px 0 0;text-align:center}.wpmake-advance-user-avatar-container .wpmake-advance-user-avatar-error{background:rgba(255,79,85,.1);color:#ff030b;font-size:14px;border:2px solid #ff4f55;padding:10px;border-radius:10px;display:flex;justify-content:center;gap:15px}.wpmake-advance-user-avatar-container .wpmake-advance-user-avatar-error img{flex:13%}.wpmake-advance-user-avatar-container .wpmake-advance-user-avatar-success{background:rgba(0,128,0,.1);color:green;font-size:14px;border:2px solid green;padding:10px;border-radius:10px;display:flex;justify-content:center;gap:15px}.wpmake-advance-user-avatar-container .wpmake-advance-user-avatar-success img{flex:13%}.woocommerce-MyAccount-content .wpmake-advance-user-avatar-container{width:100%;height:auto;padding:0}.avatar-50{width:50px!important;height:50px!important}.avatar-100{width:100px!important;height:100px!important}.avatar-150{width:150px!important;height:150px!important}
+/* =============================================================
+   WPMake Advance User Avatar — Frontend Styles
+   ============================================================= */
+
+/* --- Upload widget container --------------------------------- */
+.wpmake-advance-user-avatar-container {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	width: 400px;
+	height: 300px;
+	padding: 30px;
+}
+.wpmake-advance-user-avatar-container h4 {
+	color: darkblue;
+	margin-bottom: 50px;
+}
+.wpmake-advance-user-avatar-container .profile-preview {
+	max-width: 96px;
+	max-height: 96px;
+	margin-bottom: 15px;
+}
+.wpmake-advance-user-avatar-container .wpmake-advance-user-avatar-upload {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+.wpmake-advance-user-avatar-container .wpmake-advance-user-avatar-upload .wpmake-advance-user-avatar-upload-node {
+	height: 0;
+	width: 0;
+	margin: 0;
+	padding: 0;
+	float: left;
+	border: 0;
+	overflow: hidden;
+}
+
+/* --- Button hierarchy ---------------------------------------- */
+.wpmake-advance-user-avatar-container .wpmake-advance-user-avatar-upload button {
+	padding: 8px 16px;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 14px;
+	transition: background-color .15s, border-color .15s, color .15s;
+}
+
+/* Primary: Upload file — solid blue */
+.wpmake-advance-user-avatar-container .wpmake-advance-user-avatar-upload button.wpmake_advance_user_avatar_upload {
+	background-color: #0693e3;
+	border: 2px solid #0693e3;
+	color: #fff;
+}
+.wpmake-advance-user-avatar-container .wpmake-advance-user-avatar-upload button.wpmake_advance_user_avatar_upload:hover {
+	background-color: #0578c1;
+	border-color: #0578c1;
+}
+
+/* Secondary: Take Picture — outlined purple */
+.wpmake-advance-user-avatar-container .wpmake-advance-user-avatar-upload button.wpmake_advance_user_avatar_take_snapshot {
+	background-color: transparent;
+	border: 2px solid #475bd9;
+	color: #475bd9;
+}
+.wpmake-advance-user-avatar-container .wpmake-advance-user-avatar-upload button.wpmake_advance_user_avatar_take_snapshot:hover {
+	background-color: #475bd9;
+	color: #fff;
+}
+
+/* Neutral: Remove — outlined gray (resting) */
+.wpmake-advance-user-avatar-container .wpmake-advance-user-avatar-upload button.wpmake-advance-user-avatar-remove {
+	background-color: transparent;
+	border: 2px solid #888;
+	color: #555;
+}
+.wpmake-advance-user-avatar-container .wpmake-advance-user-avatar-upload button.wpmake-advance-user-avatar-remove:hover {
+	background-color: #f0f0f0;
+	border-color: #666;
+}
+
+/* Inline remove confirmation bar */
+.wpmake-advance-user-avatar-upload .wpmake-remove-confirm {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+	margin-top: 4px;
+}
+.wpmake-advance-user-avatar-upload .wpmake-remove-confirm .wpmake-remove-confirm-text {
+	font-size: 14px;
+	color: #555;
+}
+.wpmake-advance-user-avatar-upload .wpmake-remove-confirm .wpmake-remove-yes {
+	background-color: transparent;
+	border: 2px solid #dc3232;
+	color: #dc3232;
+	padding: 6px 14px;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 14px;
+	transition: background-color .15s, color .15s;
+}
+.wpmake-advance-user-avatar-upload .wpmake-remove-confirm .wpmake-remove-yes:hover {
+	background-color: #dc3232;
+	color: #fff;
+}
+.wpmake-advance-user-avatar-upload .wpmake-remove-confirm .wpmake-remove-no {
+	background-color: transparent;
+	border: 2px solid #aaa;
+	color: #555;
+	padding: 6px 14px;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 14px;
+	transition: background-color .15s;
+}
+.wpmake-advance-user-avatar-upload .wpmake-remove-confirm .wpmake-remove-no:hover {
+	background-color: #f0f0f0;
+}
+
+/* --- Status messages ----------------------------------------- */
+.wpmake-advance-user-avatar-container .wpmake-advance-user-avatar-error {
+	background: rgba(255,79,85,.1);
+	color: #ff030b;
+	font-size: 14px;
+	border: 2px solid #ff4f55;
+	padding: 10px;
+	border-radius: 10px;
+	display: flex;
+	justify-content: center;
+	gap: 15px;
+}
+.wpmake-advance-user-avatar-container .wpmake-advance-user-avatar-error img { flex: 13%; }
+
+.wpmake-advance-user-avatar-container .wpmake-advance-user-avatar-success {
+	background: rgba(0,128,0,.1);
+	color: green;
+	font-size: 14px;
+	border: 2px solid green;
+	padding: 10px;
+	border-radius: 10px;
+	display: flex;
+	justify-content: center;
+	gap: 15px;
+}
+.wpmake-advance-user-avatar-container .wpmake-advance-user-avatar-success img { flex: 13%; }
+
+/* --- WooCommerce override ------------------------------------ */
+.woocommerce-MyAccount-content .wpmake-advance-user-avatar-container {
+	width: 100%;
+	height: auto;
+	padding: 0;
+}
+
+/* --- Avatar display size utilities -------------------------- */
+.avatar-50  { width:  50px !important; height:  50px !important; }
+.avatar-100 { width: 100px !important; height: 100px !important; }
+.avatar-150 { width: 150px !important; height: 150px !important; }
+
+
+/* =============================================================
+   Custom Modal (replaces SweetAlert2)
+   ============================================================= */
+.wpmake-modal-overlay {
+	position: fixed;
+	top: 0; right: 0; bottom: 0; left: 0;
+	background: rgba(0,0,0,.55);
+	z-index: 999999;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.wpmake-modal {
+	background: #fff;
+	border-radius: 8px;
+	max-width: 90vw;
+	max-height: 92vh;
+	overflow: auto;
+	box-shadow: 0 8px 40px rgba(0,0,0,.3);
+}
+.wpmake-modal-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 16px 20px 0;
+}
+.wpmake-modal-title {
+	margin: 0;
+	font-size: 16px;
+	font-weight: 600;
+}
+.wpmake-modal-close {
+	background: none;
+	border: none;
+	font-size: 22px;
+	line-height: 1;
+	cursor: pointer;
+	color: #888;
+	padding: 0 2px;
+}
+.wpmake-modal-close:hover { color: #333; }
+.wpmake-modal-body { padding: 16px 20px; }
+.wpmake-modal-footer {
+	padding: 0 20px 16px;
+	display: flex;
+	gap: 8px;
+	justify-content: flex-end;
+}
+
+/* Shared button base used inside modals */
+.wpmake-btn {
+	padding: 8px 18px;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 14px;
+	font-weight: 500;
+	border: 2px solid transparent;
+	transition: background-color .15s, border-color .15s, color .15s;
+}
+.wpmake-btn-primary {
+	background: #6e41e2;
+	border-color: #6e41e2;
+	color: #fff;
+}
+.wpmake-btn-primary:hover { background: #5a33c4; border-color: #5a33c4; }
+.wpmake-btn-secondary {
+	background: #fff;
+	border-color: #ccc;
+	color: #333;
+}
+.wpmake-btn-secondary:hover { border-color: #999; }
+.wpmake-btn-cancel {
+	background: #fff;
+	border-color: #e0e0e0;
+	color: #999;
+}
+.wpmake-btn-cancel:hover { border-color: #bbb; color: #555; }
+
+/* Webcam container centering */
+#wpmake-webcam-inner { display: flex; justify-content: center; }
+
+
+/* =============================================================
+   Custom Cropper Modal
+   ============================================================= */
+.wpmake-cropper-modal { max-width: none; }
+
+.wpmake-cropper-wrap {
+	display: flex;
+	gap: 24px;
+	align-items: flex-start;
+}
+.wpmake-cropper-left { flex: none; }
+
+/* Dark stage where the image lives */
+.wpmake-crop-stage {
+	position: relative;
+	width: 300px;
+	height: 300px;
+	background: #3c3c3c;
+	overflow: hidden;
+	cursor: move;
+	user-select: none;
+	-webkit-user-select: none;
+	border-radius: 4px;
+}
+
+/* The image being cropped */
+.wpmake-crop-image {
+	position: absolute;
+	display: block;
+	max-width: none;
+	max-height: none;
+	pointer-events: none;
+	user-select: none;
+}
+
+/* Crop selection box — dark surround via box-shadow */
+.wpmake-crop-box {
+	position: absolute;
+	box-sizing: border-box;
+	border: 2px solid rgba(255,255,255,.9);
+	box-shadow: 0 0 0 9999px rgba(0,0,0,.48);
+	cursor: move;
+}
+
+/* Rule-of-thirds grid lines */
+.wpmake-crop-box::before,
+.wpmake-crop-box::after {
+	content: "";
+	position: absolute;
+	pointer-events: none;
+}
+.wpmake-crop-box::before {
+	top: 0; bottom: 0;
+	left: 33.33%; right: 33.33%;
+	border-left:  1px solid rgba(255,255,255,.32);
+	border-right: 1px solid rgba(255,255,255,.32);
+}
+.wpmake-crop-box::after {
+	left: 0; right: 0;
+	top: 33.33%; bottom: 33.33%;
+	border-top:    1px solid rgba(255,255,255,.32);
+	border-bottom: 1px solid rgba(255,255,255,.32);
+}
+
+/* Eight resize handles */
+.wpmake-handle {
+	position: absolute;
+	width: 12px;
+	height: 12px;
+	background: #fff;
+	border-radius: 50%;
+	border: 2px solid #7c4de8;
+	box-sizing: border-box;
+}
+.wpmake-handle-nw { top: -6px;  left: -6px;  cursor: nw-resize; }
+.wpmake-handle-n  { top: -6px;  left: 50%;   margin-left: -6px; cursor: n-resize; }
+.wpmake-handle-ne { top: -6px;  right: -6px; cursor: ne-resize; }
+.wpmake-handle-e  { top: 50%;   margin-top: -6px; right: -6px;  cursor: e-resize; }
+.wpmake-handle-se { bottom: -6px; right: -6px; cursor: se-resize; }
+.wpmake-handle-s  { bottom: -6px; left: 50%; margin-left: -6px; cursor: s-resize; }
+.wpmake-handle-sw { bottom: -6px; left: -6px;  cursor: sw-resize; }
+.wpmake-handle-w  { top: 50%;   margin-top: -6px; left: -6px;  cursor: w-resize; }
+
+/* Square crop label */
+.wpmake-crop-ratio-label {
+	font-size: 12px;
+	color: #666;
+	text-align: center;
+	margin: 6px 0 0;
+}
+
+/* Drag / handles hint */
+.wpmake-crop-hint {
+	font-size: 12px;
+	color: #999;
+	text-align: center;
+	margin: 4px 0 0;
+}
+
+/* Zoom bar */
+.wpmake-zoom-bar {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-top: 10px;
+	font-size: 13px;
+}
+.wpmake-zoom-slider {
+	flex: 1;
+	accent-color: #7c4de8;
+	cursor: pointer;
+}
+.wpmake-zoom-value {
+	min-width: 36px;
+	font-weight: 600;
+	color: #7c4de8;
+	text-align: right;
+}
+
+/* Sidebar: previews + buttons */
+.wpmake-cropper-sidebar {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	min-width: 170px;
+}
+.wpmake-preview-label {
+	font-size: 13px;
+	font-weight: 600;
+	margin: 0;
+}
+.wpmake-preview-sizes {
+	display: flex;
+	align-items: flex-end;
+	gap: 12px;
+}
+.wpmake-preview-item {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 6px;
+}
+.wpmake-preview-item p {
+	font-size: 11px;
+	color: #666;
+	text-align: center;
+	margin: 0;
+	line-height: 1.4;
+}
+
+/* Circular preview canvas */
+.wpmake-preview-circle {
+	display: block;
+	border-radius: 50%;
+	background: #e8dff9;
+	flex: none;
+}
+
+.wpmake-cropper-actions {
+	margin-top: auto;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+
+/* =============================================================
+   Webcam capture — face-guide overlay
+   ============================================================= */
+
+/* Container must be relative so the overlay can fill it */
+#wpmake-webcam-inner {
+	position: relative;
+	overflow: hidden;
+	background: #0d0f1a;
+	border-radius: 6px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+/* Overlay sits on top of the live video, pointer-events off */
+.wpmake-webcam-overlay {
+	position: absolute;
+	top: 0; right: 0; bottom: 0; left: 0;
+	z-index: 10;
+	pointer-events: none;
+}
+
+/* --- Corner viewfinder brackets ----------------------------- */
+.wpmake-corner {
+	position: absolute;
+	width: 26px;
+	height: 26px;
+	border-style: solid;
+	border-color: #6b5ce7;
+}
+.wpmake-corner-tl { top: 14px;    left: 14px;   border-width: 3px 0 0 3px; border-radius: 3px 0 0 0; }
+.wpmake-corner-tr { top: 14px;    right: 14px;  border-width: 3px 3px 0 0; border-radius: 0 3px 0 0; }
+.wpmake-corner-bl { bottom: 14px; left: 14px;   border-width: 0 0 3px 3px; border-radius: 0 0 0 3px; }
+.wpmake-corner-br { bottom: 14px; right: 14px;  border-width: 0 3px 3px 0; border-radius: 0 0 3px 0; }
+
+/* --- Rule-of-thirds grid ------------------------------------ */
+.wpmake-grid {
+	position: absolute;
+	top: 0; right: 0; bottom: 0; left: 0;
+}
+.wpmake-grid-v,
+.wpmake-grid-h {
+	position: absolute;
+	background: rgba(107, 92, 231, 0.13);
+}
+.wpmake-grid-v { top: 0; bottom: 0; width: 1px; }
+.wpmake-grid-h { left: 0; right: 0; height: 1px; }
+.wpmake-grid-v1 { left: 33.33%; }
+.wpmake-grid-v2 { left: 66.66%; }
+.wpmake-grid-h1 { top: 33.33%; }
+.wpmake-grid-h2 { top: 66.66%; }
+
+/* --- Concentric face-guide circles -------------------------- */
+.wpmake-face-guide {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	/* zero-size anchor; children are absolutely centred via the same trick */
+}
+
+/* Outer oval — face silhouette shape */
+.wpmake-circle-outer {
+	position: absolute;
+	width: 130px;
+	height: 165px;
+	border: 2px dashed rgba(107, 92, 231, 0.75);
+	border-radius: 50%;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+/* Middle dashed ring */
+.wpmake-circle-mid {
+	position: absolute;
+	width: 76px;
+	height: 76px;
+	border: 1.5px dashed rgba(180, 180, 220, 0.45);
+	border-radius: 50%;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+/* Centre dot with ring */
+.wpmake-circle-dot {
+	position: absolute;
+	width: 20px;
+	height: 20px;
+	border: 1.5px solid rgba(180, 180, 220, 0.4);
+	border-radius: 50%;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+.wpmake-circle-dot::after {
+	content: "";
+	position: absolute;
+	width: 5px;
+	height: 5px;
+	background: rgba(180, 180, 220, 0.55);
+	border-radius: 50%;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+/* --- "Position face" pill badge ----------------------------- */
+.wpmake-position-badge {
+	position: absolute;
+	top: 14px;
+	right: 14px;
+	background: #6b5ce7;
+	color: #fff;
+	font-size: 13px;
+	font-weight: 600;
+	padding: 5px 14px;
+	border-radius: 20px;
+	letter-spacing: .01em;
+	white-space: nowrap;
+}
