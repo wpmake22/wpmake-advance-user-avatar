@@ -1,17 +1,17 @@
-# Copyright (C) 2025 WPMake
+# Copyright (C) 2026 WPMake
 # This file is distributed under the GNU General Public License v3.0.
 msgid ""
 msgstr ""
-"Project-Id-Version: Advanced User Avatar 1.1.2\n"
+"Project-Id-Version: Advanced User Avatar 1.2.0\n"
 "Report-Msgid-Bugs-To: dev@wpmake.net\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-11-15T09:51:47+00:00\n"
+"POT-Creation-Date: 2026-05-20T15:05:40+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.11.0\n"
+"X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: wpmake-advance-user-avatar\n"
 
 #. Plugin Name of the plugin
@@ -34,194 +34,351 @@ msgstr ""
 msgid "https://www.wpmake.net"
 msgstr ""
 
-#: includes/Admin/Admin.php:65
+#: includes/Admin/Admin.php:101
 msgid "Advanced Users Avatar"
 msgstr ""
 
-#: includes/Admin/Admin.php:66
+#: includes/Admin/Admin.php:102
+#: includes/Admin/Settings.php:287
 msgid "Users Avatar"
 msgstr ""
 
-#: includes/Admin/Admin.php:109
-#: includes/UserAvatar.php:169
-msgid "Settings"
-msgstr ""
-
-#: includes/Admin/Admin.php:116
-msgid "Store avatar in different thumbnail sizes <span style=\"color:#0693e3;\">( New )</span>"
-msgstr ""
-
-#: includes/Admin/Admin.php:124
-msgid "Max Avatar Size Allowed"
-msgstr ""
-
-#: includes/Admin/Admin.php:132
-msgid "Allowed File Type"
-msgstr ""
-
-#: includes/Admin/Admin.php:140
-msgid "Capture Picture <span style=\"color:#0693e3;\">( New )</span>"
-msgstr ""
-
-#: includes/Admin/Admin.php:148
-msgid "Cropping interface"
-msgstr ""
-
-#: includes/Admin/Admin.php:156
-msgid "Uploaded Image Size <span style=\"color:#0693e3;\">( New )</span>"
-msgstr ""
-
-#: includes/Admin/Admin.php:164
-msgid "WooCommerce Integration <span style=\"color:#0693e3;\">( New )</span>"
-msgstr ""
-
-#: includes/Admin/Admin.php:172
-msgid "BuddyPress Integration <span style=\"color:#0693e3;\">( New )</span>"
-msgstr ""
-
-#: includes/Admin/Admin.php:261
-msgid "Stores avatar in different thumbnail sizes so that a perfect avatar will be displayed anywhere in your site."
-msgstr ""
-
-#: includes/Admin/Admin.php:281
-msgid "Maximum avatar size allowed for upload. Enter file size in Kb. Leave the field empty for upload without restriction"
-msgstr ""
-
-#: includes/Admin/Admin.php:312
-msgid "The size of the final uploaded image, defaults to 500 width by 500 height."
-msgstr ""
-
-#: includes/Admin/Admin.php:331
-msgid "JPG"
-msgstr ""
-
-#: includes/Admin/Admin.php:332
-msgid "JPEG"
-msgstr ""
-
-#: includes/Admin/Admin.php:333
-msgid "GIF"
-msgstr ""
-
-#: includes/Admin/Admin.php:334
-msgid "PNG"
-msgstr ""
-
-#: includes/Admin/Admin.php:336
-msgid "Choose valid file types allowed for avatar upload."
-msgstr ""
-
-#: includes/Admin/Admin.php:359
-msgid "Allow user to crop selected or captured image."
-msgstr ""
-
-#: includes/Admin/Admin.php:382
-msgid "Display user avatar in dashboard and uploader in account details of WooCommerce My Account."
-msgstr ""
-
-#: includes/Admin/Admin.php:405
-msgid "Display user avatar in BuddyPress avatar areas and uploader in Change Avatar section of BuddyPress Profile section."
-msgstr ""
-
-#: includes/Admin/Admin.php:428
-msgid "This option will enable taking picture using webcam. Note that your site must have valid SSL enabled."
-msgstr ""
-
-#. translators: 1: Advanced User Avatar 2:: five stars
-#: includes/Admin/Admin.php:459
+#. translators: 1: Plugin name 2: Five-star rating link
+#: includes/Admin/Admin.php:133
 msgid "If you like %1$s please leave us a %2$s rating. A huge thanks in advance!"
 msgstr ""
 
-#: includes/Admin/Admin.php:461
+#: includes/Admin/Admin.php:135
 msgid "Thank You!"
 msgstr ""
 
-#: includes/Admin/Admin.php:473
+#: includes/Admin/Admin.php:147
 msgid "Thank you for using Advanced User Avatar."
 msgstr ""
 
-#: includes/Admin/Admin.php:522
+#: includes/Admin/Admin.php:190
 msgid "Sure, I'd love to!"
 msgstr ""
 
-#: includes/Admin/Admin.php:523
+#: includes/Admin/Admin.php:191
+msgid "Maybe Later"
+msgstr ""
+
+#: includes/Admin/Admin.php:192
 msgid "I already did!"
 msgstr ""
 
-#: includes/Ajax.php:71
-#: includes/Ajax.php:101
-msgid "Nonce error, please reload."
+#: includes/Admin/Settings.php:62
+msgid "WooCommerce Display"
 msgstr ""
 
-#: includes/Ajax.php:81
-msgid "User avatar removed successfully"
+#: includes/Admin/Settings.php:64
+msgid "WooCommerce"
 msgstr ""
 
-#: includes/Ajax.php:125
-msgid "Invalid file type, please contact with site administrator."
+#: includes/Admin/Settings.php:71
+msgid "Display avatar on"
 msgstr ""
 
-#. translators: %s - Max Size
-#. translators: %s - Max Size
-#: includes/Ajax.php:149
-#: includes/Ajax.php:156
-msgid "Please upload a picture with size less than %s"
+#: includes/Admin/Settings.php:72
+msgid "Choose where avatars appear in your store"
 msgstr ""
 
-#: includes/Ajax.php:168
-msgid "Upload path permission deny."
+#: includes/Admin/Settings.php:75
+msgid "My Account dashboard"
 msgstr ""
 
-#: includes/Ajax.php:295
-msgid "File cannot be uploaded."
+#: includes/Admin/Settings.php:76
+msgid "Account page header"
 msgstr ""
 
-#: includes/Frontend/Frontend.php:79
-msgid "Uploading..."
+#: includes/Admin/Settings.php:79
+msgid "Account details tab"
 msgstr ""
 
-#: includes/Frontend/Frontend.php:80
-msgid "Something wrong, please try again."
+#: includes/Admin/Settings.php:80
+msgid "Edit profile section"
 msgstr ""
 
-#: includes/Frontend/Frontend.php:81
-msgid "Crop Your Picture"
+#: includes/Admin/Settings.php:83
+msgid "Order history"
 msgstr ""
 
-#: includes/Frontend/Frontend.php:82
-msgid "Crop Picture"
+#: includes/Admin/Settings.php:84
+msgid "Next to each order"
 msgstr ""
 
-#: includes/Frontend/Frontend.php:83
-msgid "Capture"
+#: includes/Admin/Settings.php:87
+msgid "Product reviews"
 msgstr ""
 
-#: includes/Frontend/Frontend.php:84
-msgid "SSl Certificate Error"
+#: includes/Admin/Settings.php:88
+msgid "Replaces Gravatar"
 msgstr ""
 
-#: includes/Frontend/Frontend.php:85
-msgid "The site must be secure. Please enable https connection."
+#: includes/Admin/Settings.php:91
+msgid "Checkout page"
 msgstr ""
 
-#: includes/Frontend/Frontend.php:86
-msgid "Permission Error"
+#: includes/Admin/Settings.php:92
+msgid "Logged-in customer area"
 msgstr ""
 
-#: includes/Frontend/Frontend.php:87
-msgid "Please allow access to webcam."
+#: includes/Admin/Settings.php:95
+msgid "Wishlist (if active)"
 msgstr ""
 
-#: includes/Frontend/Frontend.php:88
+#: includes/Admin/Settings.php:96
+msgid "WooCommerce Wishlists"
+msgstr ""
+
+#: includes/Admin/Settings.php:102
+msgid "My Account uploader"
+msgstr ""
+
+#: includes/Admin/Settings.php:103
+msgid "Show the avatar upload widget inside My Account"
+msgstr ""
+
+#: includes/Admin/Settings.php:130
+msgid "Upload & Image"
+msgstr ""
+
+#: includes/Admin/Settings.php:135
+msgid "Max Avatar Size Allowed"
+msgstr ""
+
+#: includes/Admin/Settings.php:136
+msgid "Enter file size in KB. Leave empty for no restriction."
+msgstr ""
+
+#: includes/Admin/Settings.php:143
+msgid "Allowed File Type"
+msgstr ""
+
+#: includes/Admin/Settings.php:144
+msgid "Choose valid file types allowed for avatar upload"
+msgstr ""
+
+#: includes/Admin/Settings.php:155
+msgid "Uploaded Image Size"
+msgstr ""
+
+#: includes/Admin/Settings.php:156
+msgid "The size of the final uploaded image (width × height)"
+msgstr ""
+
+#: includes/Admin/Settings.php:164
+msgid "Store in thumbnail sizes"
+msgstr ""
+
+#: includes/Admin/Settings.php:165
+#: includes/Admin/Settings.php:192
+#: includes/Admin/Settings.php:205
+msgid "New"
+msgstr ""
+
+#: includes/Admin/Settings.php:166
+msgid "Generate 32px, 64px and 96px variants for different page contexts"
+msgstr ""
+
+#: includes/Admin/Settings.php:170
+msgid "admin bar, comments"
+msgstr ""
+
+#: includes/Admin/Settings.php:174
+msgid "My Account header"
+msgstr ""
+
+#: includes/Admin/Settings.php:178
+msgid "product reviews"
+msgstr ""
+
+#: includes/Admin/Settings.php:184
+msgid "Cropping Interface"
+msgstr ""
+
+#: includes/Admin/Settings.php:185
+msgid "Allow user to crop selected or captured image"
+msgstr ""
+
+#: includes/Admin/Settings.php:191
+msgid "Capture Picture"
+msgstr ""
+
+#: includes/Admin/Settings.php:196
+msgid "Webcam capture"
+msgstr ""
+
+#: includes/Admin/Settings.php:197
+msgid "Enable taking a photo directly from the customer's webcam"
+msgstr ""
+
+#: includes/Admin/Settings.php:198
+msgid "Requires valid SSL (HTTPS) on your domain"
+msgstr ""
+
+#: includes/Admin/Settings.php:204
+msgid "Integrations"
+msgstr ""
+
+#: includes/Admin/Settings.php:209
+msgid "BuddyPress Integration"
+msgstr ""
+
+#: includes/Admin/Settings.php:210
+msgid "Display user avatar in BuddyPress avatar areas and Change Avatar section"
+msgstr ""
+
+#: includes/Admin/Settings.php:294
+msgid "WooCommerce detected."
+msgstr ""
+
+#: includes/Admin/Settings.php:295
+msgid "Avatar settings below are applied to your store's My Account page, product reviews, and checkout — giving customers a personalised shopping experience."
+msgstr ""
+
+#: includes/Admin/Settings.php:350
+msgid "WooCommerce is required"
+msgstr ""
+
+#: includes/Admin/Settings.php:359
+msgid "Save Changes"
+msgstr ""
+
+#: includes/Admin/Settings.php:362
+#: includes/Frontend/Frontend.php:311
 msgid "Cancel"
 msgstr ""
 
-#: includes/Frontend/Frontend.php:89
-msgid "OK"
+#: includes/Admin/Settings.php:384
+msgid "Add a profile picture upload form, allowing users to upload or remove their avatar image."
 msgstr ""
 
-#: includes/Frontend/Frontend.php:92
+#: includes/Admin/Settings.php:388
+msgid "Display the avatar upload form for the logged-in user."
+msgstr ""
+
+#: includes/Admin/Settings.php:395
+msgid "Available Shortcodes"
+msgstr ""
+
+#: includes/Admin/Settings.php:405
+msgid "Copy shortcode"
+msgstr ""
+
+#: includes/Admin/Settings.php:418
+msgid "Visit wpmake.net for full documentation"
+msgstr ""
+
+#: includes/Admin/Settings.php:481
+#: includes/Admin/Settings.php:590
+msgid "Enable"
+msgstr ""
+
+#: includes/Admin/Settings.php:557
+msgid "by"
+msgstr ""
+
+#: includes/Ajax.php:69
+msgid "You must be logged in to remove your avatar."
+msgstr ""
+
+#: includes/Ajax.php:78
+msgid "User avatar removed successfully"
+msgstr ""
+
+#: includes/Ajax.php:111
+msgid "Invalid file type. Accepted: %s."
+msgstr ""
+
+#: includes/Ajax.php:135
+msgid "No file was received. Please select a file and try again."
+msgstr ""
+
+#. translators: %s - Max Size
+#: includes/Ajax.php:142
+msgid "Please upload a picture with size less than %s"
+msgstr ""
+
+#: includes/Ajax.php:154
+msgid "Upload path permission deny."
+msgstr ""
+
+#: includes/Ajax.php:280
+msgid "File cannot be uploaded."
+msgstr ""
+
+#: includes/Frontend/Frontend.php:302
+msgid "Uploading..."
+msgstr ""
+
+#: includes/Frontend/Frontend.php:303
+msgid "Something wrong, please try again."
+msgstr ""
+
+#: includes/Frontend/Frontend.php:304
+msgid "Crop Your Picture"
+msgstr ""
+
+#: includes/Frontend/Frontend.php:305
+msgid "Crop Picture"
+msgstr ""
+
+#: includes/Frontend/Frontend.php:306
+msgid "Capture"
+msgstr ""
+
+#: includes/Frontend/Frontend.php:307
+msgid "Camera Unavailable"
+msgstr ""
+
+#: includes/Frontend/Frontend.php:308
+msgid "Camera access requires a secure (HTTPS) connection. You can upload a photo from your device instead."
+msgstr ""
+
+#: includes/Frontend/Frontend.php:309
+msgid "Camera Access Denied"
+msgstr ""
+
+#: includes/Frontend/Frontend.php:310
+msgid "Camera access was blocked. Allow it in your browser settings, or upload a photo instead."
+msgstr ""
+
+#: includes/Frontend/Frontend.php:312
+msgid "Close"
+msgstr ""
+
+#: includes/Frontend/Frontend.php:315
 msgid "Avatar has been uploaded successfully."
+msgstr ""
+
+#: includes/Frontend/Frontend.php:316
+msgid "Remove your avatar?"
+msgstr ""
+
+#: includes/Frontend/Frontend.php:317
+msgid "Yes, remove"
+msgstr ""
+
+#: includes/Frontend/Frontend.php:318
+msgid "Upload a Photo"
+msgstr ""
+
+#: includes/Frontend/Frontend.php:319
+msgid "Square crop (1:1)"
+msgstr ""
+
+#: includes/Frontend/Frontend.php:320
+msgid "Retake"
+msgstr ""
+
+#: includes/Frontend/Frontend.php:321
+msgid "Re-upload"
+msgstr ""
+
+#: includes/Frontend/Frontend.php:322
+msgid "Save avatar"
 msgstr ""
 
 #: includes/Functions/CoreFunctions.php:187
@@ -239,6 +396,10 @@ msgstr ""
 
 #: includes/UserAvatar.php:169
 msgid "View User Avatar Settings"
+msgstr ""
+
+#: includes/UserAvatar.php:169
+msgid "Settings"
 msgstr ""
 
 #: templates/wpmake-advance-user-avatar-upload-page.php:48
@@ -267,37 +428,31 @@ msgstr ""
 msgid "Display Avatar"
 msgstr ""
 
-#: chunks/user-avatar/block.json
 #: src/user-avatar/block.json
 msgctxt "block title"
 msgid "Advanced User Avatar"
 msgstr ""
 
-#: chunks/user-avatar/block.json
 #: src/user-avatar/block.json
 msgctxt "block description"
 msgid "This block allows user to upload their avatar"
 msgstr ""
 
-#: chunks/user-avatar/block.json
 #: src/user-avatar/block.json
 msgctxt "block keyword"
 msgid "user avatar"
 msgstr ""
 
-#: chunks/user-avatar/block.json
 #: src/user-avatar/block.json
 msgctxt "block keyword"
 msgid "avatar"
 msgstr ""
 
-#: chunks/user-avatar/block.json
 #: src/user-avatar/block.json
 msgctxt "block keyword"
 msgid "profile picture"
 msgstr ""
 
-#: chunks/user-avatar/block.json
 #: src/user-avatar/block.json
 msgctxt "block keyword"
 msgid "picture"

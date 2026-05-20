@@ -2,8 +2,8 @@
 Contributors: wpmakedev, iamprazol
 Tags: profile picture, avatar, gravatar, user avatar, custom avatar
 Requires at least: 6.0
-Tested up to: 6.8.3
-Stable tag: 1.1.3
+Tested up to: 7.0
+Stable tag: 1.2.0
 Requires PHP: 7.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -122,7 +122,7 @@ Yes. The WooCommerce integration is fully compatible with Bricks Builder. The pl
 
 == Changelog ==
 
-= 1.1.3   - 08-04-2026 =
+= 1.2.0   - 20-05-2026 =
 * Feature - Better Messages integration: custom avatars now appear in the Better Messages chat interface.
 * Fix     - WooCommerce integration conflicting with Bricks Builder and other page builders due to duplicate dashboard template rendering.
 * Fix     - Review notice not dismissing after clicking "Sure, I'd love to!" — the notice kept reappearing on every admin page.
