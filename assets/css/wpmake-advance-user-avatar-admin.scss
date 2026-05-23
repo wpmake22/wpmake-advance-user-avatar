@@ -652,25 +652,75 @@
 		padding: 16px 0 24px;
 	}
 
+	// Shared base: lock down every property WP 7.0's .button reset touches so the
+	// settings buttons render consistently regardless of theme or core changes.
+	.wpmake-aua-save-btn,
+	.wpmake-aua-cancel-btn {
+		box-sizing: border-box;
+		appearance: none;
+		-webkit-appearance: none;
+		-moz-appearance: none;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		height: 38px;
+		min-width: 110px;
+		padding: 0 18px;
+		font-family: inherit;
+		font-size: 13.5px;
+		font-weight: 500;
+		line-height: 1;
+		text-decoration: none;
+		border: 1px solid transparent;
+		border-radius: 6px;
+		cursor: pointer;
+		transition: background-color .15s, border-color .15s, color .15s, box-shadow .15s;
+
+		&:focus { outline: none; }
+		&:focus-visible {
+			outline: none;
+			box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.35);
+		}
+
+		&:disabled,
+		&[disabled] {
+			opacity: .55;
+			cursor: not-allowed;
+		}
+	}
+
 	.wpmake-aua-save-btn.button-primary {
 		background: #2563eb;
 		border-color: #2563eb;
 		color: #fff;
-		padding: 6px 18px;
-		height: 36px;
-		font-size: 13.5px;
+		box-shadow: 0 1px 2px rgba(37, 99, 235, 0.18);
 
-		&:hover,
-		&:focus {
+		&:hover {
 			background: #1d4ed8;
 			border-color: #1d4ed8;
+			color: #fff;
+		}
+
+		&:active {
+			background: #1e40af;
+			border-color: #1e40af;
 		}
 	}
 
 	.wpmake-aua-cancel-btn {
-		height: 36px;
-		padding: 6px 18px;
-		font-size: 13.5px;
+		background: #fff;
+		border-color: #d1d5db;
+		color: #374151;
+
+		&:hover {
+			background: #f9fafb;
+			border-color: #9ca3af;
+			color: #111827;
+		}
+
+		&:active {
+			background: #f3f4f6;
+		}
 	}
 }
 

@@ -73,13 +73,21 @@ class Frontend {
 
 		// -- Display locations ------------------------------------------------
 
+		// Resolve uploader state early — needed below to suppress a redundant viewer
+		// on Account Details (the uploader template already renders a preview image).
+		$uploader_enabled = isset( $options['woo_my_account_uploader'] )
+			? ! empty( $options['woo_my_account_uploader'] )
+			: ! empty( $options['woocommerce_integration'] );
+
 		// My Account dashboard tab — avatar viewer at the top.
 		if ( in_array( 'my_account_dashboard', $locations, true ) ) {
 			add_action( 'woocommerce_account_dashboard', array( $this, 'woo_render_avatar_viewer' ), 5 );
 		}
 
 		// Account details (edit account) tab — avatar viewer above the form.
-		if ( in_array( 'account_details_tab', $locations, true ) ) {
+		// Skip when the uploader is also wired here: it renders its own preview,
+		// and adding the viewer would duplicate the image.
+		if ( in_array( 'account_details_tab', $locations, true ) && ! $uploader_enabled ) {
 			add_action( 'woocommerce_before_edit_account_form', array( $this, 'woo_render_avatar_viewer' ), 5 );
 		}
 
@@ -103,11 +111,6 @@ class Frontend {
 		}
 
 		// -- My Account uploader ----------------------------------------------
-
-		// If the new option key exists, use it; otherwise fall back to the legacy toggle.
-		$uploader_enabled = isset( $options['woo_my_account_uploader'] )
-			? ! empty( $options['woo_my_account_uploader'] )
-			: ! empty( $options['woocommerce_integration'] );
 
 		if ( $uploader_enabled ) {
 			// Show the upload widget on the Account Details form.

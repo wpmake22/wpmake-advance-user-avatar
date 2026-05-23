@@ -609,16 +609,22 @@ jQuery(function ($) {
 							message = errorIcon + res.data.message;
 							isError = true;
 						} else {
-							var successIcon = '<img src="' + p.wpmake_assets_url + '/images/success.png" width="30px">';
+							var successIcon =
+								'<span class="wpmake-success-icon" aria-hidden="true">' +
+									'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">' +
+										'<polyline points="20 6 9 17 4 12"/>' +
+									'</svg>' +
+								'</span>';
 							$(".wpmake-advance-user-avatar-container .profile-preview, .wpmake-advance-user-avatar-upload .profile-preview")
 								.attr("src", res.data.profile_picture_url);
 							$wrap.find(".wpmake-advance-user-avatar-remove").show();
 							$wrap.find(".wpmake_advance_user_avatar_take_snapshot, .wpmake_advance_user_avatar_upload").hide();
 							$wrap.find(".wpmake-advance-user-avatar-input").val(res.data.attachment_id);
 							$wrap.append(
-								'<div class="wpmake-advance-user-avatar-success">' +
-								successIcon + p.wpmake_advance_user_avatar_upload_success_message +
-								"</div>"
+								'<div class="wpmake-advance-user-avatar-success" role="status" aria-live="polite">' +
+									successIcon +
+									'<span class="wpmake-success-text">' + p.wpmake_advance_user_avatar_upload_success_message + '</span>' +
+								'</div>'
 							);
 						}
 					} catch (e) {
@@ -705,14 +711,19 @@ jQuery(function ($) {
 					}
 				],
 				onOpen: function () {
+					// Preview size in the modal — small enough to fit, kept at 4:3
 					var w = 320, h = 240;
 					if (window.innerWidth < window.innerHeight) { w = 240; h = 320; }
 
+					// Output 4× the preview dimensions so the user-cropper has high-res
+					// pixels to work with. Cropper handles framing — no server crop here.
+					var outW = w * 4, outH = h * 4;
+
 					Webcam.set({
-						width: w, height: h,
-						dest_width: w, dest_height: h,
-						crop_width: w, crop_height: h,
-						image_format: "jpeg", jpeg_quality: 90
+						width:        w,    height:       h,
+						dest_width:   outW, dest_height:  outH,
+						image_format: "jpeg",
+						jpeg_quality: 95
 					});
 
 					Webcam.off("error");

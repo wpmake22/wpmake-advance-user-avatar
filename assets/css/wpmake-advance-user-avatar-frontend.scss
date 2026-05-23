@@ -33,33 +33,53 @@
 			overflow: hidden;
 		}
 
+		// Lock every property WP 7.0's .button reset touches, so theme/core
+		// changes can't bleed through. All page-form buttons inherit this base.
 		button {
+			box-sizing: border-box;
+			appearance: none;
+			-webkit-appearance: none;
+			-moz-appearance: none;
+			font-family: inherit;
+			font-size: 14px;
+			line-height: 1.4;
+			text-decoration: none;
 			padding: 8px 16px;
 			border-radius: 4px;
+			border: 2px solid transparent;
+			background: transparent;
+			color: inherit;
 			cursor: pointer;
-			font-size: 14px;
-			transition: background-color .15s, border-color .15s, color .15s;
+			transition: background-color .15s, border-color .15s, color .15s, box-shadow .15s;
+
+			&:focus { outline: none; }
+			&:focus-visible {
+				outline: none;
+				box-shadow: 0 0 0 3px rgba(6, 147, 227, 0.35);
+			}
 
 			// Primary: solid blue — the main action
 			&.wpmake_advance_user_avatar_upload {
 				background-color: #0693e3;
-				border: 2px solid #0693e3;
+				border-color: #0693e3;
 				color: #fff;
 
 				&:hover {
 					background-color: #0578c1;
 					border-color: #0578c1;
+					color: #fff;
 				}
 			}
 
 			// Secondary: outlined — lower-weight action
 			&.wpmake_advance_user_avatar_take_snapshot {
 				background-color: transparent;
-				border: 2px solid #475BD9;
+				border-color: #475BD9;
 				color: #475BD9;
 
 				&:hover {
 					background-color: #475BD9;
+					border-color: #475BD9;
 					color: #fff;
 				}
 			}
@@ -67,12 +87,13 @@
 			// Neutral outlined — resting state for Remove
 			&.wpmake-advance-user-avatar-remove {
 				background-color: transparent;
-				border: 2px solid #888;
+				border-color: #888;
 				color: #555;
 
 				&:hover {
 					background-color: #f0f0f0;
 					border-color: #666;
+					color: #555;
 				}
 			}
 		}
@@ -142,20 +163,59 @@
 	}
 
 	.wpmake-advance-user-avatar-success {
-		background:rgba(0,128,0,.1);
-		color:green;
-		font-size: 14px;
-		border: 2px solid green;
-		padding: 10px;
-		border-radius: 10px;
 		display: flex;
-		justify-content: center;
-		gap: 15px;
+		align-items: center;
+		gap: 12px;
+		margin-top: 12px;
+		padding: 12px 16px;
+		background: #ecfdf3;
+		border: 1px solid #a6f4c5;
+		border-left: 4px solid #12b76a;
+		border-radius: 10px;
+		color: #067647;
+		font-size: 14px;
+		font-weight: 500;
+		line-height: 1.4;
+		box-shadow: 0 1px 3px rgba(16, 24, 40, 0.06);
+		animation: wpmake-success-in .25s ease-out;
 
-		img {
-			flex: 13%;
+		.wpmake-success-icon {
+			flex: 0 0 24px;
+			width: 24px;
+			height: 24px;
+			background: #12b76a;
+			border-radius: 50%;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			color: #fff;
+			animation: wpmake-success-pop .35s cubic-bezier(.34, 1.56, .64, 1);
+
+			svg {
+				width: 14px;
+				height: 14px;
+				display: block;
+			}
 		}
+
+		.wpmake-success-text {
+			flex: 1;
+		}
+
+		// Hide the legacy PNG icon if it ever ships through
+		img { display: none; }
 	}
+}
+
+@keyframes wpmake-success-in {
+	from { opacity: 0; transform: translateY(-4px); }
+	to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes wpmake-success-pop {
+	0%   { transform: scale(0); }
+	60%  { transform: scale(1.15); }
+	100% { transform: scale(1); }
 }
 
 .woocommerce-MyAccount-content {
@@ -177,4 +237,391 @@
 .avatar-150 {
 	width: 150px !important;
 	height: 150px !important;
+}
+
+/* =========================================================================
+   WPMakeModal — overlay modal
+   ========================================================================= */
+.wpmake-modal-overlay {
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.55);
+	z-index: 100000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 16px;
+	box-sizing: border-box;
+}
+
+.wpmake-modal {
+	background: #fff;
+	border-radius: 8px;
+	box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+	max-width: 95vw;
+	max-height: 95vh;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	min-width: 320px;
+}
+
+.wpmake-modal-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 12px 16px;
+	border-bottom: 1px solid #eee;
+}
+
+.wpmake-modal-title {
+	margin: 0;
+	font-size: 16px;
+	font-weight: 600;
+	color: #222;
+}
+
+.wpmake-modal-close {
+	background: none;
+	border: 0;
+	font-size: 24px;
+	line-height: 1;
+	color: #666;
+	cursor: pointer;
+	padding: 0 4px;
+}
+
+.wpmake-modal-close:hover {
+	color: #000;
+}
+
+.wpmake-modal-body {
+	padding: 16px;
+	overflow: auto;
+}
+
+.wpmake-modal-footer {
+	display: flex;
+	justify-content: flex-end;
+	gap: 8px;
+	padding: 12px 16px;
+	border-top: 1px solid #eee;
+}
+
+// Lock down every property WP 7.0's .button reset touches so modal buttons
+// render identically regardless of theme or core changes.
+.wpmake-btn {
+	box-sizing: border-box;
+	appearance: none;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	font-family: inherit;
+	font-size: 14px;
+	line-height: 1.4;
+	text-decoration: none;
+	padding: 8px 16px;
+	border-radius: 4px;
+	border: 2px solid transparent;
+	background: transparent;
+	color: inherit;
+	cursor: pointer;
+	transition: background-color .15s, border-color .15s, color .15s, box-shadow .15s;
+
+	&:focus { outline: none; }
+	&:focus-visible {
+		outline: none;
+		box-shadow: 0 0 0 3px rgba(6, 147, 227, 0.35);
+	}
+}
+
+.wpmake-btn-primary {
+	background: #0693e3;
+	border-color: #0693e3;
+	color: #fff;
+
+	&:hover {
+		background: #0578c1;
+		border-color: #0578c1;
+		color: #fff;
+	}
+}
+
+.wpmake-btn-secondary {
+	background: transparent;
+	border-color: #475BD9;
+	color: #475BD9;
+
+	&:hover {
+		background: #475BD9;
+		border-color: #475BD9;
+		color: #fff;
+	}
+}
+
+.wpmake-btn-cancel {
+	background: transparent;
+	border-color: #888;
+	color: #555;
+
+	&:hover {
+		background: #f0f0f0;
+		border-color: #666;
+		color: #555;
+	}
+}
+
+/* =========================================================================
+   Webcam — capture container + face-guide overlay
+   ========================================================================= */
+#wpmake-webcam-inner {
+	position: relative;
+	display: inline-block;
+	background: #000;
+	border-radius: 6px;
+	overflow: hidden;
+}
+
+#wpmake-webcam-inner video,
+#wpmake-webcam-inner canvas {
+	display: block;
+}
+
+.wpmake-webcam-overlay {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+}
+
+.wpmake-corner {
+	position: absolute;
+	width: 18px;
+	height: 18px;
+	border-color: rgba(255, 255, 255, 0.9);
+	border-style: solid;
+	border-width: 0;
+}
+
+.wpmake-corner-tl { top: 8px;    left: 8px;    border-top-width: 2px; border-left-width: 2px; }
+.wpmake-corner-tr { top: 8px;    right: 8px;   border-top-width: 2px; border-right-width: 2px; }
+.wpmake-corner-bl { bottom: 8px; left: 8px;    border-bottom-width: 2px; border-left-width: 2px; }
+.wpmake-corner-br { bottom: 8px; right: 8px;   border-bottom-width: 2px; border-right-width: 2px; }
+
+.wpmake-grid {
+	position: absolute;
+	inset: 0;
+}
+
+.wpmake-grid-v,
+.wpmake-grid-h {
+	position: absolute;
+	background: rgba(255, 255, 255, 0.18);
+}
+
+.wpmake-grid-v { top: 0; bottom: 0; width: 1px; }
+.wpmake-grid-h { left: 0; right: 0; height: 1px; }
+
+.wpmake-grid-v1 { left: 33.33%; }
+.wpmake-grid-v2 { left: 66.66%; }
+.wpmake-grid-h1 { top: 33.33%; }
+.wpmake-grid-h2 { top: 66.66%; }
+
+.wpmake-face-guide {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 60%;
+	aspect-ratio: 1 / 1;
+}
+
+.wpmake-circle-outer,
+.wpmake-circle-mid,
+.wpmake-circle-dot {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	border-radius: 50%;
+}
+
+.wpmake-circle-outer {
+	width: 100%;
+	height: 100%;
+	border: 2px dashed rgba(255, 255, 255, 0.75);
+}
+
+.wpmake-circle-mid {
+	width: 60%;
+	height: 60%;
+	border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.wpmake-circle-dot {
+	width: 6px;
+	height: 6px;
+	background: rgba(255, 255, 255, 0.9);
+}
+
+.wpmake-position-badge {
+	position: absolute;
+	bottom: 10px;
+	left: 50%;
+	transform: translateX(-50%);
+	background: rgba(0, 0, 0, 0.6);
+	color: #fff;
+	font-size: 12px;
+	padding: 4px 10px;
+	border-radius: 12px;
+}
+
+/* =========================================================================
+   WPMakeCropper — crop modal layout
+   ========================================================================= */
+.wpmake-cropper-modal .wpmake-modal-body {
+	padding: 0;
+}
+
+.wpmake-cropper-wrap {
+	display: flex;
+	gap: 16px;
+	padding: 16px;
+}
+
+.wpmake-cropper-left {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.wpmake-crop-stage {
+	position: relative;
+	width: 400px;
+	height: 400px;
+	background: #1d1d1d;
+	overflow: hidden;
+	user-select: none;
+	touch-action: none;
+	border-radius: 4px;
+}
+
+.wpmake-crop-image {
+	position: absolute;
+	max-width: none;
+	pointer-events: none;
+	user-select: none;
+}
+
+.wpmake-crop-box {
+	position: absolute;
+	box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.55);
+	border: 1px solid rgba(255, 255, 255, 0.9);
+	cursor: move;
+	box-sizing: border-box;
+}
+
+.wpmake-handle {
+	position: absolute;
+	width: 10px;
+	height: 10px;
+	background: #fff;
+	border: 1px solid #333;
+	box-sizing: border-box;
+}
+
+.wpmake-handle-nw { top: -5px;    left: -5px;    cursor: nwse-resize; }
+.wpmake-handle-n  { top: -5px;    left: 50%;     margin-left: -5px; cursor: ns-resize; }
+.wpmake-handle-ne { top: -5px;    right: -5px;   cursor: nesw-resize; }
+.wpmake-handle-e  { top: 50%;     right: -5px;   margin-top: -5px; cursor: ew-resize; }
+.wpmake-handle-se { bottom: -5px; right: -5px;   cursor: nwse-resize; }
+.wpmake-handle-s  { bottom: -5px; left: 50%;     margin-left: -5px; cursor: ns-resize; }
+.wpmake-handle-sw { bottom: -5px; left: -5px;    cursor: nesw-resize; }
+.wpmake-handle-w  { top: 50%;     left: -5px;    margin-top: -5px; cursor: ew-resize; }
+
+.wpmake-crop-ratio-label {
+	margin: 0;
+	font-size: 13px;
+	color: #444;
+}
+
+.wpmake-crop-hint {
+	margin: 0;
+	font-size: 12px;
+	color: #888;
+}
+
+.wpmake-zoom-bar {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	font-size: 13px;
+	color: #444;
+}
+
+.wpmake-zoom-slider {
+	flex: 1;
+}
+
+.wpmake-zoom-value {
+	min-width: 36px;
+	text-align: right;
+	color: #666;
+}
+
+.wpmake-cropper-sidebar {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	min-width: 200px;
+}
+
+.wpmake-preview-label {
+	margin: 0;
+	font-size: 13px;
+	font-weight: 600;
+	color: #222;
+}
+
+.wpmake-preview-sizes {
+	display: flex;
+	gap: 12px;
+	align-items: flex-end;
+}
+
+.wpmake-preview-item {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 4px;
+
+	p {
+		margin: 0;
+		font-size: 11px;
+		color: #666;
+		text-align: center;
+		line-height: 1.3;
+	}
+}
+
+.wpmake-preview-circle {
+	border-radius: 50%;
+	background: #f0f0f0;
+}
+
+.wpmake-cropper-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-top: auto;
+}
+
+@media (max-width: 640px) {
+	.wpmake-cropper-wrap {
+		flex-direction: column;
+	}
+	.wpmake-crop-stage {
+		width: 80vw;
+		height: 80vw;
+		max-width: 400px;
+		max-height: 400px;
+	}
 }
