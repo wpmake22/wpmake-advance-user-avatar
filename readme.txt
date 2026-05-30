@@ -3,7 +3,7 @@ Contributors: wpmakedev, iamprazol
 Tags: woocommerce-avatar, woocommerce-profile-picture, user-avatar, profile-picture, custom-avatar
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 1.2.1
+Stable tag: 1.2.2
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -114,6 +114,9 @@ Yes. Use the shortcode `[wpmake_advance_user_avatar]` to output the current user
 9. The avatar displayed across BuddyPress member profile pages and the member directory.
 
 == Changelog ==
+
+= 1.2.2   - 30-05-2026 =
+* Fix     - Design issue in Gutenberg block.
 
 = 1.2.1   - 23-05-2026 =
 * Enhance - WordPress 7.0 Compatibility.

@@ -30,9 +30,14 @@ class Gutenberg {
 	private function init_hooks() {
 		add_action( 'init', array( $this, 'register_block_types' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) );
+		add_action( 'enqueue_block_assets', array( $this, 'enqueue_block_assets' ) );
 	}
 	/**
 	 * Enqueue Block Editor Assets.
+	 *
+	 * Loads the block editor JS into the outer editor frame. The block preview
+	 * stylesheet is registered separately via enqueue_block_assets so it reaches
+	 * inside the iframed canvas (WP 6.3+).
 	 *
 	 * @return void.
 	 */
@@ -53,8 +58,29 @@ class Gutenberg {
 				'ajax_url'         => admin_url( 'admin-ajax.php' ),
 			)
 		);
+	}
 
-		wp_enqueue_style( 'wpmake-advance-user-avatar-frontend-style', WPMAKE_ADVANCE_USER_AVATAR_ASSETS_URL . '/css/wpmake-advance-user-avatar-frontend.css', array( 'wp-edit-blocks' ), WPMAKE_ADVANCE_USER_AVATAR_VERSION );
+	/**
+	 * Enqueue block assets that must apply inside the iframed editor canvas.
+	 *
+	 * The enqueue_block_assets hook fires for both the front-end and the block
+	 * editor iframe. Frontend.php already loads this stylesheet on the front-end,
+	 * so we only enqueue here in admin context to scope it to the editor and
+	 * avoid relying on wp_enqueue_style's handle deduplication.
+	 *
+	 * @return void
+	 */
+	public function enqueue_block_assets() {
+		if ( ! is_admin() ) {
+			return;
+		}
+
+		wp_enqueue_style(
+			'wpmake-advance-user-avatar-frontend-style',
+			WPMAKE_ADVANCE_USER_AVATAR_ASSETS_URL . '/css/wpmake-advance-user-avatar-frontend.css',
+			array(),
+			WPMAKE_ADVANCE_USER_AVATAR_VERSION
+		);
 	}
 
 	/**
