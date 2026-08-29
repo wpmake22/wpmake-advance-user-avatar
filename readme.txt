@@ -120,6 +120,13 @@ Yes, and no `!important` is needed. Every size, shape and colour is read from a 
 
 The remaining properties follow the same naming: `--wpmake-aua-align`, `--wpmake-aua-avatar-spacing`, `--wpmake-aua-btn-border-width`, `--wpmake-aua-btn-primary-color`, `--wpmake-aua-btn-capture-color`, `--wpmake-aua-btn-capture-color-hover`, `--wpmake-aua-btn-remove-border`, `--wpmake-aua-btn-remove-border-hover`, `--wpmake-aua-btn-remove-color` and `--wpmake-aua-btn-remove-bg-hover`.
 
+= Can I set the size for one placement only? =
+
+Yes. Both shortcodes accept attributes: `size` (avatar width/height in px), `radius` (avatar corner radius, e.g. `50%`), and `class` (extra class names on the container, for your own CSS). The uploader also accepts `upload_text`, `remove_text` and `capture_text` for the button labels.
+
+`[wpmake_advance_user_avatar size="150" radius="50%"]`
+`[wpmake_advance_user_avatar_upload size="120" class="my-profile-avatar" upload_text="Choose a photo"]`
+
 == Screenshots ==
 
 1. The avatar upload form — drop it on any page with the shortcode or Gutenberg block. Crop and webcam capture are built in.
