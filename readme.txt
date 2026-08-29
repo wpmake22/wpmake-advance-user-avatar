@@ -101,6 +101,25 @@ Yes. The WooCommerce integration is compatible with Bricks Builder and inserts t
 
 Yes. Use the shortcode `[wpmake_advance_user_avatar]` to output the current user's avatar anywhere shortcodes are supported, including widgets and page builders.
 
+= Can I change the avatar size, or the size, colour and shape of the upload button? =
+
+Yes, and no `!important` is needed. Every size, shape and colour is read from a CSS custom property on the widget's container, so one rule in Appearance > Customize > Additional CSS is enough:
+
+`.wpmake-advance-user-avatar-container {
+    --wpmake-aua-avatar-size: 150px;    /* avatar width/height */
+    --wpmake-aua-avatar-radius: 50%;    /* round the avatar */
+    --wpmake-aua-width: 100%;           /* container box */
+    --wpmake-aua-height: auto;
+    --wpmake-aua-padding: 0;
+    --wpmake-aua-btn-primary-bg: #2f7d32;   /* Upload file button */
+    --wpmake-aua-btn-primary-bg-hover: #27682a;
+    --wpmake-aua-btn-padding: 6px 12px;
+    --wpmake-aua-btn-font-size: 13px;
+    --wpmake-aua-btn-radius: 999px;
+}`
+
+The remaining properties follow the same naming: `--wpmake-aua-align`, `--wpmake-aua-avatar-spacing`, `--wpmake-aua-btn-border-width`, `--wpmake-aua-btn-primary-color`, `--wpmake-aua-btn-capture-color`, `--wpmake-aua-btn-capture-color-hover`, `--wpmake-aua-btn-remove-border`, `--wpmake-aua-btn-remove-border-hover`, `--wpmake-aua-btn-remove-color` and `--wpmake-aua-btn-remove-bg-hover`.
+
 == Screenshots ==
 
 1. The avatar upload form — drop it on any page with the shortcode or Gutenberg block. Crop and webcam capture are built in.

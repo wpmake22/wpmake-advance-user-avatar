@@ -1,11 +1,49 @@
 .wpmake-advance-user-avatar-container {
+	// -------------------------------------------------------------------------
+	// Customisation hooks.
+	//
+	// Every size, shape and colour below is read from a custom property, so a site
+	// can restyle the widget with one low-specificity rule -- no !important, and no
+	// need to reproduce the selector chain:
+	//
+	//   .wpmake-advance-user-avatar-container {
+	//       --wpmake-aua-avatar-size: 150px;
+	//       --wpmake-aua-btn-primary-bg: #2f7d32;
+	//   }
+	//
+	// The size and radius shortcode attributes set the same properties inline, so a
+	// single placement can differ from the site-wide values.
+	// -------------------------------------------------------------------------
+	--wpmake-aua-width: 400px;
+	--wpmake-aua-height: 300px;
+	--wpmake-aua-padding: 30px;
+	--wpmake-aua-align: center;
+
+	--wpmake-aua-avatar-size: 96px;
+	--wpmake-aua-avatar-radius: 0;
+	--wpmake-aua-avatar-spacing: 15px;
+
+	--wpmake-aua-btn-font-size: 14px;
+	--wpmake-aua-btn-padding: 8px 16px;
+	--wpmake-aua-btn-radius: 4px;
+	--wpmake-aua-btn-border-width: 2px;
+	--wpmake-aua-btn-primary-bg: #0693e3;
+	--wpmake-aua-btn-primary-bg-hover: #0578c1;
+	--wpmake-aua-btn-primary-color: #fff;
+	--wpmake-aua-btn-capture-color: #475BD9;
+	--wpmake-aua-btn-capture-color-hover: #fff;
+	--wpmake-aua-btn-remove-border: #888;
+	--wpmake-aua-btn-remove-border-hover: #666;
+	--wpmake-aua-btn-remove-color: #555;
+	--wpmake-aua-btn-remove-bg-hover: #f0f0f0;
+
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	align-items: center;
-	width: 400px;
-	height: 300px;
-	padding: 30px;
+	align-items: var(--wpmake-aua-align);
+	width: var(--wpmake-aua-width);
+	height: var(--wpmake-aua-height);
+	padding: var(--wpmake-aua-padding);
 
 	h4 {
 		color:darkblue;
@@ -13,9 +51,10 @@
 	}
 
 	.profile-preview {
-		max-width:96px;
-		max-height:96px;
-		margin-bottom: 15px;
+		max-width: var(--wpmake-aua-avatar-size);
+		max-height: var(--wpmake-aua-avatar-size);
+		border-radius: var(--wpmake-aua-avatar-radius);
+		margin-bottom: var(--wpmake-aua-avatar-spacing);
 	}
 
 	.wpmake-advance-user-avatar-upload {
@@ -33,20 +72,21 @@
 			overflow: hidden;
 		}
 
-		// Lock every property WP 7.0's .button reset touches, so theme/core
-		// changes can't bleed through. All page-form buttons inherit this base.
+		// Restate every property WP 7.0's .button reset touches, so theme/core changes
+		// can't bleed through. The values come from the custom properties above, which
+		// is what keeps the site owner able to restyle these without a specificity war.
 		button {
 			box-sizing: border-box;
 			appearance: none;
 			-webkit-appearance: none;
 			-moz-appearance: none;
 			font-family: inherit;
-			font-size: 14px;
+			font-size: var(--wpmake-aua-btn-font-size);
 			line-height: 1.4;
 			text-decoration: none;
-			padding: 8px 16px;
-			border-radius: 4px;
-			border: 2px solid transparent;
+			padding: var(--wpmake-aua-btn-padding);
+			border-radius: var(--wpmake-aua-btn-radius);
+			border: var(--wpmake-aua-btn-border-width) solid transparent;
 			background: transparent;
 			color: inherit;
 			cursor: pointer;
@@ -60,40 +100,40 @@
 
 			// Primary: solid blue — the main action
 			&.wpmake_advance_user_avatar_upload {
-				background-color: #0693e3;
-				border-color: #0693e3;
-				color: #fff;
+				background-color: var(--wpmake-aua-btn-primary-bg);
+				border-color: var(--wpmake-aua-btn-primary-bg);
+				color: var(--wpmake-aua-btn-primary-color);
 
 				&:hover {
-					background-color: #0578c1;
-					border-color: #0578c1;
-					color: #fff;
+					background-color: var(--wpmake-aua-btn-primary-bg-hover);
+					border-color: var(--wpmake-aua-btn-primary-bg-hover);
+					color: var(--wpmake-aua-btn-primary-color);
 				}
 			}
 
 			// Secondary: outlined — lower-weight action
 			&.wpmake_advance_user_avatar_take_snapshot {
 				background-color: transparent;
-				border-color: #475BD9;
-				color: #475BD9;
+				border-color: var(--wpmake-aua-btn-capture-color);
+				color: var(--wpmake-aua-btn-capture-color);
 
 				&:hover {
-					background-color: #475BD9;
-					border-color: #475BD9;
-					color: #fff;
+					background-color: var(--wpmake-aua-btn-capture-color);
+					border-color: var(--wpmake-aua-btn-capture-color);
+					color: var(--wpmake-aua-btn-capture-color-hover);
 				}
 			}
 
 			// Neutral outlined — resting state for Remove
 			&.wpmake-advance-user-avatar-remove {
 				background-color: transparent;
-				border-color: #888;
-				color: #555;
+				border-color: var(--wpmake-aua-btn-remove-border);
+				color: var(--wpmake-aua-btn-remove-color);
 
 				&:hover {
-					background-color: #f0f0f0;
-					border-color: #666;
-					color: #555;
+					background-color: var(--wpmake-aua-btn-remove-bg-hover);
+					border-color: var(--wpmake-aua-btn-remove-border-hover);
+					color: var(--wpmake-aua-btn-remove-color);
 				}
 			}
 		}
@@ -220,9 +260,9 @@
 
 .woocommerce-MyAccount-content {
 	.wpmake-advance-user-avatar-container {
-		width: 100%;
-		height: auto;
-		padding: 0px;
+		--wpmake-aua-width: 100%;
+		--wpmake-aua-height: auto;
+		--wpmake-aua-padding: 0px;
 	}
 }
 
@@ -230,24 +270,24 @@
 // form rather than keep the shortcode's fixed 400x300 box.
 #wpmem_profile_form {
 	.wpmake-advance-user-avatar-container {
-		width: 100%;
-		height: auto;
-		padding: 0px;
-		align-items: flex-start;
+		--wpmake-aua-width: 100%;
+		--wpmake-aua-height: auto;
+		--wpmake-aua-padding: 0px;
+		--wpmake-aua-align: flex-start;
 	}
 }
 
 .avatar-50 {
-	width: 50px !important;
-	height: 50px !important;
+	width: 50px;
+	height: 50px;
 }
 .avatar-100 {
-	width: 100px !important;
-	height: 100px !important;
+	width: 100px;
+	height: 100px;
 }
 .avatar-150 {
-	width: 150px !important;
-	height: 150px !important;
+	width: 150px;
+	height: 150px;
 }
 
 /* =========================================================================
