@@ -130,7 +130,7 @@ class Shortcodes {
 		if ( is_user_logged_in() ) {
 			$wpmake_aua_atts = wp_parse_args( (array) $atts, self::default_uploader_atts() );
 
-			include WPMAKE_ADVANCE_USER_AVATAR_TEMPLATE_PATH . '/wpmake-advance-user-avatar-upload-page.php';
+			include wpmake_advance_user_avatar_locate_template( 'wpmake-advance-user-avatar-upload-page.php' );
 		}
 	}
 
@@ -145,7 +145,7 @@ class Shortcodes {
 		if ( is_user_logged_in() ) {
 			$wpmake_aua_atts = wp_parse_args( (array) $atts, self::default_avatar_atts() );
 
-			include WPMAKE_ADVANCE_USER_AVATAR_TEMPLATE_PATH . '/wpmake-advance-user-avatar-page.php';
+			include wpmake_advance_user_avatar_locate_template( 'wpmake-advance-user-avatar-page.php' );
 		}
 	}
 

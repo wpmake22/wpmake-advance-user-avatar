@@ -127,6 +127,12 @@ Yes. Both shortcodes accept attributes: `size` (avatar width/height in px), `rad
 `[wpmake_advance_user_avatar size="150" radius="50%"]`
 `[wpmake_advance_user_avatar_upload size="120" class="my-profile-avatar" upload_text="Choose a photo"]`
 
+= Can I change the uploader's markup or layout? =
+
+Yes. Copy the template you want to change out of `wp-content/plugins/wpmake-advance-user-avatar/templates/` into `wp-content/themes/your-theme/wpmake-advance-user-avatar/`, keeping the file name, and edit your copy. The theme copy is used instead of the plugin's and survives plugin updates.
+
+There are also action hooks for adding markup without replacing a template: `wpmake_advance_user_avatar_before_avatar`, `wpmake_advance_user_avatar_after_avatar`, `wpmake_advance_user_avatar_before_uploader`, `wpmake_advance_user_avatar_after_uploader`, `wpmake_advance_user_avatar_before_upload_buttons` and `wpmake_advance_user_avatar_after_upload_buttons`.
+
 == Screenshots ==
 
 1. The avatar upload form — drop it on any page with the shortcode or Gutenberg block. Crop and webcam capture are built in.

@@ -4,6 +4,9 @@
  *
  * Shows user lists in selected layout
  *
+ * This template can be overridden by copying it to
+ * yourtheme/wpmake-advance-user-avatar/wpmake-advance-user-avatar-upload-page.php
+ *
  * @package WPMakeAdvanceUserAvatar/Templates
  * @version 1.2.3
  */
@@ -19,6 +22,8 @@ $wpmake_aua_style = Shortcodes::container_style( $wpmake_aua_atts );
 ?>
 <div class="<?php echo esc_attr( Shortcodes::container_class( $wpmake_aua_atts ) ); ?>"<?php echo $wpmake_aua_style ? ' style="' . esc_attr( $wpmake_aua_style ) . '"' : ''; ?>>
 	<?php
+		do_action( 'wpmake_advance_user_avatar_before_uploader', $wpmake_aua_atts );
+
 		$gravatar_image      = get_avatar_url( get_current_user_id(), null );
 		$profile_picture_url = wp_get_attachment_url( get_user_meta( get_current_user_id(), 'wpmake_advance_user_avatar_attachment_id', true ) );
 		$image               = ( ! empty( $profile_picture_url ) ) ? $profile_picture_url : $gravatar_image;
@@ -53,6 +58,8 @@ $wpmake_aua_style = Shortcodes::container_style( $wpmake_aua_atts );
 					<?php
 					$options = get_option( 'wpmake_advance_user_avatar_settings', array() );
 
+					do_action( 'wpmake_advance_user_avatar_before_upload_buttons', $wpmake_aua_atts );
+
 					if ( ! $profile_picture_url ) {
 						?>
 							<button type="button" class="button wpmake-advance-user-avatar-remove hide-if-no-js" style="display:none"><?php echo esc_html( $wpmake_remove_label ); ?></button>
@@ -71,9 +78,12 @@ $wpmake_aua_style = Shortcodes::container_style( $wpmake_aua_atts );
 							<button type="button" class="button wpmake_advance_user_avatar_upload hide-if-no-js" style="display:none"><?php echo esc_html( $wpmake_upload_label ); ?></button>
 						<?php
 					}
+
+					do_action( 'wpmake_advance_user_avatar_after_upload_buttons', $wpmake_aua_atts );
 					?>
 				</p>
 			</div>
 		</div>
 	</header>
+	<?php do_action( 'wpmake_advance_user_avatar_after_uploader', $wpmake_aua_atts ); ?>
 </div>

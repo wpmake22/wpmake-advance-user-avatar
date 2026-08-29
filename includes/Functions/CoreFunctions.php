@@ -120,6 +120,59 @@ if ( ! function_exists( 'wpmake_advance_user_avatar_build_avatar_html' ) ) {
 	}
 }
 
+if ( ! function_exists( 'wpmake_advance_user_avatar_locate_template' ) ) {
+	/**
+	 * Locate a plugin template, letting the active theme override it.
+	 *
+	 * Checked in order:
+	 *   yourtheme/wpmake-advance-user-avatar/$template_name
+	 *   yourtheme/$template_name
+	 *   wp-content/plugins/wpmake-advance-user-avatar/templates/$template_name
+	 *
+	 * @since 1.2.3
+	 *
+	 * @param string $template_name Template file name, e.g. wpmake-advance-user-avatar-page.php.
+	 * @return string Absolute path of the template to load.
+	 */
+	function wpmake_advance_user_avatar_locate_template( $template_name ) {
+		$template_name = ltrim( $template_name, '/' );
+		$default       = WPMAKE_ADVANCE_USER_AVATAR_TEMPLATE_PATH . '/' . $template_name;
+
+		/**
+		 * Filter the theme sub-directory templates are looked up in.
+		 *
+		 * @since 1.2.3
+		 *
+		 * @param string $directory Sub-directory name, without slashes.
+		 */
+		$directory = apply_filters( 'wpmake_advance_user_avatar_template_directory', 'wpmake-advance-user-avatar' );
+
+		$template = locate_template(
+			array(
+				trailingslashit( $directory ) . $template_name,
+				$template_name,
+			)
+		);
+
+		if ( ! $template ) {
+			$template = $default;
+		}
+
+		/**
+		 * Filter the resolved template path.
+		 *
+		 * @since 1.2.3
+		 *
+		 * @param string $template      Absolute path of the template to load.
+		 * @param string $template_name Template file name.
+		 */
+		$template = apply_filters( 'wpmake_advance_user_avatar_locate_template', $template, $template_name );
+
+		// Never hand back a path that cannot be included -- fall back to the shipped file.
+		return file_exists( $template ) ? $template : $default;
+	}
+}
+
 if ( ! function_exists( 'wpmake_aua_get_allowed_html_tags' ) ) {
 	/**
 	 * WPMAKE AUA KSES.
