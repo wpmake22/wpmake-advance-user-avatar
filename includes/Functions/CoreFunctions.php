@@ -26,10 +26,45 @@ if ( ! function_exists( 'wpmake_advance_user_avatar_replace_gravatar_image' ) ) 
 	 * @param array  $args Args.
 	 */
 	function wpmake_advance_user_avatar_replace_gravatar_image( $avatar, $id_or_email, $size, $default, $alt, $args = array() ) {
-		remove_all_filters( 'get_avatar' );
+		static $running = false;
 
-		add_filter( 'get_avatar', 'wpmake_advance_user_avatar_replace_gravatar_image', 100, 6 );
+		/*
+		 * Re-entrancy guard.
+		 *
+		 * This used to call remove_all_filters( 'get_avatar' ) and then re-add itself at a
+		 * later priority. That did make the plugin's avatar the final word, but it also
+		 * unhooked every other callback on `get_avatar` for the rest of the request --
+		 * other plugins' filters and, more to the point, the site owner's own snippets.
+		 * The flag gives the same protection against a nested get_avatar() call without
+		 * destroying anyone else's filters.
+		 */
+		if ( $running ) {
+			return $avatar;
+		}
 
+		$running = true;
+		$avatar  = wpmake_advance_user_avatar_build_avatar_html( $avatar, $id_or_email, $args );
+		$running = false;
+
+		return $avatar;
+	}
+}
+
+if ( ! function_exists( 'wpmake_advance_user_avatar_build_avatar_html' ) ) {
+	/**
+	 * Build the replacement avatar markup for a user, if they have uploaded one.
+	 *
+	 * Split out of the filter callback above so the re-entrancy flag has a single
+	 * place to be reset, whichever way this bails out.
+	 *
+	 * @since 1.2.3
+	 *
+	 * @param string $avatar      Avatar markup passed in by the filter.
+	 * @param mixed  $id_or_email ID, email, or object identifying the user.
+	 * @param array  $args        Avatar args.
+	 * @return string
+	 */
+	function wpmake_advance_user_avatar_build_avatar_html( $avatar, $id_or_email, $args = array() ) {
 		// Process the user identifier.
 		$user = false;
 		if ( is_numeric( $id_or_email ) ) {
