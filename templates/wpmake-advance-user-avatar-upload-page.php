@@ -8,7 +8,7 @@
  * yourtheme/wpmake-advance-user-avatar/wpmake-advance-user-avatar-upload-page.php
  *
  * @package WPMakeAdvanceUserAvatar/Templates
- * @version 1.2.3
+ * @version 1.3.0
  */
 
 use WPMake\WPMakeAdvanceUserAvatar\Admin\Shortcodes;

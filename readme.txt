@@ -2,8 +2,8 @@
 Contributors: wpmakedev, iamprazol
 Tags: woocommerce-avatar, woocommerce-profile-picture, user-avatar, profile-picture, custom-avatar
 Requires at least: 6.0
-Tested up to: 7.0
-Stable tag: 1.2.2
+Tested up to: 7.1
+Stable tag: 1.3.0
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -146,6 +146,25 @@ There are also action hooks for adding markup without replacing a template: `wpm
 9. The avatar displayed across BuddyPress member profile pages and the member directory.
 
 == Changelog ==
+
+= 1.3.0   - 29-08-2026 =
+* Feature - WP-Members integration: adds the avatar uploader to the WP-Members profile edit form.
+* Enhance - Templates can be overridden from the theme. Each one now resolves through `yourtheme/wpmake-advance-user-avatar/`, then `yourtheme/`, then the shipped copy, so customised markup survives an update. The theme sub-directory and the resolved path are both filterable.
+* Enhance - Six new action hooks around the markup -- before and after the avatar, before and after the uploader, and before and after the uploader's buttons -- for changes that do not need a whole template override.
+* Enhance - Both shortcodes now accept attributes. `size`, `radius` and `class` on either, plus `upload_text`, `remove_text` and `capture_text` on the uploader, so a single placement can differ from the site-wide styling. The attributes were previously parsed and discarded.
+* Enhance - Frontend styles are driven by CSS custom properties on the widget container, so one low-specificity rule in Additional CSS is enough to restyle the avatar size and shape and the button colour, padding, font size and radius -- no `!important` needed.
+* Fix     - The `get_avatar` filter called `remove_all_filters( 'get_avatar' )` and re-added only itself, discarding every other callback on the hook for the rest of the request -- other plugins' filters, and the site owner's own snippets, silently stopped working. Replaced with a re-entrancy guard that gives the same protection without touching anyone else's filters.
+* Fix     - Removed `!important` from `.avatar-50`, `.avatar-100` and `.avatar-150`. `get_avatar()` already emits matching width and height attributes, so it only served to stop the theme, and the site owner, from resizing those avatars.
+* Fix     - Review notice buttons not behaving correctly.
+* Fix     - Security: the accepted file types and the maximum upload size were read from the AJAX request rather than from the saved settings, so a tampered request could ignore the site owner's limits. Both are now enforced server side.
+* Fix     - Security: the upload and remove handlers were registered for logged-out visitors. A file was written and a media attachment created before the handler checked who was asking. Both now require a logged-in user.
+* Fix     - Uploaded file types are validated from the file's real contents with `wp_check_filetype_and_ext()` instead of trusting the extension on the supplied filename.
+* Fix     - Cropping a PNG or GIF wrote JPEG data back under the original extension, losing transparency and flattening animation. Cropping now goes through `WP_Image_Editor` and preserves the source format.
+* Fix     - Cropping a WEBP upload failed outright -- the crop had no WEBP branch and fell through to the JPEG decoder.
+* Fix     - Thumbnail sizes were generated from the uncropped upload. Cropping now happens before the attachment is created, so every generated size is cut from the final image.
+* Fix     - A failed upload no longer leaves an orphaned file behind in the uploads directory.
+* Fix     - The BuddyPress `bp-disable-avatar-uploads` option is only written when BuddyPress is actually installed.
+* Tweak   - The avatar directory is created on activation with `wp_mkdir_p()` instead of a `mkdir( 0777 )` attempted on every request.
 
 = 1.2.2   - 30-05-2026 =
 * Fix     - Design issue in Gutenberg block.

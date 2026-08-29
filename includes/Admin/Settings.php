@@ -710,13 +710,16 @@ class Settings
 
         $output['woo_my_account_uploader'] = ! empty($input['woo_my_account_uploader']) ? '1' : '';
 
-        // BuddyPress — also syncs the bp-disable-avatar-uploads option.
-        if (! empty($input['buddypress_integration']) ) {
-            $output['buddypress_integration'] = '1';
-            update_option('bp-disable-avatar-uploads', '1');
-        } else {
-            $output['buddypress_integration'] = '';
-            update_option('bp-disable-avatar-uploads', '');
+        $output['buddypress_integration'] = ! empty($input['buddypress_integration']) ? '1' : '';
+
+        /*
+         * Sync BuddyPress's own avatar-upload switch, but only when BuddyPress is
+         * actually installed. Writing the option unconditionally left a stray row in
+         * wp_options on every site that had never heard of BuddyPress, and would have
+         * silently disabled its uploader the day someone activated it.
+         */
+        if (function_exists('buddypress') ) {
+            update_option('bp-disable-avatar-uploads', $output['buddypress_integration']);
         }
 
         $output['wpmembers_integration'] = ! empty($input['wpmembers_integration']) ? '1' : '';

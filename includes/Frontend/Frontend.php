@@ -318,7 +318,7 @@ class Frontend {
 		/**
 		 * Filter where the avatar row sits in the WP-Members profile form.
 		 *
-		 * @since 1.2.3
+		 * @since 1.3.0
 		 *
 		 * @param string $position Either 'top' (default) or 'bottom'.
 		 */

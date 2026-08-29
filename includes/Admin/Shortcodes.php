@@ -35,7 +35,7 @@ class Shortcodes {
 	/**
 	 * Attributes accepted by [wpmake_advance_user_avatar].
 	 *
-	 * @since 1.2.3
+	 * @since 1.3.0
 	 *
 	 * @return array
 	 */
@@ -53,7 +53,7 @@ class Shortcodes {
 	/**
 	 * Attributes accepted by [wpmake_advance_user_avatar_upload].
 	 *
-	 * @since 1.2.3
+	 * @since 1.3.0
 	 *
 	 * @return array
 	 */
@@ -98,7 +98,7 @@ class Shortcodes {
 	/**
 	 * Normalise shortcode attributes against their defaults.
 	 *
-	 * @since 1.2.3
+	 * @since 1.3.0
 	 *
 	 * @param mixed  $atts     Raw attributes as passed by the shortcode API.
 	 * @param array  $defaults Known attributes and their default values.
@@ -111,7 +111,7 @@ class Shortcodes {
 		/**
 		 * Filter the parsed shortcode attributes.
 		 *
-		 * @since 1.2.3
+		 * @since 1.3.0
 		 *
 		 * @param array  $atts Parsed attributes.
 		 * @param string $tag  Shortcode tag.
@@ -155,7 +155,7 @@ class Shortcodes {
 	 * The stylesheet reads every size/shape value from custom properties, so a
 	 * per-shortcode override is just a matter of redeclaring them on the container.
 	 *
-	 * @since 1.2.3
+	 * @since 1.3.0
 	 *
 	 * @param array $atts Parsed attributes.
 	 * @return string Style attribute value, empty when nothing was set.
@@ -181,7 +181,7 @@ class Shortcodes {
 	/**
 	 * Build the container class list from the shortcode attributes.
 	 *
-	 * @since 1.2.3
+	 * @since 1.3.0
 	 *
 	 * @param array $atts Parsed attributes.
 	 * @return string

@@ -135,12 +135,42 @@ if ( ! class_exists( 'UserAvatar' ) ) :
 				// require file.
 				$this->frontend = new Frontend();
 			}
+		}
 
-			// Create a folder to store avatars if not present.
-			$path = wp_upload_dir()['basedir'] . '/wpmake-advance-user-avatar';
+		/**
+		 * Absolute path of the directory avatars are stored in.
+		 *
+		 * @since 1.3.0
+		 *
+		 * @return string
+		 */
+		public static function get_upload_path() {
+			return wp_upload_dir()['basedir'] . '/wpmake-advance-user-avatar';
+		}
 
-			if ( ! is_dir( $path ) ) {
-				mkdir( $path, 0777, true ); // phpcs:ignore
+		/**
+		 * Runs on activation.
+		 *
+		 * Creating this directory used to happen inside includes(), which meant a
+		 * stat call and a possible mkdir() on every single request. It belongs here,
+		 * and the upload handler calls wp_mkdir_p() itself to cover sites that
+		 * upgrade without ever re-activating.
+		 *
+		 * @since 1.3.0
+		 *
+		 * @return void
+		 */
+		public static function activate() {
+			$path = self::get_upload_path();
+
+			// wp_mkdir_p() applies the filesystem's own permissions rather than a blanket 0777.
+			wp_mkdir_p( $path );
+
+			// Keep the directory from being listed on servers with no index rule of their own.
+			$index = trailingslashit( $path ) . 'index.php';
+
+			if ( ! file_exists( $index ) ) {
+				file_put_contents( $index, "<?php\n// Silence is golden.\n" ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
 			}
 		}
 

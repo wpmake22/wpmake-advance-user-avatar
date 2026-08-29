@@ -57,7 +57,7 @@ if ( ! function_exists( 'wpmake_advance_user_avatar_build_avatar_html' ) ) {
 	 * Split out of the filter callback above so the re-entrancy flag has a single
 	 * place to be reset, whichever way this bails out.
 	 *
-	 * @since 1.2.3
+	 * @since 1.3.0
 	 *
 	 * @param string $avatar      Avatar markup passed in by the filter.
 	 * @param mixed  $id_or_email ID, email, or object identifying the user.
@@ -129,7 +129,7 @@ if ( ! function_exists( 'wpmake_advance_user_avatar_locate_template' ) ) {
 	 *   yourtheme/$template_name
 	 *   wp-content/plugins/wpmake-advance-user-avatar/templates/$template_name
 	 *
-	 * @since 1.2.3
+	 * @since 1.3.0
 	 *
 	 * @param string $template_name Template file name, e.g. wpmake-advance-user-avatar-page.php.
 	 * @return string Absolute path of the template to load.
@@ -141,7 +141,7 @@ if ( ! function_exists( 'wpmake_advance_user_avatar_locate_template' ) ) {
 		/**
 		 * Filter the theme sub-directory templates are looked up in.
 		 *
-		 * @since 1.2.3
+		 * @since 1.3.0
 		 *
 		 * @param string $directory Sub-directory name, without slashes.
 		 */
@@ -161,7 +161,7 @@ if ( ! function_exists( 'wpmake_advance_user_avatar_locate_template' ) ) {
 		/**
 		 * Filter the resolved template path.
 		 *
-		 * @since 1.2.3
+		 * @since 1.3.0
 		 *
 		 * @param string $template      Absolute path of the template to load.
 		 * @param string $template_name Template file name.

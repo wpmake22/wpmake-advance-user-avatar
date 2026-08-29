@@ -31,10 +31,15 @@ class Ajax {
 	 * Hook in methods - uses WordPress ajax handlers (admin-ajax)
 	 */
 	public static function add_ajax_events() {
-
+		/*
+		 * Every handler here needs a logged-in user, so none of them are exposed to
+		 * wp_ajax_nopriv_. Upload and remove used to be, which meant an anonymous
+		 * request reached wp_handle_upload() and wp_insert_attachment() before the
+		 * handler ever looked at who was asking.
+		 */
 		$ajax_events = array(
-			'method_upload'  => true,
-			'remove_avatar'  => true,
+			'method_upload'  => false,
+			'remove_avatar'  => false,
 			'rated'          => false,
 			'dismiss_notice' => false,
 		);
@@ -53,6 +58,109 @@ class Ajax {
 				);
 			}
 		}
+	}
+
+	/**
+	 * The avatar mime types the site owner has allowed.
+	 *
+	 * Read from the saved settings only. The uploader used to post this list along
+	 * with the file and the handler trusted it, so anything able to edit the request
+	 * could accept types the site owner had switched off.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @return array List of mime types.
+	 */
+	private static function get_allowed_mimes(): array {
+		$supported = array( 'image/jpeg', 'image/png', 'image/gif', 'image/webp' );
+		$options   = get_option( 'wpmake_advance_user_avatar_settings', array() );
+
+		$configured = isset( $options['allowed_file_type'] ) && is_array( $options['allowed_file_type'] )
+			? $options['allowed_file_type']
+			: array();
+
+		// The settings screen offers 'image/jpg', which is not a real mime type.
+		$configured = array_map(
+			static function ( $mime ) {
+				return 'image/jpg' === $mime ? 'image/jpeg' : $mime;
+			},
+			$configured
+		);
+
+		$allowed = array_values( array_unique( array_intersect( $configured, $supported ) ) );
+
+		return empty( $allowed ) ? array( 'image/jpeg', 'image/png', 'image/gif' ) : $allowed;
+	}
+
+	/**
+	 * The allowed types in the extension => mime shape wp_handle_upload() expects.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @return array
+	 */
+	private static function get_allowed_mime_overrides(): array {
+		$extensions = array(
+			'image/jpeg' => 'jpg|jpeg|jpe',
+			'image/png'  => 'png',
+			'image/gif'  => 'gif',
+			'image/webp' => 'webp',
+		);
+
+		$overrides = array();
+
+		foreach ( self::get_allowed_mimes() as $mime ) {
+			if ( isset( $extensions[ $mime ] ) ) {
+				$overrides[ $extensions[ $mime ] ] = $mime;
+			}
+		}
+
+		return $overrides;
+	}
+
+	/**
+	 * Human readable list of accepted types, for error messages.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @return string
+	 */
+	private static function get_allowed_types_label(): string {
+		$labels = array(
+			'image/jpeg' => 'JPG',
+			'image/png'  => 'PNG',
+			'image/gif'  => 'GIF',
+			'image/webp' => 'WEBP',
+		);
+
+		$allowed = array();
+
+		foreach ( self::get_allowed_mimes() as $mime ) {
+			if ( isset( $labels[ $mime ] ) ) {
+				$allowed[] = $labels[ $mime ];
+			}
+		}
+
+		return implode( ', ', $allowed );
+	}
+
+	/**
+	 * The upload ceiling in bytes.
+	 *
+	 * The site owner's setting can only ever tighten the server limit, never raise
+	 * it past what PHP will actually accept.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @return int
+	 */
+	private static function get_max_upload_bytes(): int {
+		$options = get_option( 'wpmake_advance_user_avatar_settings', array() );
+		$server  = (int) wp_max_upload_size();
+
+		$configured = isset( $options['max_size'] ) ? absint( $options['max_size'] ) * 1024 : 0;
+
+		return $configured > 0 ? min( $configured, $server ) : $server;
 	}
 
 	/**
@@ -81,71 +189,75 @@ class Ajax {
 	}
 
 	/**
-	 * User input dropped function.
+	 * Handle an avatar upload.
+	 *
+	 * Who may upload, which types are accepted and how large a file may be are all
+	 * decided server side. Until 1.3.0 the accepted types and the size ceiling came
+	 * out of the request body, so anything that could edit the form could ignore the
+	 * site owner's settings entirely.
 	 */
 	public static function method_upload() {
 
 		check_ajax_referer( 'wpmake_advance_user_avatar_upload_nonce', 'security' );
 
-		$upload = isset( $_FILES['file'] ) ? $_FILES['file'] : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$user_id = get_current_user_id();
 
-		// valid extension for image.
-		$valid_extensions     = isset( $_REQUEST['valid_extension'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['valid_extension'] ) ) : array();
-		$valid_extension_type = explode( ',', $valid_extensions );
-		$valid_ext            = array();
-
-		foreach ( $valid_extension_type as $key => $value ) {
-			$image_extension   = explode( '/', $value );
-			$valid_ext[ $key ] = $image_extension[1];
-		}
-
-		$src_file_name  = isset( $upload['name'] ) ? $upload['name'] : '';
-		$file_extension = strtolower( pathinfo( $src_file_name, PATHINFO_EXTENSION ) );
-
-		// Validates if the uploaded file has the acceptable extension.
-		if ( ! in_array( $file_extension, $valid_ext ) ) {
+		if ( ! $user_id ) {
 			wp_send_json_error(
 				array(
-					/* translators: %s: comma-separated list of accepted file types e.g. JPG, PNG, GIF */
-					'message' => sprintf(
-						esc_html__( 'Invalid file type. Accepted: %s.', 'wpmake-advance-user-avatar' ),
-						strtoupper( implode( ', ', $valid_ext ) )
-					),
+					'message' => esc_html__( 'You must be logged in to upload an avatar.', 'wpmake-advance-user-avatar' ),
 				)
 			);
 		}
 
-		$server_max_bytes = wp_max_upload_size();
+		$upload = isset( $_FILES['file'] ) ? $_FILES['file'] : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
-		// Retrieves cropped picture dimensions from ajax request.
-		$value                          = isset( $_REQUEST['cropped_image'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['cropped_image'] ) ) : '';
-		$cropped_image_size             = json_decode( $value, true );
-		$max_uploaded_size_option_value = isset( $_REQUEST['max_uploaded_size'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['max_uploaded_size'] ) ) : '';
-
-		if ( '' !== $max_uploaded_size_option_value ) {
-			$max_upload_size_options_value = $max_uploaded_size_option_value * 1024;
-		} else {
-			$max_upload_size_options_value = $server_max_bytes;
-		}
-
-		if ( ! isset( $upload['size'] ) || $upload['size'] < 1 ) {
-
+		if ( empty( $upload['tmp_name'] ) || ! isset( $upload['size'] ) || $upload['size'] < 1 ) {
 			wp_send_json_error(
 				array(
 					'message' => esc_html__( 'No file was received. Please select a file and try again.', 'wpmake-advance-user-avatar' ),
 				)
 			);
-		} elseif ( $upload['size'] > $max_upload_size_options_value ) {
+		}
+
+		/*
+		 * Sniff the real type off the file itself. The check this replaces looked
+		 * only at the extension on the supplied filename.
+		 */
+		$filetype = wp_check_filetype_and_ext( $upload['tmp_name'], isset( $upload['name'] ) ? $upload['name'] : '' );
+
+		if ( empty( $filetype['type'] ) || ! in_array( $filetype['type'], self::get_allowed_mimes(), true ) ) {
 			wp_send_json_error(
 				array(
-					/* translators: %s - Max Size */
-					'message' => sprintf( esc_html__( 'Please upload a picture with size less than %s', 'wpmake-advance-user-avatar' ), size_format( $max_upload_size_options_value ) ),
+					'message' => sprintf(
+						/* translators: %s: comma-separated list of accepted file types e.g. JPG, PNG, GIF */
+						esc_html__( 'Invalid file type. Accepted: %s.', 'wpmake-advance-user-avatar' ),
+						esc_html( self::get_allowed_types_label() )
+					),
 				)
 			);
 		}
 
+		$max_upload_bytes = self::get_max_upload_bytes();
+
+		if ( $upload['size'] > $max_upload_bytes ) {
+			wp_send_json_error(
+				array(
+					/* translators: %s - Max Size */
+					'message' => sprintf( esc_html__( 'Please upload a picture with size less than %s', 'wpmake-advance-user-avatar' ), size_format( $max_upload_bytes ) ),
+				)
+			);
+		}
+
+		// Retrieves cropped picture dimensions from ajax request.
+		$value              = isset( $_REQUEST['cropped_image'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['cropped_image'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$cropped_image_size = json_decode( $value, true );
+
 		$upload_dir  = wp_upload_dir();
 		$upload_path = apply_filters( 'wpmake_advance_user_avatar_upload_url', $upload_dir['basedir'] . '/wpmake-advance-user-avatar' ); /*Get path of upload dir of WordPress*/
+
+		// Cheap when the directory is already there; covers upgrades that never re-run activation.
+		wp_mkdir_p( $upload_path );
 
 		if ( ! is_writable( $upload_path ) ) {  /*Check if upload dir is writable*/ // phpcs:ignore
 
@@ -172,115 +284,184 @@ class Ajax {
 
 		$overrides = array(
 			'test_form' => false,
+			'mimes'     => self::get_allowed_mime_overrides(),
 		);
 
 		$uploaded = wp_handle_upload( $upload, $overrides );
 		remove_filter( 'upload_dir', $upload_dir_filter );
 
-		if ( $uploaded && ! isset( $uploaded['error'] ) ) {
-			$file_url  = $uploaded['url'];
-			$file_path = $uploaded['file'];
-			$file_type = $uploaded['type'];
-
-			// Fix image EXIF orientation before processing further
-			self::fix_image_orientation( $file_path );
-
-			$attachment_id = wp_insert_attachment(
+		if ( ! $uploaded || isset( $uploaded['error'] ) ) {
+			wp_send_json_error(
 				array(
-					'guid'           => $file_url,
-					'post_mime_type' => $file_type,
-					'post_title'     => preg_replace( '/\.[^.]+$/', '', basename( $file_path ) ),
-					'post_content'   => '',
-					'post_status'    => 'inherit',
-				),
-				$file_path
+					'message' => ! empty( $uploaded['error'] )
+						? $uploaded['error']
+						: esc_html__( 'File cannot be uploaded.', 'wpmake-advance-user-avatar' ),
+				)
 			);
+		}
 
-			if ( is_wp_error( $attachment_id ) ) {
+		$file_url  = $uploaded['url'];
+		$file_path = $uploaded['file'];
+		$file_type = $uploaded['type'];
+
+		// Fix image EXIF orientation before processing further.
+		self::fix_image_orientation( $file_path );
+
+		$options = get_option( 'wpmake_advance_user_avatar_settings', array() );
+
+		/*
+		 * Crop before the attachment exists, so the thumbnail sizes generated below
+		 * are cut from the final image rather than from the untouched upload.
+		 */
+		if ( ! empty( $options['cropping_interface'] ) && ! empty( $cropped_image_size ) ) {
+			$cropped = self::crop_image( $file_path, $cropped_image_size, $options );
+
+			if ( is_wp_error( $cropped ) ) {
+				wp_delete_file( $file_path );
 
 				wp_send_json_error(
 					array(
-						'message' => $attachment_id->get_error_message(),
+						'message' => $cropped->get_error_message(),
 					)
 				);
 			}
 
-			include_once ABSPATH . 'wp-admin/includes/image.php';
+			/*
+			 * A site filtering image_editor_output_format -- a WebP conversion plugin,
+			 * say -- can have the editor write under a different extension than it
+			 * read. Follow the file the editor actually produced, or the attachment
+			 * would be pointing at the copy we are about to leave behind.
+			 */
+			if ( $cropped['path'] !== $file_path ) {
+				wp_delete_file( $file_path );
 
-			$options = get_option( 'wpmake_advance_user_avatar_settings', array() );
-
-			$url = wp_get_attachment_url( $attachment_id );
-
-			if ( isset( $options['cropping_interface'] ) && $options['cropping_interface'] && ! empty( $cropped_image_size ) ) {
-				// Retrieves original picture height and width.
-				list( $original_image_width, $original_image_height ) = getimagesize( $file_path );
-
-				// Determines the type of uploaded picture and treats them differently.
-				switch ( $upload['type'] ) {
-					case 'image/png':
-						$img_r = imagecreatefrompng( $file_path );
-						break;
-					case 'image/gif':
-						$img_r = imagecreatefromgif( $file_path );
-						break;
-					default:
-						$img_r = imagecreatefromjpeg( $file_path );
-				}
-
-				$cropped_image_holder_width  = rtrim( $cropped_image_size['holder_width'], 'px' );
-				$cropped_image_holder_height = rtrim( $cropped_image_size['holder_height'], 'px' );
-
-				// Calculates the actual portion of original picture where the cropping is applied.
-				$cropped_image_width  = absint( $cropped_image_size['w'] * $original_image_width / $cropped_image_holder_width );
-				$cropped_image_left   = absint( $cropped_image_size['x'] * $original_image_width / $cropped_image_holder_width );
-				$cropped_image_height = absint( $cropped_image_size['h'] * $original_image_height / $cropped_image_holder_height );
-				$cropped_image_right  = absint( $cropped_image_size['y'] * $original_image_height / $cropped_image_holder_height );
-
-				// Creates a frame of original height and width and copies the cropped picture portion to the frame.
-				$dst_r = wp_imageCreateTrueColor( $original_image_width, $original_image_height );
-				imagecopyresampled( $dst_r, $img_r, 0, 0, $cropped_image_left, $cropped_image_right, $original_image_width, $original_image_height, $cropped_image_width, $cropped_image_height );
-
-				// Retrieves and Resizes the cropped picture to a size defined by user in filter or default 500 by 500.
-				$image_width  = 500;
-				$image_height = 500;
-
-				if ( isset( $options['uploaded_image_size'] ) ) {
-					$image_width  = $options['uploaded_image_size']['width'];
-					$image_height = $options['uploaded_image_size']['height'];
-				}
-
-				$dest_r = wp_imageCreateTrueColor( $image_width, $image_height );
-				imagecopyresampled( $dest_r, $dst_r, 0, 0, 0, 0, $image_width, $image_height, $original_image_width, $original_image_height );
-
-				// Replaces the original picture with the cropped picture.
-				$img_r = imagejpeg( $dest_r, $file_path );
+				$file_url  = trailingslashit( dirname( $file_url ) ) . wp_basename( $cropped['path'] );
+				$file_path = $cropped['path'];
+				$file_type = $cropped['mime-type'];
 			}
+		}
 
-			if ( empty( $url ) ) {
-				$url = home_url() . '/wp-includes/images/media/text.png';
-			}
+		$attachment_id = wp_insert_attachment(
+			array(
+				'guid'           => $file_url,
+				'post_mime_type' => $file_type,
+				'post_title'     => preg_replace( '/\.[^.]+$/', '', basename( $file_path ) ),
+				'post_content'   => '',
+				'post_status'    => 'inherit',
+			),
+			$file_path
+		);
 
-			if ( ! isset( $options['thumbnail_size'] ) || ( isset( $options['thumbnail_size'] ) && $options['thumbnail_size'] ) ) {
-				// Generate and save the attachment metas into the database .
-				wp_update_attachment_metadata( $attachment_id, wp_generate_attachment_metadata( $attachment_id, get_attached_file( $attachment_id ) ) );
-			}
+		if ( is_wp_error( $attachment_id ) ) {
+			wp_delete_file( $file_path );
 
-			$user_id = get_current_user_id();
-			update_user_meta( $user_id, 'wpmake_advance_user_avatar_attachment_id', $attachment_id );
-
-			wp_send_json_success(
-				array(
-					'attachment_id'       => $attachment_id,
-					'profile_picture_url' => $url,
-				)
-			);
-		} else {
 			wp_send_json_error(
 				array(
-					'message' => esc_html__( 'File cannot be uploaded.', 'wpmake-advance-user-avatar' ),
+					'message' => $attachment_id->get_error_message(),
 				)
 			);
 		}
+
+		include_once ABSPATH . 'wp-admin/includes/image.php';
+
+		if ( ! isset( $options['thumbnail_size'] ) || $options['thumbnail_size'] ) {
+			// Generate and save the attachment metas into the database.
+			wp_update_attachment_metadata( $attachment_id, wp_generate_attachment_metadata( $attachment_id, get_attached_file( $attachment_id ) ) );
+		}
+
+		$url = wp_get_attachment_url( $attachment_id );
+
+		if ( empty( $url ) ) {
+			$url = $file_url;
+		}
+
+		update_user_meta( $user_id, 'wpmake_advance_user_avatar_attachment_id', $attachment_id );
+
+		wp_send_json_success(
+			array(
+				'attachment_id'       => $attachment_id,
+				'profile_picture_url' => $url,
+			)
+		);
+	}
+
+	/**
+	 * Crop an uploaded avatar down to the configured output size.
+	 *
+	 * Goes through WP_Image_Editor rather than raw GD so the file is read and
+	 * written with the codec matching its own type. The implementation this
+	 * replaces read PNG and GIF correctly but always wrote back through
+	 * imagejpeg(), leaving JPEG bytes behind a .png extension and flattening
+	 * animated GIFs, and had no WEBP branch at all -- a WEBP upload fell through
+	 * to imagecreatefromjpeg() and failed.
+	 *
+	 * Note that the bundled uploader crops on a canvas in the browser and posts an
+	 * empty cropped_image, so it never reaches this path. It stays for callers that
+	 * do post crop geometry, and for any client still running older cached JS.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @param string $file_path Absolute path to the uploaded file.
+	 * @param array  $crop      Crop geometry from the browser: x, y, w and h, in the
+	 *                          holder_width / holder_height space they were measured in.
+	 * @param array  $options   Plugin settings.
+	 * @return array|\WP_Error The saved file details from WP_Image_Editor::save() on
+	 *                         success -- 'path' and 'mime-type' among them -- or a
+	 *                         WP_Error describing why the crop could not be applied.
+	 */
+	private static function crop_image( $file_path, $crop, $options ) {
+		$holder_width  = (float) rtrim( isset( $crop['holder_width'] ) ? $crop['holder_width'] : '', 'px' );
+		$holder_height = (float) rtrim( isset( $crop['holder_height'] ) ? $crop['holder_height'] : '', 'px' );
+
+		if ( $holder_width <= 0 || $holder_height <= 0 ) {
+			return new \WP_Error( 'wpmake_aua_bad_crop', esc_html__( 'The crop area could not be read. Please try again.', 'wpmake-advance-user-avatar' ) );
+		}
+
+		$size = getimagesize( $file_path );
+
+		if ( ! $size ) {
+			return new \WP_Error( 'wpmake_aua_bad_image', esc_html__( 'The uploaded file could not be read as an image.', 'wpmake-advance-user-avatar' ) );
+		}
+
+		list( $original_width, $original_height ) = $size;
+
+		// Scale the browser-space crop box back up to the real image.
+		$scale_x = $original_width / $holder_width;
+		$scale_y = $original_height / $holder_height;
+
+		$src_x = absint( ( isset( $crop['x'] ) ? $crop['x'] : 0 ) * $scale_x );
+		$src_y = absint( ( isset( $crop['y'] ) ? $crop['y'] : 0 ) * $scale_y );
+		$src_w = absint( ( isset( $crop['w'] ) ? $crop['w'] : 0 ) * $scale_x );
+		$src_h = absint( ( isset( $crop['h'] ) ? $crop['h'] : 0 ) * $scale_y );
+
+		if ( $src_w < 1 || $src_h < 1 ) {
+			return new \WP_Error( 'wpmake_aua_bad_crop', esc_html__( 'The crop area could not be read. Please try again.', 'wpmake-advance-user-avatar' ) );
+		}
+
+		$dest_width  = 500;
+		$dest_height = 500;
+
+		if ( isset( $options['uploaded_image_size'] ) ) {
+			$dest_width  = absint( $options['uploaded_image_size']['width'] );
+			$dest_height = absint( $options['uploaded_image_size']['height'] );
+
+			$dest_width  = $dest_width > 0 ? $dest_width : 500;
+			$dest_height = $dest_height > 0 ? $dest_height : 500;
+		}
+
+		$editor = wp_get_image_editor( $file_path );
+
+		if ( is_wp_error( $editor ) ) {
+			return $editor;
+		}
+
+		$cropped = $editor->crop( $src_x, $src_y, $src_w, $src_h, $dest_width, $dest_height );
+
+		if ( is_wp_error( $cropped ) ) {
+			return $cropped;
+		}
+
+		return $editor->save( $file_path );
 	}
 
 	/**
