@@ -226,6 +226,17 @@
 	}
 }
 
+// WP-Members profile form: the uploader is a form row, so it has to flow with the
+// form rather than keep the shortcode's fixed 400x300 box.
+#wpmem_profile_form {
+	.wpmake-advance-user-avatar-container {
+		width: 100%;
+		height: auto;
+		padding: 0px;
+		align-items: flex-start;
+	}
+}
+
 .avatar-50 {
 	width: 50px !important;
 	height: 50px !important;

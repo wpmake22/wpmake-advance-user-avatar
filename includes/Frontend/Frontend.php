@@ -38,6 +38,7 @@ class Frontend {
 
 		$this->init_woocommerce_hooks( $options );
 		$this->init_buddypress_hooks( $options );
+		$this->init_wpmembers_hooks( $options );
 
 		// Better Messages integration — no-op if Better Messages is not active.
 		add_filter( 'better_messages_rest_user_item', array( $this, 'better_messages_avatar' ), 10, 3 );
@@ -237,6 +238,97 @@ class Frontend {
 		}
 
 		return $image;
+	}
+
+	// -------------------------------------------------------------------------
+	// WP-Members hooks
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Wires up WP-Members hooks when the integration is enabled.
+	 *
+	 * Avatar display needs no hook of its own: WP-Members renders avatars through
+	 * get_avatar() (including its own [wpmem_avatar] shortcode), which the filter in
+	 * CoreFunctions.php already overrides.
+	 *
+	 * @param array $options Saved plugin options.
+	 */
+	private function init_wpmembers_hooks( array $options ): void {
+		if ( empty( $options['wpmembers_integration'] ) || ! class_exists( 'WP_Members' ) ) {
+			return;
+		}
+
+		add_filter( 'wpmem_register_form_rows', array( $this, 'wpmembers_add_avatar_row' ), 10, 2 );
+	}
+
+	/**
+	 * Add the avatar uploader as a row inside the WP-Members profile edit form.
+	 *
+	 * Only the profile form gets the row — on the registration form there is no user
+	 * yet to attach an avatar to.
+	 *
+	 * @param array  $rows Form rows, keyed by meta key.
+	 * @param string $tag  Form being generated: new|edit.
+	 * @return array
+	 */
+	public function wpmembers_add_avatar_row( $rows, $tag ) {
+		if ( 'edit' !== $tag || ! is_user_logged_in() || ! is_array( $rows ) ) {
+			return $rows;
+		}
+
+		$meta_key = 'wpmake_advance_user_avatar';
+
+		if ( isset( $rows[ $meta_key ] ) ) {
+			return $rows;
+		}
+
+		$label_text = __( 'Profile Picture', 'wpmake-advance-user-avatar' );
+
+		// The row filter does not receive the form args, so the wrappers are copied from
+		// a sibling row to match whatever markup this form was built with.
+		$sample = ! empty( $rows ) ? reset( $rows ) : array();
+		$wrap   = ! empty( $sample['field_before'] );
+
+		$label = function_exists( 'wpmem_form_label' )
+			? wpmem_form_label(
+				array(
+					'meta_key' => $meta_key,
+					'label'    => $label_text,
+					'type'     => 'text',
+				)
+			)
+			: '<label class="text">' . esc_html( $label_text ) . '</label>';
+
+		$row = array(
+			'meta'         => $meta_key,
+			// Deliberately not 'file': the uploader posts over ajax, and a file type would
+			// switch the whole WP-Members form to multipart enctype for nothing.
+			'type'         => 'text',
+			'value'        => '',
+			'values'       => '',
+			'label_text'   => $label_text,
+			'row_before'   => isset( $sample['row_before'] ) ? $sample['row_before'] : '',
+			'label'        => $label,
+			'field_before' => $wrap ? '<div class="div_text">' : '',
+			'field'        => apply_shortcodes( '[wpmake_advance_user_avatar_upload]' ),
+			'field_after'  => $wrap ? '</div>' : '',
+			'row_after'    => isset( $sample['row_after'] ) ? $sample['row_after'] : '',
+		);
+
+		/**
+		 * Filter where the avatar row sits in the WP-Members profile form.
+		 *
+		 * @since 1.2.3
+		 *
+		 * @param string $position Either 'top' (default) or 'bottom'.
+		 */
+		$position = apply_filters( 'wpmake_advance_user_avatar_wpmembers_row_position', 'top' );
+
+		$avatar_row = array( $meta_key => $row );
+
+		return ( 'bottom' === $position )
+			? array_merge( $rows, $avatar_row )
+			: array_merge( $avatar_row, $rows );
 	}
 
 	// -------------------------------------------------------------------------

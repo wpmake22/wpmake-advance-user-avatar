@@ -209,6 +209,11 @@ class Settings
                     'label'       => __('BuddyPress Integration', 'wpmake-advance-user-avatar'),
                     'description' => __('Display user avatar in BuddyPress avatar areas and Change Avatar section', 'wpmake-advance-user-avatar'),
         ),
+        'wpmembers_integration'   => array(
+                    'type'        => 'toggle',
+                    'label'       => __('WP-Members Integration', 'wpmake-advance-user-avatar'),
+                    'description' => __('Add the avatar uploader to the WP-Members profile edit form', 'wpmake-advance-user-avatar'),
+        ),
         ),
         );
 
@@ -713,6 +718,8 @@ class Settings
             $output['buddypress_integration'] = '';
             update_option('bp-disable-avatar-uploads', '');
         }
+
+        $output['wpmembers_integration'] = ! empty($input['wpmembers_integration']) ? '1' : '';
 
         return $output;
     }
