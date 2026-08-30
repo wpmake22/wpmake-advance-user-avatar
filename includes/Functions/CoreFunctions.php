@@ -174,6 +174,65 @@ if ( ! function_exists( 'wpmake_aua_get_avatar_url' ) ) {
 	}
 }
 
+if ( ! function_exists( 'wpmake_aua_avatar_subsizes' ) ) {
+	/**
+	 * Extra square sizes generated for avatar uploads.
+	 *
+	 * The "Store in thumbnail sizes" setting has always described these three
+	 * variants, but nothing ever generated them: the upload path only asked for the
+	 * sizes the site already had registered. A 32px avatar therefore landed on
+	 * whichever registered size happened to be smallest.
+	 *
+	 * These are deliberately not registered with add_image_size(). That would add
+	 * three sub-sizes to every image uploaded anywhere on the site, which on a store
+	 * with a large media library is a real cost for no benefit. They are injected for
+	 * the avatar upload only, and matched back by dimension rather than by name.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @return array Size definitions keyed by name.
+	 */
+	function wpmake_aua_avatar_subsizes() {
+		return apply_filters(
+			'wpmake_aua_avatar_subsizes',
+			array(
+				'wpmake_aua_32' => array(
+					'width'  => 32,
+					'height' => 32,
+					'crop'   => true,
+				),
+				'wpmake_aua_64' => array(
+					'width'  => 64,
+					'height' => 64,
+					'crop'   => true,
+				),
+				'wpmake_aua_96' => array(
+					'width'  => 96,
+					'height' => 96,
+					'crop'   => true,
+				),
+			)
+		);
+	}
+}
+
+if ( ! function_exists( 'wpmake_aua_add_avatar_subsizes' ) ) {
+	/**
+	 * Add the avatar sub-sizes to one wp_generate_attachment_metadata() run.
+	 *
+	 * Hooked and unhooked around the avatar upload rather than left on, so no other
+	 * upload on the site grows extra files.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @param array $sizes Sizes WordPress is about to generate.
+	 * @return array
+	 */
+	function wpmake_aua_add_avatar_subsizes( $sizes ) {
+		return array_merge( (array) $sizes, wpmake_aua_avatar_subsizes() );
+	}
+}
+
 if ( ! function_exists( 'wpmake_advance_user_avatar_locate_template' ) ) {
 	/**
 	 * Locate a plugin template, letting the active theme override it.

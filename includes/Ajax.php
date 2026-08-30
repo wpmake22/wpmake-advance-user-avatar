@@ -365,8 +365,16 @@ class Ajax {
 		include_once ABSPATH . 'wp-admin/includes/image.php';
 
 		if ( ! isset( $options['thumbnail_size'] ) || $options['thumbnail_size'] ) {
+			/*
+			 * Add the 32/64/96px avatar variants for this attachment only. The setting
+			 * has always promised them; until now nothing generated them.
+			 */
+			add_filter( 'intermediate_image_sizes_advanced', 'wpmake_aua_add_avatar_subsizes' );
+
 			// Generate and save the attachment metas into the database.
 			wp_update_attachment_metadata( $attachment_id, wp_generate_attachment_metadata( $attachment_id, get_attached_file( $attachment_id ) ) );
+
+			remove_filter( 'intermediate_image_sizes_advanced', 'wpmake_aua_add_avatar_subsizes' );
 		}
 
 		$url = wp_get_attachment_url( $attachment_id );
