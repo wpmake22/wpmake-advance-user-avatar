@@ -524,7 +524,7 @@ class Ajax {
 			return false;
 		}
 
-		// Only JPEG images contain EXIF orientation
+		// Only JPEG images contain EXIF orientation.
 		$mime_type = mime_content_type( $file_path );
 		if ( strpos( $mime_type, 'jpeg' ) === false && strpos( $mime_type, 'jpg' ) === false ) {
 			return false;
