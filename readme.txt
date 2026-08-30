@@ -147,6 +147,19 @@ There are also action hooks for adding markup without replacing a template: `wpm
 
 == Changelog ==
 
+= 1.4.0   - unreleased =
+* Enhance - Custom avatars now appear everywhere WordPress renders one, not only where `get_avatar()` is called. Avatar resolution moved to the `pre_get_avatar_data` filter, which also covers `get_avatar_url()` -- the REST `/wp/v2/users` response, the core Avatar block, block themes, WooCommerce Blocks and most React admin UI, all of which previously fell back to Gravatar however the avatar was set.
+* Enhance - Avatars are served at the size the page asked for instead of the full-size original. A 28px admin bar avatar downloaded a 500x500 image on every page load; it now requests a 32px file.
+* Enhance - No hashed email address leaves the site for a user who has uploaded an avatar. WordPress builds the Gravatar hash after the point this plugin now supplies the URL, so on a hit the hash is never constructed.
+* Enhance - BuddyPress avatars get a real 2x image in `srcset`. The same URL was previously labelled `2x`, which told the browser a lie and gained nothing on a high-density screen.
+* Fix     - The "Store in thumbnail sizes" setting did not do what it said. It is described as generating 32px, 64px and 96px variants and defaults to on, but nothing ever generated them -- the upload only produced the sizes the site already had registered, so a 32px avatar request landed on whichever of those happened to be smallest. The three variants are now generated, for avatar uploads only, so no other image on the site grows extra files.
+* Fix     - `review_notice_content()` was declared in the global namespace with no prefix. Renamed to `wpmake_aua_review_notice_content()`.
+* Dev     - Added `phpcs.xml`, so `composer phpcs` and `composer phpcbf` run with no arguments. They previously failed outright.
+* Dev     - PHPCS now runs in CI on pull requests and pushes to main.
+* Dev     - `grunt css` no longer rewrites the bundled third-party stylesheets, and is now a no-op on an unchanged tree.
+
+**Developer note:** `wpmake_advance_user_avatar_replace_gravatar_image()` and `wpmake_advance_user_avatar_build_avatar_html()` have been removed. WordPress now builds the avatar markup itself, including class merging and `srcset`. If you replaced either function, that override no longer runs -- filter `pre_get_avatar_data`, or the new `wpmake_aua_avatar_subsizes` filter for the generated sizes.
+
 = 1.3.0   - 29-08-2026 =
 * Feature - WP-Members integration: adds the avatar uploader to the WP-Members profile edit form.
 * Enhance - Templates can be overridden from the theme. Each one now resolves through `yourtheme/wpmake-advance-user-avatar/`, then `yourtheme/`, then the shipped copy, so customised markup survives an update. The theme sub-directory and the resolved path are both filterable.
