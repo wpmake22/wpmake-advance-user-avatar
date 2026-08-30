@@ -174,7 +174,7 @@ class Admin {
 		}
 
 		$notice_target_link = 'https://wordpress.org/support/plugin/wpmake-advance-user-avatar/reviews/#postform';
-		$notice_content     = review_notice_content();
+		$notice_content     = wpmake_aua_review_notice_content();
 
 		?>
 		<div id="wpmake-aua-review-notice" class="notice notice-info wpmake-aua-notice" data-purpose="notice-info" data-notice-id="review">

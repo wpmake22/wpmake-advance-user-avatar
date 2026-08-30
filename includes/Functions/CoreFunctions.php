@@ -261,14 +261,14 @@ function wpmake_aua_enqueue_js( $code ) {
 }
 
 
-if ( ! function_exists( 'review_notice_content' ) ) {
+if ( ! function_exists( 'wpmake_aua_review_notice_content' ) ) {
 
 	/**
 	 * Review Content.
 	 *
-	 * @return bool
+	 * @return string
 	 */
-	function review_notice_content() {
+	function wpmake_aua_review_notice_content() {
 		return wp_kses_post(
 			sprintf(
 				"<p>%s</p><p class='extra-pad'>%s</p>",
