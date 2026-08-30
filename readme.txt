@@ -157,6 +157,7 @@ There are also action hooks for adding markup without replacing a template: `wpm
 * Enhance - Plugin assets no longer load on pages that have no avatar widget on them. A logged-out visitor previously downloaded 45KB of avatar JavaScript and CSS on every page of the site, including pages with no avatar anywhere; that is now zero. Logged-in visitors only load them where an avatar widget actually renders -- either shortcode, the block, a widget placement, the WooCommerce account and checkout pages, a BuddyPress member page, or a WP-Members profile.
 * Enhance - The webcam library, the largest single asset at 17KB, now loads only when "Capture Picture" is switched on.
 * Enhance - Select2 and the plugin's admin stylesheet no longer load on every screen in wp-admin. They load on the plugin's own settings screen only.
+* Tweak   - Removed 944KB of bundled libraries the plugin stopped using in 1.2.0. Jcrop and SweetAlert2 were replaced with custom code then, but their files stayed in the release zip and were still being downloaded as part of every update.
 * Tweak   - The review notice's dismiss buttons no longer depend on jQuery or the admin bundle, and the notice carries its own small stylesheet, so it still looks and behaves correctly on every admin screen.
 * Dev     - Added `phpcs.xml`, so `composer phpcs` and `composer phpcbf` run with no arguments. They previously failed outright.
 * Dev     - PHPCS now runs in CI on pull requests and pushes to main.

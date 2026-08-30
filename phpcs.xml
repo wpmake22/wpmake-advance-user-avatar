@@ -37,11 +37,8 @@
 
 	<!-- Bundled third party libraries. -->
 	<exclude-pattern>/assets/js/select2/*</exclude-pattern>
-	<exclude-pattern>/assets/js/sweetalert2/*</exclude-pattern>
-	<exclude-pattern>/assets/js/jquery-Jcrop/*</exclude-pattern>
 	<exclude-pattern>/assets/js/webcam/*</exclude-pattern>
 	<exclude-pattern>/assets/css/select2/*</exclude-pattern>
-	<exclude-pattern>/assets/css/sweetalert2/*</exclude-pattern>
 
 	<!-- Generated or non-source directories. -->
 	<exclude-pattern>/languages/*</exclude-pattern>

@@ -87,7 +87,7 @@ module.exports = function (grunt) {
 			generate: {
 				expand: true,
 				cwd: "<%= dirs.css %>",
-				src: ["*.css", "!*-rtl.css", "!jquery*.css"],
+				src: ["*.css", "!*-rtl.css"],
 				dest: "<%= dirs.css %>/",
 				ext: "-rtl.css",
 			},
@@ -98,7 +98,7 @@ module.exports = function (grunt) {
 			minify: {
 				expand: true,
 				cwd: "<%= dirs.css %>/",
-				src: ["*.css", "!jquery*.css"],
+				src: ["*.css"],
 				dest: "<%= dirs.css %>/",
 				ext: ".css",
 			},
@@ -144,7 +144,7 @@ module.exports = function (grunt) {
 				],
 			},
 			dist: {
-				src: ["<%= dirs.css %>/*.css", "!<%= dirs.css %>/jquery*.css"],
+				src: ["<%= dirs.css %>/*.css"],
 			},
 		},
 
