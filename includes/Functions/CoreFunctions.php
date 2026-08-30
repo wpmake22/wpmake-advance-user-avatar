@@ -174,6 +174,40 @@ if ( ! function_exists( 'wpmake_aua_get_avatar_url' ) ) {
 	}
 }
 
+if ( ! function_exists( 'wpmake_aua_enqueue_frontend_assets' ) ) {
+	/**
+	 * Enqueue the front-end avatar assets.
+	 *
+	 * Frontend::load_scripts() registers the handles on every front-end request but
+	 * enqueues nothing. This turns them on, and is called both from the
+	 * wp_enqueue_scripts gate and from each render point, so a widget, page builder
+	 * or template part that the gate cannot see still gets its assets.
+	 *
+	 * Enqueuing the same handle twice is a no-op in WordPress, so the two paths do
+	 * not conflict.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @return void
+	 */
+	function wpmake_aua_enqueue_frontend_assets() {
+		if ( ! is_user_logged_in() ) {
+			return;
+		}
+
+		wp_enqueue_script( 'wpmake-advance-user-avatar-frontend-script' );
+		wp_enqueue_style( 'wpmake-advance-user-avatar-frontend-style' );
+
+		// The webcam library is the single largest asset and most sites never
+		// capture from a camera, so it follows its own setting.
+		$options = get_option( 'wpmake_advance_user_avatar_settings', array() );
+
+		if ( ! empty( $options['capture_picture'] ) ) {
+			wp_enqueue_script( 'wpmake-advance-user-avatar-webcam-script' );
+		}
+	}
+}
+
 if ( ! function_exists( 'wpmake_aua_avatar_subsizes' ) ) {
 	/**
 	 * Extra square sizes generated for avatar uploads.

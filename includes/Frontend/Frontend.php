@@ -382,10 +382,10 @@ class Frontend {
 		$suffix  = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 		$options = get_option( 'wpmake_advance_user_avatar_settings', array() );
 
-		wp_enqueue_script( 'wpmake-advance-user-avatar-frontend-script', WPMAKE_ADVANCE_USER_AVATAR_ASSETS_URL . '/js/frontend/wpmake-advance-user-avatar-frontend' . $suffix . '.js', array( 'jquery' ), WPMAKE_ADVANCE_USER_AVATAR_VERSION, true );
-		wp_enqueue_script( 'wpmake-advance-user-avatar-webcam-script', WPMAKE_ADVANCE_USER_AVATAR_ASSETS_URL . '/js/webcam/webcam' . $suffix . '.js', array( 'jquery' ), WPMAKE_ADVANCE_USER_AVATAR_VERSION, true );
+		wp_register_script( 'wpmake-advance-user-avatar-frontend-script', WPMAKE_ADVANCE_USER_AVATAR_ASSETS_URL . '/js/frontend/wpmake-advance-user-avatar-frontend' . $suffix . '.js', array( 'jquery' ), WPMAKE_ADVANCE_USER_AVATAR_VERSION, true );
+		wp_register_script( 'wpmake-advance-user-avatar-webcam-script', WPMAKE_ADVANCE_USER_AVATAR_ASSETS_URL . '/js/webcam/webcam' . $suffix . '.js', array( 'jquery' ), WPMAKE_ADVANCE_USER_AVATAR_VERSION, true );
 
-		wp_enqueue_style( 'wpmake-advance-user-avatar-frontend-style', WPMAKE_ADVANCE_USER_AVATAR_ASSETS_URL . '/css/wpmake-advance-user-avatar-frontend.css', array(), WPMAKE_ADVANCE_USER_AVATAR_VERSION );
+		wp_register_style( 'wpmake-advance-user-avatar-frontend-style', WPMAKE_ADVANCE_USER_AVATAR_ASSETS_URL . '/css/wpmake-advance-user-avatar-frontend.css', array(), WPMAKE_ADVANCE_USER_AVATAR_VERSION );
 
 		wp_localize_script(
 			'wpmake-advance-user-avatar-frontend-script',
@@ -417,5 +417,101 @@ class Frontend {
 				'wpmake_advance_user_avatar_save_avatar'   => esc_html__( 'Save avatar', 'wpmake-advance-user-avatar' ),
 			)
 		);
+
+		if ( $this->needs_assets() ) {
+			wpmake_aua_enqueue_frontend_assets();
+		}
+	}
+
+	/**
+	 * Whether the current request is going to render an avatar widget.
+	 *
+	 * Only decides whether to enqueue up front, in the document head. Every render
+	 * point enqueues for itself as well, so a false negative here costs a stylesheet
+	 * printed in the footer rather than a broken widget -- which is why this can
+	 * afford to be conservative.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @return bool
+	 */
+	private function needs_assets(): bool {
+		// Every render path bails for logged-out visitors, so nothing to load.
+		if ( ! is_user_logged_in() ) {
+			return false;
+		}
+
+		$needed = $this->post_has_avatar_widget() || $this->is_integration_surface();
+
+		/**
+		 * Filter whether the front-end avatar assets load on this request.
+		 *
+		 * @since 1.4.0
+		 *
+		 * @param bool $needed Whether the assets are needed.
+		 */
+		return (bool) apply_filters( 'wpmake_aua_needs_frontend_assets', $needed );
+	}
+
+	/**
+	 * Whether the queried post contains either shortcode or the block.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @return bool
+	 */
+	private function post_has_avatar_widget(): bool {
+		$post = get_post();
+
+		if ( ! $post instanceof \WP_Post ) {
+			return false;
+		}
+
+		if ( has_block( 'wpmake-aua/user-avatar', $post ) ) {
+			return true;
+		}
+
+		// The tags are filterable at registration, so ask for them the same way.
+		foreach ( array( 'wpmake_advance_user_avatar', 'wpmake_advance_user_avatar_upload' ) as $shortcode ) {
+			$tag = apply_filters( "wpmake_advance_user_avatar_{$shortcode}_shortcode_tag", $shortcode );
+
+			if ( has_shortcode( $post->post_content, $tag ) ) {
+				return true;
+			}
+		}
+
+		// WP-Members renders its profile form from its own shortcode, and the
+		// integration injects the uploader into that form.
+		if ( class_exists( 'WP_Members' ) && has_shortcode( $post->post_content, 'wpmem_profile' ) ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Whether this is an integration screen that renders the widget without a
+	 * shortcode or block appearing in the post content.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @return bool
+	 */
+	private function is_integration_surface(): bool {
+		// WooCommerce My Account, where the viewer and uploader hang off Woo hooks.
+		if ( function_exists( 'is_account_page' ) && is_account_page() ) {
+			return true;
+		}
+
+		if ( function_exists( 'is_checkout' ) && is_checkout() ) {
+			return true;
+		}
+
+		// BuddyPress member area.
+		if ( function_exists( 'bp_is_user' ) && bp_is_user() ) {
+			return true;
+		}
+
+		return false;
 	}
 }

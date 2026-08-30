@@ -119,6 +119,12 @@ class Gutenberg {
 	 * @return string
 	 */
 	public function render( $attributes, $content, $block ) {
+		// The block can be placed in a template part or a synced pattern, neither of
+		// which appears in the queried post's content for the gate to find.
+		if ( ! is_admin() ) {
+			wpmake_aua_enqueue_frontend_assets();
+		}
+
 		$content = apply_filters(
 			'wpmake_aua_block_content',
 			$this->wpmake_advance_user_avatar_content( $attributes ),

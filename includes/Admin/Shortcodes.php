@@ -128,6 +128,10 @@ class Shortcodes {
 	 */
 	public static function render_avatar_uploader( $atts = array() ) {
 		if ( is_user_logged_in() ) {
+			// Covers widgets, page builders and template parts that the
+			// wp_enqueue_scripts gate in Frontend.php cannot see.
+			wpmake_aua_enqueue_frontend_assets();
+
 			$wpmake_aua_atts = wp_parse_args( (array) $atts, self::default_uploader_atts() );
 
 			include wpmake_advance_user_avatar_locate_template( 'wpmake-advance-user-avatar-upload-page.php' );
@@ -143,6 +147,10 @@ class Shortcodes {
 	 */
 	public static function render_avatar( $atts = array() ) {
 		if ( is_user_logged_in() ) {
+			// Covers widgets, page builders and template parts that the
+			// wp_enqueue_scripts gate in Frontend.php cannot see.
+			wpmake_aua_enqueue_frontend_assets();
+
 			$wpmake_aua_atts = wp_parse_args( (array) $atts, self::default_avatar_atts() );
 
 			include wpmake_advance_user_avatar_locate_template( 'wpmake-advance-user-avatar-page.php' );

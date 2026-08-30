@@ -154,6 +154,10 @@ There are also action hooks for adding markup without replacing a template: `wpm
 * Enhance - BuddyPress avatars get a real 2x image in `srcset`. The same URL was previously labelled `2x`, which told the browser a lie and gained nothing on a high-density screen.
 * Fix     - The "Store in thumbnail sizes" setting did not do what it said. It is described as generating 32px, 64px and 96px variants and defaults to on, but nothing ever generated them -- the upload only produced the sizes the site already had registered, so a 32px avatar request landed on whichever of those happened to be smallest. The three variants are now generated, for avatar uploads only, so no other image on the site grows extra files.
 * Fix     - `review_notice_content()` was declared in the global namespace with no prefix. Renamed to `wpmake_aua_review_notice_content()`.
+* Enhance - Plugin assets no longer load on pages that have no avatar widget on them. A logged-out visitor previously downloaded 45KB of avatar JavaScript and CSS on every page of the site, including pages with no avatar anywhere; that is now zero. Logged-in visitors only load them where an avatar widget actually renders -- either shortcode, the block, a widget placement, the WooCommerce account and checkout pages, a BuddyPress member page, or a WP-Members profile.
+* Enhance - The webcam library, the largest single asset at 17KB, now loads only when "Capture Picture" is switched on.
+* Enhance - Select2 and the plugin's admin stylesheet no longer load on every screen in wp-admin. They load on the plugin's own settings screen only.
+* Tweak   - The review notice's dismiss buttons no longer depend on jQuery or the admin bundle, and the notice carries its own small stylesheet, so it still looks and behaves correctly on every admin screen.
 * Dev     - Added `phpcs.xml`, so `composer phpcs` and `composer phpcbf` run with no arguments. They previously failed outright.
 * Dev     - PHPCS now runs in CI on pull requests and pushes to main.
 * Dev     - `grunt css` no longer rewrites the bundled third-party stylesheets, and is now a no-op on an unchanged tree.

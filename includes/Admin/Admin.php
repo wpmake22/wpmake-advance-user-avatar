@@ -32,6 +32,16 @@ class Admin {
 	private Settings $settings;
 
 	/**
+	 * Hook suffix of this plugin's own admin screen.
+	 *
+	 * Captured from add_submenu_page() rather than hardcoded, so the asset gate
+	 * cannot drift from the menu registration.
+	 *
+	 * @var string
+	 */
+	private string $screen_hook = '';
+
+	/**
 	 * Constructor.
 	 */
 	public function __construct() {
@@ -52,6 +62,77 @@ class Admin {
 	 */
 	private function init_hooks(): void {
 		add_action( 'admin_menu', array( $this, 'register_menu' ), 68 );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_review_notice_assets' ) );
+	}
+
+	/**
+	 * Whether the review notice is going to be shown on this request.
+	 *
+	 * Used by both the renderer and the asset gate, so the notice can never print
+	 * without the stylesheet that makes it legible.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @return bool
+	 */
+	private function should_show_review_notice(): bool {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return false;
+		}
+
+		if ( get_option( 'wpmake_aua_review_notice_dismissed', false ) ) {
+			return false;
+		}
+
+		if ( get_transient( 'wpmake_aua_review_notice_snoozed' ) ) {
+			return false;
+		}
+
+		return false !== wpmake_aua_check_activation_date( '14' );
+	}
+
+	/**
+	 * Enqueue the review notice's own stylesheet, on any admin screen.
+	 *
+	 * The notice appears everywhere, but the admin bundle no longer does, so its
+	 * styles live in a small stylesheet of their own rather than dragging the whole
+	 * bundle onto every screen in wp-admin.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @return void
+	 */
+	public function enqueue_review_notice_assets(): void {
+		if ( ! $this->should_show_review_notice() ) {
+			return;
+		}
+
+		wp_enqueue_style(
+			'wpmake-advance-user-avatar-notice-style',
+			WPMAKE_ADVANCE_USER_AVATAR_ASSETS_URL . '/css/wpmake-advance-user-avatar-notice.css',
+			array(),
+			WPMAKE_ADVANCE_USER_AVATAR_VERSION
+		);
+	}
+
+	/**
+	 * Enqueue the admin assets, on this plugin's own screen only.
+	 *
+	 * These used to be enqueued straight from init_hooks(), which runs on every
+	 * admin request, so Select2 and the plugin stylesheet loaded on every screen in
+	 * wp-admin. The review notice needs no part of this bundle: its script is
+	 * dependency-free and printed with the notice itself.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @param string $hook_suffix Screen the request is on.
+	 * @return void
+	 */
+	public function enqueue_admin_assets( $hook_suffix ): void {
+		if ( $hook_suffix !== $this->screen_hook ) {
+			return;
+		}
 
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
@@ -82,21 +163,17 @@ class Admin {
 			WPMAKE_ADVANCE_USER_AVATAR_VERSION
 		);
 
-		wp_localize_script(
-			'wpmake-advance-user-avatar-admin-script',
-			'wpmake_aua_admin_params',
-			array(
-				'ajax_url'     => admin_url( 'admin-ajax.php' ),
-				'notice_nonce' => wp_create_nonce( 'notice_nonce' ),
-			)
-		);
+		/*
+		 * No wp_localize_script here any more. Its only consumer was the review
+		 * notice, which now carries its own ajax URL and nonce inline.
+		 */
 	}
 
 	/**
 	 * Register the admin sub-menu page under Users.
 	 */
 	public function register_menu(): void {
-		add_submenu_page(
+		$this->screen_hook = add_submenu_page(
 			'users.php',
 			esc_html__( 'Advanced Users Avatar', 'wpmake-advance-user-avatar' ),
 			esc_html__( 'Users Avatar', 'wpmake-advance-user-avatar' ),
@@ -157,19 +234,7 @@ class Admin {
 	 * @return void
 	 */
 	public function review_notice(): void {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return;
-		}
-
-		if ( get_option( 'wpmake_aua_review_notice_dismissed', false ) ) {
-			return;
-		}
-
-		if ( get_transient( 'wpmake_aua_review_notice_snoozed' ) ) {
-			return;
-		}
-
-		if ( wpmake_aua_check_activation_date( '14' ) === false ) {
+		if ( ! $this->should_show_review_notice() ) {
 			return;
 		}
 
@@ -194,6 +259,68 @@ class Admin {
 				</div>
 			</div>
 		</div>
+		<?php
+		$this->print_review_notice_script();
+	}
+
+	/**
+	 * Print the review notice's dismiss handlers.
+	 *
+	 * Deliberately dependency-free. The notice shows on every admin screen, and
+	 * pulling jQuery plus the whole admin bundle onto all of them just to wire up
+	 * three buttons is what this milestone exists to stop.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @return void
+	 */
+	private function print_review_notice_script(): void {
+		$data = wp_json_encode(
+			array(
+				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+				'nonce'   => wp_create_nonce( 'notice_nonce' ),
+			)
+		);
+		?>
+		<script>
+		( function () {
+			var cfg    = <?php echo $data; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wp_json_encode output. ?>;
+			var notice = document.getElementById( 'wpmake-aua-review-notice' );
+
+			if ( ! notice ) {
+				return;
+			}
+
+			function dismiss( type ) {
+				var body = new URLSearchParams();
+				body.append( 'action', 'wpmake_advance_user_avatar_upload_dismiss_notice' );
+				body.append( 'security', cfg.nonce );
+				body.append( 'dismissed', 'true' );
+				body.append( 'type', type );
+
+				window.fetch( cfg.ajaxUrl, {
+					method: 'POST',
+					credentials: 'same-origin',
+					headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+					body: body.toString()
+				} );
+			}
+
+			notice.querySelectorAll( '[data-dismiss-type]' ).forEach( function ( el ) {
+				el.addEventListener( 'click', function ( e ) {
+					// "Sure, I'd love to!" is a real link to the review page; let it open.
+					var href = el.getAttribute( 'href' );
+
+					if ( ! href || '#' === href ) {
+						e.preventDefault();
+					}
+
+					dismiss( el.getAttribute( 'data-dismiss-type' ) );
+					notice.style.display = 'none';
+				} );
+			} );
+		}() );
+		</script>
 		<?php
 	}
 }
