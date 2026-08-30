@@ -72,24 +72,7 @@ class Ajax {
 	 * @return array List of mime types.
 	 */
 	private static function get_allowed_mimes(): array {
-		$supported = array( 'image/jpeg', 'image/png', 'image/gif', 'image/webp' );
-		$options   = get_option( 'wpmake_advance_user_avatar_settings', array() );
-
-		$configured = isset( $options['allowed_file_type'] ) && is_array( $options['allowed_file_type'] )
-			? $options['allowed_file_type']
-			: array();
-
-		// The settings screen offers 'image/jpg', which is not a real mime type.
-		$configured = array_map(
-			static function ( $mime ) {
-				return 'image/jpg' === $mime ? 'image/jpeg' : $mime;
-			},
-			$configured
-		);
-
-		$allowed = array_values( array_unique( array_intersect( $configured, $supported ) ) );
-
-		return empty( $allowed ) ? array( 'image/jpeg', 'image/png', 'image/gif' ) : $allowed;
+		return wpmake_aua_get_allowed_mimes();
 	}
 
 	/**

@@ -97,6 +97,10 @@ jQuery(function ($) {
 			CB.onRetake     = onRetake;
 			CB.retakeLabel  = retakeLabel;
 
+			// Remember what the source actually is, so a PNG can stay a PNG.
+			var mimeMatch = /^data:([^;,]+)/.exec(src || "");
+			S.sourceMime  = mimeMatch ? mimeMatch[1] : null;
+
 			var img = new Image();
 			img.onload = function () {
 				S.img      = img;
@@ -226,8 +230,12 @@ jQuery(function ($) {
 			saveBtn.className = "wpmake-btn wpmake-btn-primary";
 			saveBtn.textContent = p.wpmake_advance_user_avatar_save_avatar || "Save avatar";
 			saveBtn.onclick = function () {
-				var dataURL = _getCropped();
+				var dataURL = _getCropped(S.sourceMime);
 				WPMakeModal.close();
+
+				// null means no allowed format can be produced in the browser (a
+				// GIF-only site, say). Hand back nothing and let the caller upload
+				// the untouched original, which the server can still accept.
 				if (CB.onSave) { CB.onSave(dataURL); }
 			};
 
@@ -326,16 +334,95 @@ jQuery(function ($) {
 			});
 		}
 
-		function _getCropped(size) {
-			size = size || 500;
+		// Formats a canvas can actually encode. GIF is not one of them, and
+		// "image/jpg" is not a real mime type -- toDataURL silently falls back to
+		// PNG for both, which the server would then reject.
+		var CANVAS_MIMES = ["image/png", "image/jpeg", "image/webp"];
+
+		// Mime types this site accepts, reduced to the ones a canvas can produce.
+		function _encodableMimes() {
+			var allowed = (wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_allowed_file_type || []).map(function (m) {
+				return m === "image/jpg" ? "image/jpeg" : m;
+			});
+
+			return CANVAS_MIMES.filter(function (m) {
+				return allowed.indexOf(m) !== -1;
+			});
+		}
+
+		// Prefer the source image's own format when the site allows it, so a PNG
+		// stays a PNG; otherwise take the first allowed format.
+		function _pickOutputMime(sourceMime) {
+			var usable = _encodableMimes();
+
+			if (!usable.length) { return null; }
+			if (sourceMime && usable.indexOf(sourceMime) !== -1) { return sourceMime; }
+
+			return usable[0];
+		}
+
+		function _configuredSize() {
+			var cfg = wpmake_advance_user_avatar_params.wpmake_advance_user_avatar_uploaded_image_size || {};
+			var w   = parseInt(cfg.width, 10);
+			var h   = parseInt(cfg.height, 10);
+
+			return {
+				w: w > 0 ? w : 500,
+				h: h > 0 ? h : 500
+			};
+		}
+
+		function _getCropped(sourceMime) {
+			var out  = _configuredSize();
+			var mime = _pickOutputMime(sourceMime);
+
+			if (!mime) { return null; }   // caller falls back to the original file
+
 			var srcX = (S.cropX - S.imgX) / S.zoom;
 			var srcY = (S.cropY - S.imgY) / S.zoom;
 			var srcW = S.cropW / S.zoom;
 			var srcH = S.cropH / S.zoom;
-			var cv   = document.createElement("canvas");
-			cv.width = cv.height = size;
-			cv.getContext("2d").drawImage(S.img, srcX, srcY, srcW, srcH, 0, 0, size, size);
-			return cv.toDataURL("image/jpeg", 0.92);
+
+			// The crop box is square but the configured size need not be. Take a
+			// centred sub-rectangle of the selection matching the target aspect, so
+			// the output is exactly the configured size with no bars and no stretch.
+			var targetAspect = out.w / out.h;
+			var cropAspect   = srcW / srcH;
+
+			if (cropAspect > targetAspect) {
+				var newW = srcH * targetAspect;
+				srcX += (srcW - newW) / 2;
+				srcW  = newW;
+			} else if (cropAspect < targetAspect) {
+				var newH = srcW / targetAspect;
+				srcY += (srcH - newH) / 2;
+				srcH  = newH;
+			}
+
+			var cv = document.createElement("canvas");
+			cv.width  = out.w;
+			cv.height = out.h;
+
+			var ctx = cv.getContext("2d");
+
+			// PNG and WEBP carry an alpha channel, so the canvas is left transparent.
+			// JPEG has none, and an unfilled canvas encodes as black rather than white.
+			if (mime === "image/jpeg") {
+				ctx.fillStyle = "#ffffff";
+				ctx.fillRect(0, 0, out.w, out.h);
+			}
+
+			ctx.drawImage(S.img, srcX, srcY, srcW, srcH, 0, 0, out.w, out.h);
+
+			var dataURL = cv.toDataURL(mime, 0.92);
+
+			// Browsers fall back to PNG without telling you. If that happened and PNG
+			// is not allowed here, report it rather than uploading a doomed file.
+			if (dataURL.indexOf("data:" + mime) !== 0) {
+				if (_encodableMimes().indexOf("image/png") === -1) { return null; }
+			}
+
+			return dataURL;
 		}
 
 		// Keep image large enough so the crop box never exposes the dark stage
@@ -510,7 +597,10 @@ jQuery(function ($) {
 							WPMakeCropper.open(
 								src,
 								function (croppedDataURL) {  // onSave
-									var blob = WPMake_Advance_User_Avatar_Frontend.dataURItoBlob(croppedDataURL);
+									// null: no allowed format can be encoded in the browser,
+									// so send the original untouched rather than a format the
+									// server is configured to refuse.
+									var blob = WPMake_Advance_User_Avatar_Frontend.dataURItoBlob(croppedDataURL || src);
 									WPMake_Advance_User_Avatar_Frontend.send_file($input, blob);
 								},
 								function () {                // onRetake — re-open file picker
@@ -565,17 +655,25 @@ jQuery(function ($) {
 			var formData = new FormData();
 
 			if (blob) {
-				formData.append("file", new File([blob], "avatar.jpeg", { type: "image/jpeg" }));
+				// Name the file after what it actually is. This used to be hardcoded
+				// to avatar.jpeg regardless of the blob's real type, so a cropped PNG
+				// arrived claiming to be a JPEG.
+				var mime = blob.type || "image/jpeg";
+				var ext  = ({
+					"image/png":  "png",
+					"image/webp": "webp",
+					"image/gif":  "gif"
+				})[mime] || "jpeg";
+
+				formData.append("file", new File([blob], "avatar." + ext, { type: mime }));
 			} else if ($node[0].files && $node[0].files[0]) {
 				formData.append("file", $node[0].files[0]);
 			} else {
 				return; // nothing to send
 			}
 
-			// Empty cropped_image signals server to skip Jcrop re-crop
-			formData.append("cropped_image",    "");
-			formData.append("valid_extension",  $('input[name="profile-pic"]').attr("accept"));
-			formData.append("max_uploaded_size", $('input[name="profile-pic"]').attr("size"));
+			// Empty cropped_image signals server to skip the server-side re-crop.
+			formData.append("cropped_image", "");
 
 			var $wrap      = $node.closest(".wpmake-advance-user-avatar-upload");
 			var $uploadBtn = $wrap.find(".wpmake_advance_user_avatar_upload");
@@ -696,7 +794,8 @@ jQuery(function ($) {
 									WPMakeCropper.open(
 										dataUri,
 										function (croppedDataURL) { // onSave
-											var blob = WPMake_Advance_User_Avatar_Frontend.dataURItoBlob(croppedDataURL);
+											// null: see the file-upload path above.
+											var blob = WPMake_Advance_User_Avatar_Frontend.dataURItoBlob(croppedDataURL || dataUri);
 											WPMake_Advance_User_Avatar_Frontend.send_file($fileInput, blob);
 										},
 										function () { openWebcam(); }, // onRetake

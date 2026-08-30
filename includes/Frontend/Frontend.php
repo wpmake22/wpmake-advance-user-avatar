@@ -406,6 +406,10 @@ class Frontend {
 				'wpmake_advance_user_avatar_cancel_button' => esc_html__( 'Cancel', 'wpmake-advance-user-avatar' ),
 				'wpmake_advance_user_avatar_cancel_button_confirmation' => esc_html__( 'Close', 'wpmake-advance-user-avatar' ),
 				'wpmake_advance_user_avatar_enable_cropping_interface' => $options['cropping_interface'] ?? false,
+				// The cropper encodes in the browser, so it needs the same size and
+				// format rules the server enforces on the way back in.
+				'wpmake_advance_user_avatar_uploaded_image_size' => wpmake_aua_get_uploaded_image_size(),
+				'wpmake_advance_user_avatar_allowed_file_type' => wpmake_aua_get_allowed_mimes(),
 				'wpmake_assets_url'                        => WPMAKE_ADVANCE_USER_AVATAR_ASSETS_URL,
 				'wpmake_advance_user_avatar_upload_success_message' => esc_html__( 'Avatar has been uploaded successfully.', 'wpmake-advance-user-avatar' ),
 				'wpmake_advance_user_avatar_remove_confirm_text' => esc_html__( 'Remove your avatar?', 'wpmake-advance-user-avatar' ),

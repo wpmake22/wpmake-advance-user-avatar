@@ -174,6 +174,68 @@ if ( ! function_exists( 'wpmake_aua_get_avatar_url' ) ) {
 	}
 }
 
+if ( ! function_exists( 'wpmake_aua_get_allowed_mimes' ) ) {
+	/**
+	 * Image mime types this site accepts for an avatar.
+	 *
+	 * Lives here rather than in Ajax because the browser cropper needs exactly the
+	 * same list: it decides what format to encode to, and encoding to a type the
+	 * server refuses is what made cropped uploads fail when JPEG was unchecked.
+	 * Two copies of this list would be two chances to disagree.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @return array Mime type strings.
+	 */
+	function wpmake_aua_get_allowed_mimes() {
+		$supported = array( 'image/jpeg', 'image/png', 'image/gif', 'image/webp' );
+		$options   = get_option( 'wpmake_advance_user_avatar_settings', array() );
+
+		$configured = isset( $options['allowed_file_type'] ) && is_array( $options['allowed_file_type'] )
+			? $options['allowed_file_type']
+			: array();
+
+		// The settings screen offers 'image/jpg', which is not a real mime type.
+		$configured = array_map(
+			static function ( $mime ) {
+				return 'image/jpg' === $mime ? 'image/jpeg' : $mime;
+			},
+			$configured
+		);
+
+		$allowed = array_values( array_unique( array_intersect( $configured, $supported ) ) );
+
+		return empty( $allowed ) ? array( 'image/jpeg', 'image/png', 'image/gif' ) : $allowed;
+	}
+}
+
+if ( ! function_exists( 'wpmake_aua_get_uploaded_image_size' ) ) {
+	/**
+	 * Configured output size for an uploaded avatar.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @return array {
+	 *     @type int $width  Width in pixels.
+	 *     @type int $height Height in pixels.
+	 * }
+	 */
+	function wpmake_aua_get_uploaded_image_size() {
+		$options = get_option( 'wpmake_advance_user_avatar_settings', array() );
+		$size    = isset( $options['uploaded_image_size'] ) && is_array( $options['uploaded_image_size'] )
+			? $options['uploaded_image_size']
+			: array();
+
+		$width  = isset( $size['width'] ) ? absint( $size['width'] ) : 0;
+		$height = isset( $size['height'] ) ? absint( $size['height'] ) : 0;
+
+		return array(
+			'width'  => $width > 0 ? $width : 500,
+			'height' => $height > 0 ? $height : 500,
+		);
+	}
+}
+
 if ( ! function_exists( 'wpmake_aua_enqueue_frontend_assets' ) ) {
 	/**
 	 * Enqueue the front-end avatar assets.
