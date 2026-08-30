@@ -35,7 +35,7 @@ Thumbs.db
 /tests/
 
 # Local overrides
-phpcs.xml
+# phpcs.xml is the project ruleset and is tracked; .distignore keeps it out of the release zip.
 phpunit.xml
 phpunit-watcher.yml
 .wp-env.override.json

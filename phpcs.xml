@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="WPMake Advanced User Avatar" xsi:noNamespaceSchemaLocation="https://schema.phpcodesniffer.com/phpcs.xsd">
+
+	<description>Coding standard for the Advanced User Avatar plugin.</description>
+
+	<!--
+	#############################################################################
+	COMMAND LINE ARGUMENTS
+	So that `composer phpcs` and `composer phpcbf` work with no arguments.
+	#############################################################################
+	-->
+
+	<file>.</file>
+
+	<!-- Only sniff PHP. The bundled third party JS and CSS is checked, if at all, by grunt. -->
+	<arg name="extensions" value="php"/>
+
+	<!-- Strip the file paths down to the relevant bit. -->
+	<arg name="basepath" value="."/>
+
+	<!-- Show sniff codes and progress, and use colour when the terminal supports it. -->
+	<arg value="sp"/>
+	<arg name="colors"/>
+
+	<!-- Check up to 8 files simultaneously. -->
+	<arg name="parallel" value="8"/>
+
+	<!--
+	#############################################################################
+	EXCLUDED PATHS
+	#############################################################################
+	-->
+
+	<!-- Third party code we do not own. -->
+	<exclude-pattern>/vendor/*</exclude-pattern>
+	<exclude-pattern>/node_modules/*</exclude-pattern>
+
+	<!-- Bundled third party libraries. -->
+	<exclude-pattern>/assets/js/select2/*</exclude-pattern>
+	<exclude-pattern>/assets/js/sweetalert2/*</exclude-pattern>
+	<exclude-pattern>/assets/js/jquery-Jcrop/*</exclude-pattern>
+	<exclude-pattern>/assets/js/webcam/*</exclude-pattern>
+	<exclude-pattern>/assets/css/select2/*</exclude-pattern>
+	<exclude-pattern>/assets/css/sweetalert2/*</exclude-pattern>
+
+	<!-- Generated or non-source directories. -->
+	<exclude-pattern>/languages/*</exclude-pattern>
+	<exclude-pattern>/.wordpress-org/*</exclude-pattern>
+
+	<!--
+	#############################################################################
+	RULESETS
+	WordPress-Extra is deliberately NOT enabled yet; see docs/MILESTONE-PROMPTS.md M00.
+	#############################################################################
+	-->
+
+	<rule ref="WordPress-Core">
+		<!-- PSR-4 autoloading maps class files to StudlyCaps names, which this sniff forbids. -->
+		<exclude name="WordPress.Files.FileName"/>
+	</rule>
+
+	<rule ref="WordPress-Docs"/>
+
+	<!--
+	#############################################################################
+	SNIFF CONFIGURATION
+	#############################################################################
+	-->
+
+	<!-- Oldest WordPress version the plugin supports; matches "Requires at least" in readme.txt. -->
+	<config name="minimum_wp_version" value="6.0"/>
+
+	<!--
+	Minimum PHP version the plugin supports; matches "Requires PHP" in readme.txt.
+	Inert until the PHPCompatibilityWP standard is installed - see the M00 report.
+	-->
+	<config name="testVersion" value="7.4-"/>
+
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="wpmake-advance-user-avatar"/>
+			</property>
+		</properties>
+	</rule>
+
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array">
+				<element value="wpmake_aua"/>
+				<element value="wpmake_advance_user_avatar"/>
+				<element value="WPMake"/>
+			</property>
+		</properties>
+	</rule>
+
+	<!--
+	#############################################################################
+	DELIBERATE OPT-OUTS
+	Each of these is a convention the codebase follows on purpose, or a sniff that
+	cannot see enough context to judge this code correctly.
+	#############################################################################
+	-->
+
+	<!-- Template files are included inside a method, so their variables are method scope, not global. -->
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound">
+		<exclude-pattern>/templates/*</exclude-pattern>
+	</rule>
+
+	<!-- UserAvatar() is the main instance accessor and is named after its class by convention. -->
+	<rule ref="WordPress.NamingConventions.ValidFunctionName.FunctionNameInvalid">
+		<exclude-pattern>/includes/UserAvatar\.php</exclude-pattern>
+	</rule>
+
+</ruleset>
