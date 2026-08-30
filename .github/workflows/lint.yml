@@ -1,0 +1,67 @@
+name: Lint
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  phpcs:
+    name: PHPCS
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          coverage: none
+          tools: composer
+
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Collect changed PHP files
+        id: changed
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE="${{ github.event.pull_request.base.sha }}"
+            HEAD="${{ github.event.pull_request.head.sha }}"
+          else
+            BASE="${{ github.event.before }}"
+            HEAD="${{ github.sha }}"
+          fi
+          # A new branch reports an all-zero base SHA; fall back to the previous commit.
+          if ! git cat-file -e "${BASE}^{commit}" 2>/dev/null; then
+            BASE="${HEAD}~1"
+          fi
+          git diff --name-only --diff-filter=ACMR "$BASE" "$HEAD" -- '*.php' > changed-php.txt
+          echo "count=$(wc -l < changed-php.txt | tr -d ' ')" >> "$GITHUB_OUTPUT"
+          echo "Changed PHP files:"
+          cat changed-php.txt
+
+      # Gates on changed files only, and on errors only.
+      #
+      # The repository carries a large pre-existing baseline (see
+      # docs/MILESTONE-PROMPTS.md M00), so a whole-repo gate would fail on every
+      # run and be ignored. Warnings are excluded because a file can be touched
+      # for an unrelated reason and inherit warnings it did not introduce.
+      #
+      # Consequence worth knowing: a file that still carries baseline errors -
+      # today that is includes/Admin/Settings.php and the main plugin file - will
+      # fail this job the first time it is edited. Run `composer phpcbf` on that
+      # file, in its own commit, before the change that touches it.
+      - name: PHPCS on changed files
+        if: steps.changed.outputs.count != '0'
+        run: xargs -r -d '\n' ./vendor/bin/phpcs --no-colors --warning-severity=0 < changed-php.txt
+
+      # Visibility only, never blocking, so the baseline trend stays observable.
+      - name: PHPCS whole-repository baseline
+        if: always()
+        continue-on-error: true
+        run: ./vendor/bin/phpcs --no-colors --report=summary
