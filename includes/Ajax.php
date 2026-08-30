@@ -322,6 +322,32 @@ class Ajax {
 				$file_path = $cropped['path'];
 				$file_type = $cropped['mime-type'];
 			}
+		} else {
+			/*
+			 * No crop geometry, which is every upload made with the cropper switched
+			 * off. The configured "Uploaded Image Size" used to be skipped entirely
+			 * here, so the setting did nothing at all unless the cropper was on.
+			 */
+			$resized = self::resize_image( $file_path, $options );
+
+			if ( is_wp_error( $resized ) ) {
+				wp_delete_file( $file_path );
+
+				wp_send_json_error(
+					array(
+						'message' => $resized->get_error_message(),
+					)
+				);
+			}
+
+			// Same output-format caveat as the crop branch above.
+			if ( is_array( $resized ) && $resized['path'] !== $file_path ) {
+				wp_delete_file( $file_path );
+
+				$file_url  = trailingslashit( dirname( $file_url ) ) . wp_basename( $resized['path'] );
+				$file_path = $resized['path'];
+				$file_type = $resized['mime-type'];
+			}
 		}
 
 		$attachment_id = wp_insert_attachment(
@@ -374,6 +400,57 @@ class Ajax {
 				'profile_picture_url' => $url,
 			)
 		);
+	}
+
+	/**
+	 * Scale an upload down to the configured avatar size.
+	 *
+	 * The bundled uploader posts an empty cropped_image, so crop_image() below never
+	 * runs in normal use. That left "Uploaded Image Size" applied only by the
+	 * browser cropper, and doing nothing whatsoever when the cropper was switched
+	 * off. This is the path for those uploads.
+	 *
+	 * Centre-crops to the configured aspect, matching what the browser cropper does,
+	 * so both routes produce the same shape. Images already at or below the
+	 * configured size are left alone -- upscaling an avatar only adds bytes and
+	 * blur.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @param string $file_path Absolute path to the uploaded file.
+	 * @param array  $options   Plugin settings.
+	 * @return array|true|\WP_Error Saved file details when the image was resized,
+	 *                              true when it was already small enough, or a
+	 *                              WP_Error describing the failure.
+	 */
+	private static function resize_image( $file_path, $options ) {
+		$size = wpmake_aua_get_uploaded_image_size();
+
+		$dimensions = @getimagesize( $file_path ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- a malformed image is handled by the check below.
+
+		if ( ! is_array( $dimensions ) || empty( $dimensions[0] ) || empty( $dimensions[1] ) ) {
+			// Not readable as an image. The mime checks earlier already rejected
+			// anything genuinely invalid, so leave it rather than failing the upload.
+			return true;
+		}
+
+		if ( $dimensions[0] <= $size['width'] && $dimensions[1] <= $size['height'] ) {
+			return true;
+		}
+
+		$editor = wp_get_image_editor( $file_path );
+
+		if ( is_wp_error( $editor ) ) {
+			return $editor;
+		}
+
+		$resized = $editor->resize( $size['width'], $size['height'], true );
+
+		if ( is_wp_error( $resized ) ) {
+			return $resized;
+		}
+
+		return $editor->save( $file_path );
 	}
 
 	/**

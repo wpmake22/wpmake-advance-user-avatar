@@ -137,7 +137,7 @@ class Settings {
 				'allowed_file_type'   => array(
 					'type'        => 'select',
 					'label'       => __( 'Allowed File Type', 'wpmake-advance-user-avatar' ),
-					'description' => __( 'Choose valid file types allowed for avatar upload', 'wpmake-advance-user-avatar' ),
+					'description' => __( 'Choose valid file types allowed for avatar upload. JPG and JPEG are the same format. GIF cannot be produced by the browser cropper, so if GIF is the only type allowed, uploads are saved uncropped.', 'wpmake-advance-user-avatar' ),
 					'choices'     => array(
 						'image/jpg'  => 'JPG',
 						'image/jpeg' => 'JPEG',
