@@ -507,8 +507,21 @@ class Frontend {
 			return true;
 		}
 
-		// BuddyPress member area.
+		/*
+		 * BuddyPress. bp_is_user() covers a member's own profile area, which is where
+		 * the uploader is injected, but the avatar is displayed across the member
+		 * directory and group pages too. Missing one only costs a footer-loaded
+		 * stylesheet, since the render-time enqueue still fires.
+		 */
 		if ( function_exists( 'bp_is_user' ) && bp_is_user() ) {
+			return true;
+		}
+
+		if ( function_exists( 'bp_is_members_component' ) && bp_is_members_component() ) {
+			return true;
+		}
+
+		if ( function_exists( 'bp_is_groups_component' ) && bp_is_groups_component() ) {
 			return true;
 		}
 
