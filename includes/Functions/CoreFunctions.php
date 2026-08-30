@@ -12,64 +12,99 @@
 
 defined( 'ABSPATH' ) || exit;
 
-add_filter( 'get_avatar', 'wpmake_advance_user_avatar_replace_gravatar_image', 99, 6 );
+/*
+ * Resolve avatars through `pre_get_avatar_data` rather than `get_avatar`.
+ *
+ * `get_avatar` only fires for get_avatar(), so anything calling get_avatar_url()
+ * directly -- the REST /wp/v2/users response, the core Avatar block, block themes,
+ * WooCommerce Blocks and most React admin UI -- got Gravatar back regardless of
+ * what the user had uploaded. `pre_get_avatar_data` sits underneath all of them.
+ *
+ * Core short-circuits as soon as $args['url'] is set, and it does so *before* it
+ * hashes the user's email address, so on a hit no hashed email is built at all.
+ * See wp-includes/link-template.php: the filter fires at line 4492, the early
+ * return is at 4494, and the SHA-256 hash is not reached until line 4548.
+ */
+add_filter( 'pre_get_avatar_data', 'wpmake_aua_pre_get_avatar_data', 99, 2 );
 
-if ( ! function_exists( 'wpmake_advance_user_avatar_replace_gravatar_image' ) ) {
+if ( ! function_exists( 'wpmake_aua_pre_get_avatar_data' ) ) {
 	/**
-	 * Custom function to override get_gavatar function.
+	 * Point WordPress at the user's uploaded avatar, at the size it asked for.
 	 *
-	 * @param string $avatar Avatar of user.
-	 * @param string $id_or_email ID or email of user.
-	 * @param string $size Size of avatar.
-	 * @param string $default Default avatar.
-	 * @param string $alt Alt.
-	 * @param array  $args Args.
+	 * @since 1.4.0
+	 *
+	 * @param array $args        Avatar arguments, already normalised by core.
+	 * @param mixed $id_or_email ID, email, or object identifying the user.
+	 * @return array
 	 */
-	function wpmake_advance_user_avatar_replace_gravatar_image( $avatar, $id_or_email, $size, $default, $alt, $args = array() ) {
-		static $running = false;
-
+	function wpmake_aua_pre_get_avatar_data( $args, $id_or_email ) {
 		/*
-		 * Re-entrancy guard.
-		 *
-		 * This used to call remove_all_filters( 'get_avatar' ) and then re-add itself at a
-		 * later priority. That did make the plugin's avatar the final word, but it also
-		 * unhooked every other callback on `get_avatar` for the rest of the request --
-		 * other plugins' filters and, more to the point, the site owner's own snippets.
-		 * The flag gives the same protection against a nested get_avatar() call without
-		 * destroying anyone else's filters.
+		 * Another callback has already decided this avatar. `isset` is the same test
+		 * core uses to short-circuit, so a deliberate `'url' => false` from another
+		 * plugin counts as a decision and is left alone.
 		 */
-		if ( $running ) {
-			return $avatar;
+		if ( isset( $args['url'] ) ) {
+			return $args;
 		}
 
-		$running = true;
-		$avatar  = wpmake_advance_user_avatar_build_avatar_html( $avatar, $id_or_email, $args );
-		$running = false;
+		// The caller explicitly asked for the default avatar, e.g. the previews on
+		// Settings > Discussion. Overriding that would misrepresent the setting.
+		if ( ! empty( $args['force_default'] ) ) {
+			return $args;
+		}
 
-		return $avatar;
+		$user_id = wpmake_aua_resolve_user_id( $id_or_email );
+
+		if ( ! $user_id ) {
+			return $args;
+		}
+
+		$size = isset( $args['size'] ) ? (int) $args['size'] : 96;
+		$url  = wpmake_aua_get_avatar_url( $user_id, $size );
+
+		if ( ! $url ) {
+			return $args;
+		}
+
+		$args['url'] = $url;
+
+		// Core initialises found_avatar to false before this filter runs and adds an
+		// `avatar-default` class when it is still false. Without this the uploaded
+		// avatar renders with the class meaning "this user has no avatar".
+		$args['found_avatar'] = true;
+
+		return $args;
 	}
 }
 
-if ( ! function_exists( 'wpmake_advance_user_avatar_build_avatar_html' ) ) {
+if ( ! function_exists( 'wpmake_aua_resolve_user_id' ) ) {
 	/**
-	 * Build the replacement avatar markup for a user, if they have uploaded one.
+	 * Resolve the identifier WordPress passes around avatars into a user ID.
 	 *
-	 * Split out of the filter callback above so the re-entrancy flag has a single
-	 * place to be reset, whichever way this bails out.
+	 * Mirrors the resolution in core's get_avatar_data(), because this now runs
+	 * ahead of it rather than after it.
 	 *
-	 * @since 1.3.0
+	 * @since 1.4.0
 	 *
-	 * @param string $avatar      Avatar markup passed in by the filter.
-	 * @param mixed  $id_or_email ID, email, or object identifying the user.
-	 * @param array  $args        Avatar args.
-	 * @return string
+	 * @param mixed $id_or_email ID, email, or object identifying the user.
+	 * @return int User ID, or 0 when the identifier does not resolve to one.
 	 */
-	function wpmake_advance_user_avatar_build_avatar_html( $avatar, $id_or_email, $args = array() ) {
-		// Process the user identifier.
+	function wpmake_aua_resolve_user_id( $id_or_email ) {
 		$user = false;
+
+		// Core normalises a bare comment object to WP_Comment before resolving it.
+		if ( is_object( $id_or_email ) && isset( $id_or_email->comment_ID ) ) {
+			$id_or_email = get_comment( $id_or_email );
+		}
+
 		if ( is_numeric( $id_or_email ) ) {
 			$user = get_user_by( 'id', absint( $id_or_email ) );
 		} elseif ( is_string( $id_or_email ) ) {
+			// A Gravatar hash is not an address; looking one up would always miss.
+			if ( str_contains( $id_or_email, '@md5.gravatar.com' ) || str_contains( $id_or_email, '@sha256.gravatar.com' ) ) {
+				return 0;
+			}
+
 			$user = get_user_by( 'email', $id_or_email );
 		} elseif ( $id_or_email instanceof WP_User ) {
 			// User Object.
@@ -78,6 +113,14 @@ if ( ! function_exists( 'wpmake_advance_user_avatar_build_avatar_html' ) ) {
 			// Post Object.
 			$user = get_user_by( 'id', (int) $id_or_email->post_author );
 		} elseif ( $id_or_email instanceof WP_Comment ) {
+			/*
+			 * Core refuses avatars for comment types outside the allowed list, and it
+			 * does so *after* this filter. Running ahead of that check means pingbacks
+			 * and trackbacks would get an avatar here that core would have denied.
+			 */
+			if ( ! is_avatar_comment_type( get_comment_type( $id_or_email ) ) ) {
+				return 0;
+			}
 
 			if ( ! empty( $id_or_email->user_id ) ) {
 				$user = get_user_by( 'id', (int) $id_or_email->user_id );
@@ -85,38 +128,49 @@ if ( ! function_exists( 'wpmake_advance_user_avatar_build_avatar_html' ) ) {
 		}
 
 		if ( ! $user || is_wp_error( $user ) ) {
-			return $avatar;
+			return 0;
 		}
 
-		$profile_picture_url = wp_get_attachment_url( get_user_meta( $user->ID, 'wpmake_advance_user_avatar_attachment_id', true ) );
-		$class               = array( 'avatar', 'avatar-' . (int) $args['size'], 'photo' );
+		return (int) $user->ID;
+	}
+}
 
-		if ( ( isset( $args['found_avatar'] ) && ! $args['found_avatar'] ) || ( isset( $args['force_default'] ) && $args['force_default'] ) ) {
-			$class[] = 'avatar-default';
+if ( ! function_exists( 'wpmake_aua_get_avatar_url' ) ) {
+	/**
+	 * URL of a user's uploaded avatar at the requested pixel size.
+	 *
+	 * Asks for the generated thumbnail closest to $size rather than the original
+	 * upload. A 32px admin bar avatar used to download the full 500x500 file, which
+	 * made the plugin's own "store in thumbnail sizes" setting decorative.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @param int $user_id User ID.
+	 * @param int $size    Requested square size in pixels.
+	 * @return string Avatar URL, or an empty string when the user has not uploaded one.
+	 */
+	function wpmake_aua_get_avatar_url( $user_id, $size = 96 ) {
+		$user_id = (int) $user_id;
+
+		if ( $user_id <= 0 ) {
+			return '';
 		}
 
-		if ( ! empty( $args['class'] ) ) {
-			if ( is_array( $args['class'] ) ) {
-				$class = array_merge( $class, $args['class'] );
-			} else {
-				$class[] = $args['class'];
-			}
+		$attachment_id = (int) get_user_meta( $user_id, 'wpmake_advance_user_avatar_attachment_id', true );
+
+		if ( $attachment_id <= 0 ) {
+			return '';
 		}
 
-		if ( $profile_picture_url ) {
-			$avatar = sprintf(
-				"<img alt='%s' src='%s' srcset='%s' class='%s' height='%d' width='%d' %s/>",
-				esc_attr( $args['alt'] ),
-				esc_url( $profile_picture_url ),
-				esc_url( $profile_picture_url ) . ' 2x',
-				esc_attr( implode( ' ', $class ) ),
-				(int) $args['height'],
-				(int) $args['width'],
-				$args['extra_attr']
-			);
+		$size = (int) $size;
+
+		if ( $size <= 0 ) {
+			$size = 96;
 		}
 
-		return $avatar;
+		$url = wp_get_attachment_image_url( $attachment_id, array( $size, $size ) );
+
+		return $url ? $url : '';
 	}
 }
 

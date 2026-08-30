@@ -24,8 +24,11 @@ $wpmake_aua_style = Shortcodes::container_style( $wpmake_aua_atts );
 	<?php
 		do_action( 'wpmake_advance_user_avatar_before_avatar', $wpmake_aua_atts );
 
-		$gravatar_image      = get_avatar_url( get_current_user_id(), null );
-		$profile_picture_url = wp_get_attachment_url( get_user_meta( get_current_user_id(), 'wpmake_advance_user_avatar_attachment_id', true ) );
+		// Match the size the container actually renders at, so the widget stops
+		// pulling the full-size original for a 96px preview.
+		$avatar_size         = ! empty( $wpmake_aua_atts['size'] ) ? absint( $wpmake_aua_atts['size'] ) : 96;
+		$gravatar_image      = get_avatar_url( get_current_user_id(), array( 'size' => $avatar_size ) );
+		$profile_picture_url = wpmake_aua_get_avatar_url( get_current_user_id(), $avatar_size );
 		$image               = ( ! empty( $profile_picture_url ) ) ? $profile_picture_url : $gravatar_image;
 	?>
 		<img class="profile-preview" alt="profile-picture" src="<?php echo esc_url( $image ); ?>">

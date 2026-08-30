@@ -97,7 +97,7 @@ class Frontend {
 			add_action( 'woocommerce_before_account_orders', array( $this, 'woo_render_avatar_viewer' ), 5 );
 		}
 
-		// Product reviews — the global get_avatar filter in CoreFunctions.php
+		// Product reviews — the global pre_get_avatar_data filter in CoreFunctions.php
 		// already replaces Gravatar site-wide, so no additional hook is needed.
 		// The setting exists so the user can deliberately opt in/out.
 
@@ -185,28 +185,28 @@ class Frontend {
 			return $image;
 		}
 
-		$profile_picture_url = wp_get_attachment_image_url(
-			get_user_meta( $user->ID, 'wpmake_advance_user_avatar_attachment_id', true )
+		$size                = ! empty( $params['width'] ) ? (int) $params['width'] : 96;
+		$profile_picture_url = wpmake_aua_get_avatar_url( $user->ID, $size );
+
+		if ( ! $profile_picture_url ) {
+			return $image;
+		}
+
+		// A genuine 2x file rather than the same URL labelled 2x, which told the
+		// browser a lie and gained nothing on a high-density screen.
+		$retina_url = wpmake_aua_get_avatar_url( $user->ID, $size * 2 );
+		$class      = array( 'avatar', 'avatar-' . $size, 'photo' );
+
+		$image = sprintf(
+			"<img alt='%s' src='%s' srcset='%s' class='%s' height='%s' width='%s' %s />",
+			esc_attr( $params['alt'] ),
+			esc_url( $profile_picture_url ),
+			esc_url( $retina_url ? $retina_url : $profile_picture_url ) . ' 2x',
+			esc_attr( implode( ' ', $class ) ),
+			esc_attr( $params['height'] ),
+			esc_attr( $params['width'] ),
+			esc_attr( $params['extra_attr'] )
 		);
-
-		$class = array( 'avatar', 'avatar-' . (int) $params['width'], 'photo' );
-
-		if ( ( isset( $args['found_avatar'] ) && ! $args['found_avatar'] ) || ( isset( $args['force_default'] ) && $args['force_default'] ) ) {
-			$class[] = 'avatar-default';
-		}
-
-		if ( $profile_picture_url ) {
-			$image = sprintf(
-				"<img alt='%s' src='%s' srcset='%s' class='%s' height='%s' width='%s' %s />",
-				esc_attr( $params['alt'] ),
-				esc_url( $profile_picture_url ),
-				esc_url( $profile_picture_url ),
-				esc_attr( implode( ' ', $class ) ),
-				esc_attr( $params['height'] ),
-				esc_attr( $params['width'] ),
-				esc_attr( $params['extra_attr'] )
-			);
-		}
 
 		return $image;
 	}
@@ -228,9 +228,9 @@ class Frontend {
 			return $image;
 		}
 
-		$profile_picture_url = wp_get_attachment_image_url(
-			get_user_meta( $user->ID, 'wpmake_advance_user_avatar_attachment_id', true ),
-			'thumbnail'
+		$profile_picture_url = wpmake_aua_get_avatar_url(
+			$user->ID,
+			! empty( $params['width'] ) ? (int) $params['width'] : 96
 		);
 
 		if ( $profile_picture_url ) {
@@ -338,8 +338,9 @@ class Frontend {
 	/**
 	 * Replace Better Messages avatar with the user's custom avatar.
 	 *
-	 * Better Messages does not use get_avatar() in its REST responses, so the
-	 * standard get_avatar filter is bypassed. This hooks into the plugin's own
+	 * Better Messages builds its REST avatar URLs itself rather than going through
+	 * get_avatar() or get_avatar_url(), so the pre_get_avatar_data filter in
+	 * CoreFunctions.php never sees them. This hooks into the plugin's own
 	 * better_messages_rest_user_item filter to supply the correct avatar URL.
 	 *
 	 * @param array $item             User item data array (includes 'avatar' key).
@@ -348,13 +349,12 @@ class Frontend {
 	 * @return array
 	 */
 	public function better_messages_avatar( $item, $user_id, $include_personal ) {
-		$attachment_id = get_user_meta( $user_id, 'wpmake_advance_user_avatar_attachment_id', true );
-
-		if ( ! $attachment_id ) {
-			return $item;
-		}
-
-		$avatar_url = wp_get_attachment_url( $attachment_id );
+		/*
+		 * Better Messages does not tell us what size it wants, and its chat avatars
+		 * are small. 96 is the WordPress default avatar size and is a far better fit
+		 * than the full-size original this used to serve.
+		 */
+		$avatar_url = wpmake_aua_get_avatar_url( $user_id, 96 );
 
 		if ( ! $avatar_url ) {
 			return $item;
