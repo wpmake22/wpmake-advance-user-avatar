@@ -147,12 +147,62 @@ class Ajax {
 	}
 
 	/**
+	 * The user this request is acting on.
+	 *
+	 * Defaults to the current user, which covers every request the bundled uploader
+	 * makes -- it does not send a user_id and does not need to. An explicit user_id
+	 * is what the profile screen and the bulk manager post, and is only honoured
+	 * once wpmake_aua_current_user_can_edit_avatar() has agreed to it.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @return int
+	 */
+	private static function get_target_user_id(): int {
+		// Both callers run check_ajax_referer() before they reach this.
+		$raw = isset( $_REQUEST['user_id'] ) ? wp_unslash( $_REQUEST['user_id'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- cast to an integer below.
+
+		// Insisting on a scalar rather than casting whatever turns up: absint() of an
+		// array is 1, so `user_id[]=` would quietly resolve to user 1.
+		$requested = is_scalar( $raw ) ? absint( $raw ) : 0;
+
+		return $requested > 0 ? $requested : get_current_user_id();
+	}
+
+	/**
+	 * Refuse a request that names a user the caller may not edit.
+	 *
+	 * Deliberately separate from the nonce check. A valid nonce proves the request
+	 * came from this user's own session; it says nothing about whether that user is
+	 * allowed to touch the account named in it. The refusal is sent as JSON with a
+	 * 403, which a failed nonce is not -- check_ajax_referer() dies with a bare -1 --
+	 * so the two are distinguishable by the caller.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @param int $user_id User the request wants to act on.
+	 * @return void
+	 */
+	private static function require_avatar_capability( int $user_id ) {
+		if ( wpmake_aua_current_user_can_edit_avatar( $user_id ) ) {
+			return;
+		}
+
+		wp_send_json_error(
+			array(
+				'message' => esc_html__( 'You are not allowed to change this user\'s avatar.', 'wpmake-advance-user-avatar' ),
+			),
+			403
+		);
+	}
+
+	/**
 	 * User avatar remove function.
 	 */
 	public static function remove_avatar() {
 		check_ajax_referer( 'wpmake_advance_user_avatar_remove_nonce', 'security' );
 
-		$user_id = get_current_user_id();
+		$user_id = self::get_target_user_id();
 
 		if ( ! $user_id ) {
 			wp_send_json_error(
@@ -162,7 +212,15 @@ class Ajax {
 			);
 		}
 
-		update_user_meta( $user_id, 'wpmake_advance_user_avatar_attachment_id', '' );
+		self::require_avatar_capability( $user_id );
+
+		if ( ! wpmake_aua_remove_user_avatar( $user_id ) ) {
+			wp_send_json_error(
+				array(
+					'message' => esc_html__( 'The avatar could not be removed. Please try again.', 'wpmake-advance-user-avatar' ),
+				)
+			);
+		}
 
 		wp_send_json_success(
 			array(
@@ -183,7 +241,7 @@ class Ajax {
 
 		check_ajax_referer( 'wpmake_advance_user_avatar_upload_nonce', 'security' );
 
-		$user_id = get_current_user_id();
+		$user_id = self::get_target_user_id();
 
 		if ( ! $user_id ) {
 			wp_send_json_error(
@@ -192,6 +250,13 @@ class Ajax {
 				)
 			);
 		}
+
+		/*
+		 * Ahead of anything that touches the file, for the same reason 1.3.0 moved
+		 * the logged-in check ahead of wp_handle_upload(): a request that was never
+		 * going to be allowed should not leave a file on disk behind it.
+		 */
+		self::require_avatar_capability( $user_id );
 
 		$upload = isset( $_FILES['file'] ) ? $_FILES['file'] : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
@@ -392,7 +457,19 @@ class Ajax {
 			$url = $file_url;
 		}
 
-		update_user_meta( $user_id, 'wpmake_advance_user_avatar_attachment_id', $attachment_id );
+		if ( ! wpmake_aua_set_user_avatar( $user_id, $attachment_id ) ) {
+			/*
+			 * The attachment exists on disk and in the database by this point, so take
+			 * it back out rather than leaving a file nothing points at.
+			 */
+			wp_delete_attachment( $attachment_id, true );
+
+			wp_send_json_error(
+				array(
+					'message' => esc_html__( 'The avatar could not be saved. Please try again.', 'wpmake-advance-user-avatar' ),
+				)
+			);
+		}
 
 		wp_send_json_success(
 			array(
