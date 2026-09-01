@@ -39,6 +39,7 @@ class Ajax {
 		 */
 		$ajax_events = array(
 			'method_upload'  => false,
+			'set_avatar'     => false,
 			'remove_avatar'  => false,
 			'rated'          => false,
 			'dismiss_notice' => false,
@@ -197,6 +198,51 @@ class Ajax {
 	}
 
 	/**
+	 * Assign an attachment that already exists as a user's avatar.
+	 *
+	 * The upload handler needs a file. The bulk manager and the media picker have an
+	 * attachment ID and nothing to upload, so they post here instead. Same nonce and
+	 * capability discipline as the other two.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @return void
+	 */
+	public static function set_avatar() {
+		check_ajax_referer( 'wpmake_advance_user_avatar_set_nonce', 'security' );
+
+		$user_id = self::get_target_user_id();
+
+		if ( ! $user_id ) {
+			wp_send_json_error(
+				array(
+					'message' => esc_html__( 'You must be logged in to change an avatar.', 'wpmake-advance-user-avatar' ),
+				)
+			);
+		}
+
+		self::require_avatar_capability( $user_id );
+
+		$attachment_id = isset( $_REQUEST['attachment_id'] ) ? absint( wp_unslash( $_REQUEST['attachment_id'] ) ) : 0;
+
+		if ( ! wpmake_aua_set_user_avatar( $user_id, $attachment_id ) ) {
+			wp_send_json_error(
+				array(
+					'message' => esc_html__( 'That media item could not be used as an avatar. Pick an image and try again.', 'wpmake-advance-user-avatar' ),
+				)
+			);
+		}
+
+		wp_send_json_success(
+			array(
+				'attachment_id'       => $attachment_id,
+				'profile_picture_url' => wpmake_aua_get_avatar_url( $user_id, 96 ),
+				'message'             => esc_html__( 'Avatar updated.', 'wpmake-advance-user-avatar' ),
+			)
+		);
+	}
+
+	/**
 	 * User avatar remove function.
 	 */
 	public static function remove_avatar() {
@@ -224,7 +270,21 @@ class Ajax {
 
 		wp_send_json_success(
 			array(
-				'message' => esc_html__( 'User avatar removed successfully', 'wpmake-advance-user-avatar' ),
+				'message'      => esc_html__( 'User avatar removed successfully', 'wpmake-advance-user-avatar' ),
+
+				/*
+				 * What the user falls back to now. force_default skips this plugin's own
+				 * pre_get_avatar_data filter, so it is whatever the site shows for
+				 * somebody who has never uploaded one -- which the bulk manager needs to
+				 * repaint the row without reloading the page.
+				 */
+				'fallback_url' => get_avatar_url(
+					$user_id,
+					array(
+						'size'          => 96,
+						'force_default' => true,
+					)
+				),
 			)
 		);
 	}
