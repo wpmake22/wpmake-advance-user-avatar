@@ -180,6 +180,12 @@ class Settings {
 					'label'       => __( 'Cropping Interface', 'wpmake-advance-user-avatar' ),
 					'description' => __( 'Allow user to crop selected or captured image', 'wpmake-advance-user-avatar' ),
 				),
+				'media_library'       => array(
+					'type'        => 'toggle',
+					'label'       => __( 'Let users choose from the Media Library', 'wpmake-advance-user-avatar' ),
+					'badge'       => __( 'New', 'wpmake-advance-user-avatar' ),
+					'description' => __( 'Adds a "Choose from Media Library" button to the uploader. Only shown to users who can already upload files, which most subscribers and customers cannot.', 'wpmake-advance-user-avatar' ),
+				),
 			),
 		);
 
@@ -707,6 +713,7 @@ class Settings {
 		$output['thumbnail_size']          = ! empty( $input['thumbnail_size'] ) ? '1' : '';
 		$output['cropping_interface']      = ! empty( $input['cropping_interface'] ) ? '1' : '';
 		$output['capture_picture']         = ! empty( $input['capture_picture'] ) ? '1' : '';
+		$output['media_library']           = ! empty( $input['media_library'] ) ? '1' : '';
 		$output['woocommerce_integration'] = ! empty( $input['woocommerce_integration'] ) ? '1' : '';
 
 		// WooCommerce Display — granular location checkboxes.
