@@ -174,6 +174,181 @@ if ( ! function_exists( 'wpmake_aua_get_avatar_url' ) ) {
 	}
 }
 
+if ( ! function_exists( 'wpmake_aua_current_user_can_edit_avatar' ) ) {
+	/**
+	 * Whether the current user may set or clear a given user's avatar.
+	 *
+	 * Every avatar write goes through this. Until 1.4.0 the plugin was self-service
+	 * only -- both AJAX handlers hardcoded get_current_user_id() -- so there was
+	 * nothing to authorise. Now that a request can name a user, there is.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @param int $user_id User whose avatar is being changed.
+	 * @return bool
+	 */
+	function wpmake_aua_current_user_can_edit_avatar( $user_id ) {
+		$user_id         = (int) $user_id;
+		$current_user_id = get_current_user_id();
+
+		if ( $user_id <= 0 || $current_user_id <= 0 ) {
+			return false;
+		}
+
+		// The plugin's original contract: a logged-in user owns their own avatar,
+		// whatever else they can or cannot do. A subscriber has no edit_users
+		// capability and must still be able to upload their own picture.
+		if ( $current_user_id === $user_id ) {
+			return true;
+		}
+
+		/*
+		 * Core maps `edit_user` straight onto `edit_users` without checking that the
+		 * target exists, so an administrator "can edit" a user ID that was never
+		 * issued. Callers use this to decide whether to render a form or accept a
+		 * write, so answer for a real user or not at all.
+		 */
+		if ( ! get_userdata( $user_id ) ) {
+			return false;
+		}
+
+		/*
+		 * Anyone else's avatar is part of editing that user, so defer to core's meta
+		 * capability rather than inventing one. `edit_user` is mapped per target: on
+		 * multisite it resolves to do_not_allow unless the caller has
+		 * manage_network_users, so a site administrator does not quietly gain the
+		 * ability to edit users from elsewhere on the network.
+		 * See wp-includes/capabilities.php line 75.
+		 */
+		return current_user_can( 'edit_user', $user_id );
+	}
+}
+
+if ( ! function_exists( 'wpmake_aua_set_user_avatar' ) ) {
+	/**
+	 * Store an attachment as a user's avatar.
+	 *
+	 * Does no capability checking of its own. Callers handling a request must gate
+	 * on wpmake_aua_current_user_can_edit_avatar() first; the two are kept separate
+	 * so that code running without a current user -- an importer, WP-CLI, a
+	 * migration -- can still set an avatar.
+	 *
+	 * Attachments are deliberately allowed to be shared between users. Nothing in
+	 * the plugin deletes an attachment when an avatar is removed: removal clears the
+	 * meta and leaves the file in the media library, so a second user pointing at
+	 * the same ID cannot have their avatar pulled out from under them. If the
+	 * attachment is deleted from the media library outright, everyone holding it
+	 * falls back to Gravatar, because wpmake_aua_get_avatar_url() returns an empty
+	 * string as soon as wp_get_attachment_image_url() stops resolving.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @param int $user_id       User to set the avatar for.
+	 * @param int $attachment_id Attachment to use.
+	 * @return bool True when the user's avatar is that attachment afterwards.
+	 */
+	function wpmake_aua_set_user_avatar( $user_id, $attachment_id ) {
+		$user_id       = (int) $user_id;
+		$attachment_id = (int) $attachment_id;
+
+		if ( $user_id <= 0 || $attachment_id <= 0 ) {
+			return false;
+		}
+
+		// Meta on a user that does not exist would never be read back, and nothing
+		// would ever clean it up. Refuse rather than leave an orphan row behind.
+		if ( ! get_userdata( $user_id ) ) {
+			return false;
+		}
+
+		$attachment = get_post( $attachment_id );
+
+		if ( ! $attachment || 'attachment' !== $attachment->post_type ) {
+			return false;
+		}
+
+		// A PDF or a zip would render as a broken image on every surface M01 put
+		// avatars on, with nothing to explain why.
+		if ( ! wp_attachment_is_image( $attachment_id ) ) {
+			return false;
+		}
+
+		$previous = (int) get_user_meta( $user_id, 'wpmake_advance_user_avatar_attachment_id', true );
+
+		/*
+		 * update_user_meta() returns false when the stored value already matches,
+		 * which is indistinguishable from a failed write. Only write when there is
+		 * something to change.
+		 */
+		if ( $previous !== $attachment_id && ! update_user_meta( $user_id, 'wpmake_advance_user_avatar_attachment_id', $attachment_id ) ) {
+			return false;
+		}
+
+		/**
+		 * Fires once a user's avatar has been set.
+		 *
+		 * Also fires when the attachment was already the user's avatar, since the
+		 * end state is the same either way.
+		 *
+		 * @since 1.4.0
+		 *
+		 * @param int $user_id       User the avatar belongs to.
+		 * @param int $attachment_id Attachment now in use.
+		 */
+		do_action( 'wpmake_aua_avatar_set', $user_id, $attachment_id );
+
+		return true;
+	}
+}
+
+if ( ! function_exists( 'wpmake_aua_remove_user_avatar' ) ) {
+	/**
+	 * Clear a user's avatar.
+	 *
+	 * Capability checking is the caller's job, as with wpmake_aua_set_user_avatar().
+	 *
+	 * The attachment itself stays in the media library. That has always been the
+	 * behaviour, and it is what makes an attachment safe to share between users.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @param int $user_id User to clear the avatar for.
+	 * @return bool True when the user has no avatar afterwards.
+	 */
+	function wpmake_aua_remove_user_avatar( $user_id ) {
+		$user_id = (int) $user_id;
+
+		if ( $user_id <= 0 || ! get_userdata( $user_id ) ) {
+			return false;
+		}
+
+		$stored = get_user_meta( $user_id, 'wpmake_advance_user_avatar_attachment_id', true );
+
+		/*
+		 * Blanked rather than deleted, which is what the remove handler has always
+		 * done. Skipped when the value is already empty, both because
+		 * update_user_meta() reports that unchanged write as a failure and because
+		 * there is no reason to create a row for a user who never had one.
+		 */
+		if ( '' !== $stored && ! update_user_meta( $user_id, 'wpmake_advance_user_avatar_attachment_id', '' ) ) {
+			return false;
+		}
+
+		/**
+		 * Fires once a user's avatar has been removed.
+		 *
+		 * @since 1.4.0
+		 *
+		 * @param int $user_id       User the avatar belonged to.
+		 * @param int $attachment_id Attachment that was in use, or 0 if there was none.
+		 *                           It is not deleted; it stays in the media library.
+		 */
+		do_action( 'wpmake_aua_avatar_removed', $user_id, (int) $stored );
+
+		return true;
+	}
+}
+
 if ( ! function_exists( 'wpmake_aua_get_allowed_mimes' ) ) {
 	/**
 	 * Image mime types this site accepts for an avatar.
