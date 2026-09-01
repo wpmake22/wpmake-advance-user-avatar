@@ -190,7 +190,7 @@ if ( ! class_exists( 'UserAvatar' ) ) :
 		/**
 		 * Create the avatar directory for a site added after activation.
 		 *
-		 * @since 1.4.0
+		 * @since 2.0.0
 		 *
 		 * @param \WP_Site $new_site Site that was just created.
 		 * @return void
@@ -204,7 +204,7 @@ if ( ! class_exists( 'UserAvatar' ) ) :
 		/**
 		 * Create the avatar directory for the current site.
 		 *
-		 * @since 1.4.0
+		 * @since 2.0.0
 		 *
 		 * @return void
 		 */

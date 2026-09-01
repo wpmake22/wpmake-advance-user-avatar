@@ -106,7 +106,7 @@ class Admin {
 	 * Used by both the renderer and the asset gate, so the notice can never print
 	 * without the stylesheet that makes it legible.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @return bool
 	 */
@@ -133,7 +133,7 @@ class Admin {
 	 * styles live in a small stylesheet of their own rather than dragging the whole
 	 * bundle onto every screen in wp-admin.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @return void
 	 */
@@ -158,7 +158,7 @@ class Admin {
 	 * wp-admin. The review notice needs no part of this bundle: its script is
 	 * dependency-free and printed with the notice itself.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @param string $hook_suffix Screen the request is on.
 	 * @return void
@@ -222,7 +222,7 @@ class Admin {
 	 * no part in this field, and the front-end uploader -- webcam, cropper and all --
 	 * has no business in wp-admin. This is the media picker and one small script.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @return void
 	 */
@@ -266,7 +266,7 @@ class Admin {
 	 * Shares the plugin stylesheet with the settings tab -- it is the same screen --
 	 * but not Select2, which nothing on this tab uses.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @param string $suffix '.min' unless SCRIPT_DEBUG is on.
 	 * @return void
@@ -334,7 +334,7 @@ class Admin {
 	/**
 	 * Which tab of the plugin's screen this request is on.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @return string Either 'settings' or 'avatars'.
 	 */
@@ -351,7 +351,7 @@ class Admin {
 	 * Screen options are only honoured if they are added on load-{screen}, and the
 	 * list table has to be constructed by then for its column headers to register.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @return void
 	 */
@@ -393,7 +393,7 @@ class Admin {
 	 * filter hands back a value; returning false skips the save. See
 	 * wp-admin/includes/misc.php line 797.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @param mixed  $status Value to save, or false to skip.
 	 * @param string $option Option being saved.
@@ -414,7 +414,7 @@ class Admin {
 	/**
 	 * Render the tab strip shared by both tabs of the plugin's screen.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @param string $active Tab currently being rendered.
 	 * @return void
@@ -554,7 +554,7 @@ class Admin {
 	 * pulling jQuery plus the whole admin bundle onto all of them just to wire up
 	 * three buttons is what this milestone exists to stop.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @return void
 	 */

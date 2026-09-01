@@ -6,7 +6,7 @@
  * or clear it without leaving the screen.
  *
  * @class    UsersTable
- * @version  1.4.0
+ * @version  2.0.0
  * @package  WPMakeAdvanceUserAvatar/Admin
  */
 
@@ -53,7 +53,7 @@ class UsersTable extends \WP_List_Table {
 	 * a site administrator alter how a user appears on sites they have no rights over.
 	 * Hiding a screen that cannot work is the honest option.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @return bool
 	 */
@@ -85,7 +85,7 @@ class UsersTable extends \WP_List_Table {
 	/**
 	 * Rows per page, from the screen option.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @return int
 	 */
@@ -98,7 +98,7 @@ class UsersTable extends \WP_List_Table {
 	/**
 	 * Columns.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @return array
 	 */
@@ -118,7 +118,7 @@ class UsersTable extends \WP_List_Table {
 	 * Only the two WP_User_Query can order by without a join it would not otherwise
 	 * make. Role is a serialised capability array and email sorting is native.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @return array
 	 */
@@ -137,7 +137,7 @@ class UsersTable extends \WP_List_Table {
 	 * nothing needed. Both are primed here in two queries flat, whatever the page
 	 * size.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @return void
 	 */
@@ -183,7 +183,7 @@ class UsersTable extends \WP_List_Table {
 	/**
 	 * Prime the user meta and attachment caches for a page of users.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @param array $users Users on this page.
 	 * @return void
@@ -236,7 +236,7 @@ class UsersTable extends \WP_List_Table {
 	/**
 	 * The search term for this request.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @return string
 	 */
@@ -250,7 +250,7 @@ class UsersTable extends \WP_List_Table {
 	/**
 	 * The requested sort column, validated against the sortable list.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @return string
 	 */
@@ -264,7 +264,7 @@ class UsersTable extends \WP_List_Table {
 	/**
 	 * The requested sort direction.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @return string
 	 */
@@ -277,7 +277,7 @@ class UsersTable extends \WP_List_Table {
 	/**
 	 * Avatar column.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @param \WP_User $item User for this row.
 	 * @return string
@@ -316,7 +316,7 @@ class UsersTable extends \WP_List_Table {
 	/**
 	 * Name column.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @param \WP_User $item User for this row.
 	 * @return string
@@ -344,7 +344,7 @@ class UsersTable extends \WP_List_Table {
 	/**
 	 * Email column.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @param \WP_User $item User for this row.
 	 * @return string
@@ -359,7 +359,7 @@ class UsersTable extends \WP_List_Table {
 	 * Reads $item->roles, which is why prepare_items() warms the user meta cache --
 	 * capabilities live in meta and this would otherwise be a query per row.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @param \WP_User $item User for this row.
 	 * @return string
@@ -382,7 +382,7 @@ class UsersTable extends \WP_List_Table {
 	/**
 	 * Actions column.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @param \WP_User $item User for this row.
 	 * @return string
@@ -413,7 +413,7 @@ class UsersTable extends \WP_List_Table {
 	/**
 	 * Fallback for any column without its own method.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @param \WP_User $item        User for this row.
 	 * @param string   $column_name Column being rendered.
@@ -426,7 +426,7 @@ class UsersTable extends \WP_List_Table {
 	/**
 	 * Empty-state text.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @return void
 	 */
@@ -437,7 +437,7 @@ class UsersTable extends \WP_List_Table {
 	/**
 	 * Render the whole screen: heading, search, table.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @return void
 	 */

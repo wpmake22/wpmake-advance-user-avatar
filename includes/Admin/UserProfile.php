@@ -5,7 +5,7 @@
  * The avatar field on the WordPress user profile screen.
  *
  * @class    UserProfile
- * @version  1.4.0
+ * @version  2.0.0
  * @package  WPMakeAdvanceUserAvatar/Admin
  */
 
@@ -63,7 +63,7 @@ class UserProfile {
 	/**
 	 * The user whose profile screen this request is on.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @return int User ID, or 0 when this is not a profile screen.
 	 */
@@ -92,7 +92,7 @@ class UserProfile {
 	 * which reads as a broken button rather than an empty library. The file input
 	 * beside it still works for them, and that is the control they actually need.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @return bool
 	 */
@@ -107,7 +107,7 @@ class UserProfile {
 	 * wp-admin/user-edit.php line 277), so without this the file input renders and
 	 * silently posts nothing at all.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @return void
 	 */
@@ -121,7 +121,7 @@ class UserProfile {
 	 * Actively misleading once this plugin is active: changing the Gravatar does
 	 * nothing for a user whose avatar is stored on this site.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @param string   $description  Description core was going to print.
 	 * @param \WP_User $profile_user User whose profile is being shown.
@@ -138,7 +138,7 @@ class UserProfile {
 	/**
 	 * Render the Profile Picture field.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @param \WP_User $user User being edited.
 	 * @return void
@@ -230,7 +230,7 @@ class UserProfile {
 	 * form section and the capability check is the plugin's own, so the field is
 	 * safe wherever else these hooks might be fired from.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @param int $user_id User being saved.
 	 * @return void
@@ -282,7 +282,7 @@ class UserProfile {
 	 * the allowed types, the size ceiling, the upload directory, EXIF orientation,
 	 * the configured output size and the avatar sub-sizes are all applied here too.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @param int $user_id User being saved.
 	 * @return void
@@ -315,7 +315,7 @@ class UserProfile {
 	 * is nothing on screen to print an error into. Held against the user doing the
 	 * editing, not the user being edited, and long enough only for the redirect.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @param string $message Message to show.
 	 * @return void
@@ -327,7 +327,7 @@ class UserProfile {
 	/**
 	 * Print, and clear, a failure held over from the save.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @return void
 	 */

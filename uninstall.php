@@ -11,7 +11,7 @@
  * is far worse than leaving some orphaned rows behind.
  *
  * @package WPMakeAdvanceUserAvatar
- * @since   1.4.0
+ * @since   2.0.0
  */
 
 // Only ever reached through WordPress's own uninstall routine.
@@ -25,7 +25,7 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
  * Options are per-site on a network, so every site answers for itself. A site that
  * left the switch off keeps everything, even when a sibling site opted in.
  *
- * @since 1.4.0
+ * @since 2.0.0
  *
  * @return bool
  */
@@ -44,7 +44,7 @@ function wpmake_aua_uninstall_opted_in() {
  * that filter still is -- so asking for it here is meaningful, and hardcoding the
  * default would quietly leave a relocated directory and all its files behind.
  *
- * @since 1.4.0
+ * @since 2.0.0
  *
  * @return array {
  *     @type string $dir      Absolute path of the avatar directory.
@@ -89,11 +89,11 @@ function wpmake_aua_uninstall_upload_paths() {
  * Scoped by file path rather than by which users point at one, for two reasons.
  * An avatar the user later removed is still the plugin's file to clean up, and it
  * is referenced by nobody. And an avatar chosen from the Media Library is *not*
- * the plugin's file -- since 1.4.0 a user can pick an existing image, which may
+ * the plugin's file -- since 2.0.0 a user can pick an existing image, which may
  * well be in use elsewhere on the site. Deleting that because somebody once used
  * it as a profile picture would destroy the site owner's own media.
  *
- * @since 1.4.0
+ * @since 2.0.0
  *
  * @return void
  */
@@ -150,7 +150,7 @@ function wpmake_aua_uninstall_delete_attachments() {
  * Never recursive. If a file is still there it belongs to somebody else, or a
  * deletion failed, and either way it is not this function's business to remove it.
  *
- * @since 1.4.0
+ * @since 2.0.0
  *
  * @return void
  */
@@ -183,7 +183,7 @@ function wpmake_aua_uninstall_remove_directory() {
  * user list is the only way to clear them without raw SQL. They expire after a
  * minute anyway, so this is tidiness rather than necessity.
  *
- * @since 1.4.0
+ * @since 2.0.0
  *
  * @return void
  */
@@ -215,7 +215,7 @@ function wpmake_aua_uninstall_delete_profile_transients() {
  * are handled by the caller -- and only for users whose avatar came from a site that
  * opted in.
  *
- * @since 1.4.0
+ * @since 2.0.0
  *
  * @return void
  */
@@ -251,9 +251,9 @@ function wpmake_aua_uninstall_current_site() {
  * The reference lives in global user meta, so it cannot simply be deleted for all
  * users: on a network, one site opting in must not wipe the avatars of users whose
  * pictures belong to a site that did not. The site is recorded alongside the ID
- * since 1.4.0; where it is absent the avatar belongs to the main site.
+ * since 2.0.0; where it is absent the avatar belongs to the main site.
  *
- * @since 1.4.0
+ * @since 2.0.0
  *
  * @param int $blog_id Site whose avatars should be forgotten.
  * @return void
@@ -275,7 +275,7 @@ function wpmake_aua_uninstall_forget_avatars_for_site( $blog_id ) {
 	foreach ( $user_ids as $user_id ) {
 		$recorded = (int) get_user_meta( $user_id, 'wpmake_aua_avatar_blog_id', true );
 
-		// No record means the main site, which is where a pre-1.4.0 avatar lives.
+		// No record means the main site, which is where a pre-2.0.0 avatar lives.
 		if ( 0 === $recorded && ! $is_main ) {
 			continue;
 		}

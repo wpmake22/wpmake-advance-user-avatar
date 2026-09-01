@@ -442,7 +442,7 @@ class Frontend {
 	 * printed in the footer rather than a broken widget -- which is why this can
 	 * afford to be conservative.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @return bool
 	 */
@@ -457,7 +457,7 @@ class Frontend {
 		/**
 		 * Filter whether the front-end avatar assets load on this request.
 		 *
-		 * @since 1.4.0
+		 * @since 2.0.0
 		 *
 		 * @param bool $needed Whether the assets are needed.
 		 */
@@ -467,7 +467,7 @@ class Frontend {
 	/**
 	 * Whether the queried post contains either shortcode or the block.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @return bool
 	 */
@@ -504,7 +504,7 @@ class Frontend {
 	 * Whether this is an integration screen that renders the widget without a
 	 * shortcode or block appearing in the post content.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @return bool
 	 */

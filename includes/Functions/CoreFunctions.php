@@ -31,7 +31,7 @@ if ( ! function_exists( 'wpmake_aua_pre_get_avatar_data' ) ) {
 	/**
 	 * Point WordPress at the user's uploaded avatar, at the size it asked for.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @param array $args        Avatar arguments, already normalised by core.
 	 * @param mixed $id_or_email ID, email, or object identifying the user.
@@ -84,7 +84,7 @@ if ( ! function_exists( 'wpmake_aua_resolve_user_id' ) ) {
 	 * Mirrors the resolution in core's get_avatar_data(), because this now runs
 	 * ahead of it rather than after it.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @param mixed $id_or_email ID, email, or object identifying the user.
 	 * @return int User ID, or 0 when the identifier does not resolve to one.
@@ -148,7 +148,7 @@ if ( ! function_exists( 'wpmake_aua_get_avatar_blog_id' ) ) {
 	 * to the main site, which is where a single site that later became a network keeps
 	 * its uploads.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @param int $user_id User ID.
 	 * @return int Blog ID, or 0 on a single-site install where the question is moot.
@@ -172,7 +172,7 @@ if ( ! function_exists( 'wpmake_aua_get_avatar_url' ) ) {
 	 * upload. A 32px admin bar avatar used to download the full 500x500 file, which
 	 * made the plugin's own "store in thumbnail sizes" setting decorative.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @param int $user_id User ID.
 	 * @param int $size    Requested square size in pixels.
@@ -255,11 +255,11 @@ if ( ! function_exists( 'wpmake_aua_current_user_can_edit_avatar' ) ) {
 	/**
 	 * Whether the current user may set or clear a given user's avatar.
 	 *
-	 * Every avatar write goes through this. Until 1.4.0 the plugin was self-service
+	 * Every avatar write goes through this. Until 2.0.0 the plugin was self-service
 	 * only -- both AJAX handlers hardcoded get_current_user_id() -- so there was
 	 * nothing to authorise. Now that a request can name a user, there is.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @param int $user_id User whose avatar is being changed.
 	 * @return bool
@@ -318,7 +318,7 @@ if ( ! function_exists( 'wpmake_aua_set_user_avatar' ) ) {
 	 * falls back to Gravatar, because wpmake_aua_get_avatar_url() returns an empty
 	 * string as soon as wp_get_attachment_image_url() stops resolving.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @param int $user_id       User to set the avatar for.
 	 * @param int $attachment_id Attachment to use.
@@ -375,7 +375,7 @@ if ( ! function_exists( 'wpmake_aua_set_user_avatar' ) ) {
 		 * Also fires when the attachment was already the user's avatar, since the
 		 * end state is the same either way.
 		 *
-		 * @since 1.4.0
+		 * @since 2.0.0
 		 *
 		 * @param int $user_id       User the avatar belongs to.
 		 * @param int $attachment_id Attachment now in use.
@@ -395,7 +395,7 @@ if ( ! function_exists( 'wpmake_aua_remove_user_avatar' ) ) {
 	 * The attachment itself stays in the media library. That has always been the
 	 * behaviour, and it is what makes an attachment safe to share between users.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @param int $user_id User to clear the avatar for.
 	 * @return bool True when the user has no avatar afterwards.
@@ -426,7 +426,7 @@ if ( ! function_exists( 'wpmake_aua_remove_user_avatar' ) ) {
 		/**
 		 * Fires once a user's avatar has been removed.
 		 *
-		 * @since 1.4.0
+		 * @since 2.0.0
 		 *
 		 * @param int $user_id       User the avatar belonged to.
 		 * @param int $attachment_id Attachment that was in use, or 0 if there was none.
@@ -458,7 +458,7 @@ if ( ! function_exists( 'wpmake_aua_clear_deleted_avatar_references' ) ) {
 	 * directly, so `wpmake_aua_avatar_removed` fires as it would for any other
 	 * removal. Attachments may be shared between users, so this can be more than one.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @param int $attachment_id Attachment about to be deleted.
 	 * @return void
@@ -506,7 +506,7 @@ if ( ! function_exists( 'wpmake_aua_get_allowed_mimes' ) ) {
 	 * server refuses is what made cropped uploads fail when JPEG was unchecked.
 	 * Two copies of this list would be two chances to disagree.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @return array Mime type strings.
 	 */
@@ -536,7 +536,7 @@ if ( ! function_exists( 'wpmake_aua_get_uploaded_image_size' ) ) {
 	/**
 	 * Configured output size for an uploaded avatar.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @return array {
 	 *     @type int $width  Width in pixels.
@@ -571,7 +571,7 @@ if ( ! function_exists( 'wpmake_aua_enqueue_frontend_assets' ) ) {
 	 * Enqueuing the same handle twice is a no-op in WordPress, so the two paths do
 	 * not conflict.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @return void
 	 */
@@ -606,7 +606,7 @@ if ( ! function_exists( 'wpmake_aua_can_choose_from_media_library' ) ) {
 	 * The template, the asset gate and the localised script data all need the same
 	 * answer, which is why it lives here rather than being re-derived three times.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @return bool
 	 */
@@ -633,7 +633,7 @@ if ( ! function_exists( 'wpmake_aua_enqueue_media_picker' ) ) {
 	 * Safe to call during the_content: wp_enqueue_media() prints its templates on
 	 * wp_footer (see wp-includes/media.php line 5314), which has not fired yet.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @return void
 	 */
@@ -660,7 +660,7 @@ if ( ! function_exists( 'wpmake_aua_avatar_subsizes' ) ) {
 	 * with a large media library is a real cost for no benefit. They are injected for
 	 * the avatar upload only, and matched back by dimension rather than by name.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @return array Size definitions keyed by name.
 	 */
@@ -695,7 +695,7 @@ if ( ! function_exists( 'wpmake_aua_add_avatar_subsizes' ) ) {
 	 * Hooked and unhooked around the avatar upload rather than left on, so no other
 	 * upload on the site grows extra files.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @param array $sizes Sizes WordPress is about to generate.
 	 * @return array

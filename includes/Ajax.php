@@ -155,7 +155,7 @@ class Ajax {
 	 * is what the profile screen and the bulk manager post, and is only honoured
 	 * once wpmake_aua_current_user_can_edit_avatar() has agreed to it.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @return int
 	 */
@@ -179,7 +179,7 @@ class Ajax {
 	 * 403, which a failed nonce is not -- check_ajax_referer() dies with a bare -1 --
 	 * so the two are distinguishable by the caller.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @param int $user_id User the request wants to act on.
 	 * @return void
@@ -204,7 +204,7 @@ class Ajax {
 	 * attachment ID and nothing to upload, so they post here instead. Same nonce and
 	 * capability discipline as the other two.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @return void
 	 */
@@ -324,7 +324,7 @@ class Ajax {
 	 * Does no capability checking -- callers must have cleared
 	 * wpmake_aua_current_user_can_edit_avatar() before handing a file to this.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @param array $file     One entry from $_FILES.
 	 * @param array $crop     Optional crop geometry from the browser cropper.
@@ -595,7 +595,7 @@ class Ajax {
 	 * configured size are left alone -- upscaling an avatar only adds bytes and
 	 * blur.
 	 *
-	 * @since 1.4.0
+	 * @since 2.0.0
 	 *
 	 * @param string $file_path Absolute path to the uploaded file.
 	 * @param array  $options   Plugin settings.
