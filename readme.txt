@@ -8,13 +8,19 @@ Requires PHP: 7.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-Let WooCommerce customers upload profile photos shown on My Account, reviews, and member pages — no Gravatar account required.
+Custom profile pictures for any WordPress site. Users upload their own photo, stored on your server — no Gravatar account, no external requests.
 
 == Description ==
 
+Advanced User Avatar gives every user on your WordPress site a real profile picture. They upload it from their device, or take one with the webcam, and it appears everywhere WordPress renders an avatar: comments, author boxes, the admin bar, the Users list, the REST API and the Avatar block in the editor. Every photo is stored on your own server, so nobody needs a Gravatar account and nothing about your visitors leaves your site.
+
+Put the uploader wherever you want it with a shortcode or the Gutenberg block, or let people set their picture from their own WordPress profile screen. Administrators can change or clear anyone's avatar, one person at a time or from a searchable list of every user on the site. It works on any theme and on any WordPress site — and if you run a store or a community, the integrations below take care of the rest.
+
+= For WooCommerce stores =
+
 Your WooCommerce customers are faceless. Reviews come from anonymous silhouettes, the My Account dashboard greets returning shoppers with a generic placeholder, and every account in your store feels like a transaction instead of a person. Faceless reviews are trusted less, and anonymous accounts give your customers no reason to feel connected to your brand.
 
-Advanced User Avatar gives every WooCommerce customer a real profile photo, uploaded from their device in seconds. The avatar appears in the WooCommerce My Account dashboard and on the Account Details page automatically. For BuddyPress communities, it replaces the default avatar uploader with a faster, friendlier flow. For any other WordPress site, drop the avatar uploader anywhere using a shortcode or the Gutenberg block.
+Advanced User Avatar gives every WooCommerce customer a real profile photo, uploaded from their device in seconds. The avatar appears on the My Account dashboard and the Account Details page automatically, and you choose which other parts of the store show it.
 
 = Features =
 
@@ -22,8 +28,9 @@ Advanced User Avatar gives every WooCommerce customer a real profile photo, uplo
 
 * **My Account Dashboard avatar** — customer's profile photo displays on the dashboard the moment they log in
 * **Account Details upload field** — customers update their photo from the same page they manage their account
+* **Product review avatars** — reviewers show as real people on product pages instead of Gravatar silhouettes
+* **Choose where avatars appear** — My Account dashboard, Account details, order history, product reviews, checkout and wishlists, each switched on or off independently
 * **Page builder compatible** — works alongside Bricks Builder and other builders without duplicate template rendering
-* **Product review avatars** — coming in version 2, so reviewers show as real people on product pages
 
 **BuddyPress integration**
 
@@ -34,6 +41,11 @@ Advanced User Avatar gives every WooCommerce customer a real profile photo, uplo
 
 * **Custom avatars appear in the Better Messages chat interface** automatically, replacing the default Gravatar with the user's uploaded photo
 
+**WP-Members integration**
+
+* **Adds the avatar uploader to the WP-Members profile form**, so members set their picture on the same form they edit the rest of their details
+* **No template editing** — the field is inserted into the existing form when the integration is switched on
+
 **Upload experience**
 
 * **Crop interface** — customers position and size their photo before saving
@@ -41,13 +53,17 @@ Advanced User Avatar gives every WooCommerce customer a real profile photo, uplo
 * **EXIF orientation handling** — phone photos stay upright after cropping
 * **File type validation** — admin chooses which of JPG, PNG, and GIF are allowed
 * **Max file size control** — set the upload ceiling from settings
-* **Auto-generated image sizes** — multiple thumbnails created on upload for fast display everywhere
+* **Media Library picker** — optionally let users choose an image they already uploaded, off by default
+* **Auto-generated image sizes** — 32, 64 and 96 pixel variants created on upload, so a small avatar downloads a small file
 
 **Placement options for developers and site builders**
 
 * **Shortcode:** `[wpmake_advance_user_avatar_upload]` renders the full upload form on any page
 * **Shortcode:** `[wpmake_advance_user_avatar]` outputs the current user's avatar
 * **Gutenberg block** for drag-and-drop placement in the block editor
+* **Profile screen field** at Users > Profile, the place most people look first
+* **Bulk avatar manager** — every user with their current picture, searchable and sortable, on the Users > Users Avatar screen
+* **Theme template overrides, action hooks and CSS custom properties** for anything the settings do not cover
 
 = No Gravatar, no external data sharing =
 
@@ -59,9 +75,10 @@ Install the plugin and give your customers a face on your store.
 
 1. Install the plugin from Plugins > Add New, or upload the zip via Plugins > Add New > Upload Plugin.
 2. Activate Advanced User Avatar through the Plugins menu in WordPress.
-3. Go to Users > User Avatar to set allowed file types, max file size, image dimensions, and toggle WooCommerce and BuddyPress integrations.
-4. Add the shortcode `[wpmake_advance_user_avatar_upload]` to any page, or insert the Advanced User Avatar Gutenberg block.
-5. For WooCommerce, enable the WooCommerce integration in settings — the avatar then appears in the My Account dashboard and Account Details page automatically.
+3. Go to Users > Users Avatar to set allowed file types, max file size and image dimensions, and to switch on the WooCommerce, BuddyPress, Better Messages and WP-Members integrations.
+4. Add the shortcode `[wpmake_advance_user_avatar_upload]` to any page, or insert the Advanced User Avatar Gutenberg block. Users can also set their picture at Users > Profile without any placement at all.
+5. For WooCommerce, enable the WooCommerce integration in settings — the avatar then appears in the My Account dashboard and Account Details page automatically, and you choose which other store locations show it.
+6. To manage other people's avatars, use the Manage Avatars tab on the Users > Users Avatar screen.
 
 == Frequently Asked Questions ==
 
@@ -101,6 +118,10 @@ Yes, optionally. When the BuddyPress integration is enabled, Advanced User Avata
 
 Yes. Once a user uploads a custom avatar, it appears inside the Better Messages chat interface in place of the default Gravatar. No extra configuration is required.
 
+= Does this work with WP-Members? =
+
+Yes. When the WP-Members integration is enabled, the avatar uploader is added to the WP-Members profile form, so members set their picture on the same form they use for the rest of their details. No template editing is required.
+
 = Does this work with Bricks Builder? =
 
 Yes. The WooCommerce integration is compatible with Bricks Builder and inserts the avatar uploader and viewer without conflicting with the builder's template rendering.
@@ -139,19 +160,49 @@ Yes. Both shortcodes accept attributes: `size` (avatar width/height in px), `rad
 
 Yes. Copy the template you want to change out of `wp-content/plugins/wpmake-advance-user-avatar/templates/` into `wp-content/themes/your-theme/wpmake-advance-user-avatar/`, keeping the file name, and edit your copy. The theme copy is used instead of the plugin's and survives plugin updates.
 
-There are also action hooks for adding markup without replacing a template: `wpmake_advance_user_avatar_before_avatar`, `wpmake_advance_user_avatar_after_avatar`, `wpmake_advance_user_avatar_before_uploader`, `wpmake_advance_user_avatar_after_uploader`, `wpmake_advance_user_avatar_before_upload_buttons` and `wpmake_advance_user_avatar_after_upload_buttons`.
+There are also action hooks for adding markup without replacing a template: `wpmake_advance_user_avatar_before_avatar`, `wpmake_advance_user_avatar_after_avatar`, `wpmake_advance_user_avatar_before_uploader`, `wpmake_advance_user_avatar_after_uploader`, `wpmake_advance_user_avatar_before_upload_buttons` and `wpmake_advance_user_avatar_after_upload_buttons`. Each receives the resolved shortcode attributes.
+
+= Is there an API for setting avatars from my own code? =
+
+Yes. Three functions do the work, and every avatar change in the plugin goes through them:
+
+`wpmake_aua_set_user_avatar( int $user_id, int $attachment_id ) : bool`
+`wpmake_aua_remove_user_avatar( int $user_id ) : bool`
+`wpmake_aua_current_user_can_edit_avatar( int $user_id ) : bool`
+
+Setting an avatar checks that the user exists and that the attachment exists and is an image. The same attachment may be used by any number of users, and removing an avatar never deletes the file — so an image you picked from the Media Library stays in the Media Library.
+
+The capability function is the one to call before accepting a change from a request. It returns true when the target is the current user — everybody owns their own avatar, whatever else they can do — or when the current user can `edit_user` for that person. The two setter functions deliberately do **not** check capabilities themselves, so code running without a current user, such as an importer or a WP-CLI command, can still set an avatar.
+
+Two actions fire after every change, each passed the user ID and the attachment ID:
+
+`do_action( 'wpmake_aua_avatar_set', $user_id, $attachment_id );`
+`do_action( 'wpmake_aua_avatar_removed', $user_id, $attachment_id );`
+
+`wpmake_aua_get_avatar_url( int $user_id, int $size )` returns the URL of a user's uploaded avatar at the size you ask for, or an empty string if they have not set one.
+
+= Which filters can I use? =
+
+* `wpmake_advance_user_avatar_shortcode_atts` — the resolved attributes for either shortcode, with the shortcode tag as the second argument
+* `wpmake_advance_user_avatar_template_directory` — the theme sub-directory templates are looked up in, `wpmake-advance-user-avatar` by default
+* `wpmake_advance_user_avatar_locate_template` — the resolved absolute path of a template, with the file name as the second argument
+* `wpmake_advance_user_avatar_upload_url` — the directory avatars are stored in
+* `wpmake_aua_avatar_subsizes` — the extra image sizes generated for avatar uploads
+* `pre_get_avatar_data` — WordPress's own filter, which is where this plugin supplies the avatar; use it to override the plugin entirely
 
 == Screenshots ==
 
 1. The avatar upload form — drop it on any page with the shortcode or Gutenberg block. Crop and webcam capture are built in.
 2. The customer's uploaded avatar shown on their profile, replacing the default Gravatar silhouette across the site.
-3. Admin settings — control allowed file types, max file size, image dimensions, and toggle WooCommerce and BuddyPress integrations.
-4. The crop interface — customers position and size their photo before it saves, so headshots are framed the way they want.
-5. The WooCommerce Account Details page with the avatar upload field — customers update their photo from the same screen they manage their account.
-6. The customer's avatar after upload, displayed on the WooCommerce Account Details page.
-7. The BuddyPress member area avatar uploader, using the same upload, crop, and webcam flow as the rest of the site.
-8. The uploaded avatar shown in the BuddyPress member area after save.
-9. The avatar displayed across BuddyPress member profile pages and the member directory.
+3. The Profile Picture field at Users > Profile — upload from the device or pick an image already in the Media Library, on the screen people look at first.
+4. The bulk avatar manager — every user with their current picture, searchable and sortable, with Change and Remove on each row.
+5. Admin settings — control allowed file types, max file size, image dimensions, and switch integrations on or off.
+6. The crop interface — customers position and size their photo before it saves, so headshots are framed the way they want.
+7. The WooCommerce Account Details page with the avatar upload field — customers update their photo from the same screen they manage their account.
+8. The customer's avatar after upload, displayed on the WooCommerce Account Details page.
+9. The BuddyPress member area avatar uploader, using the same upload, crop, and webcam flow as the rest of the site.
+10. The uploaded avatar shown in the BuddyPress member area after save.
+11. The avatar displayed across BuddyPress member profile pages and the member directory.
 
 == Changelog ==
 
