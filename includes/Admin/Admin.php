@@ -298,6 +298,8 @@ class Admin {
 				'chooseTitle'  => esc_html__( 'Choose a profile picture', 'wpmake-advance-user-avatar' ),
 				'chooseButton' => esc_html__( 'Use this picture', 'wpmake-advance-user-avatar' ),
 				'confirmText'  => esc_html__( 'Remove this avatar?', 'wpmake-advance-user-avatar' ),
+				'confirmYes'   => esc_html__( 'Yes, remove', 'wpmake-advance-user-avatar' ),
+				'confirmNo'    => esc_html__( 'Cancel', 'wpmake-advance-user-avatar' ),
 				'savingText'   => esc_html__( 'Saving…', 'wpmake-advance-user-avatar' ),
 				'errorText'    => esc_html__( 'Something went wrong. Please try again.', 'wpmake-advance-user-avatar' ),
 			)

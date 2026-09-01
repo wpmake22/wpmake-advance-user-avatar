@@ -372,8 +372,10 @@ class UsersTable extends \WP_List_Table {
 		$remove_style = $attachment_id > 0 ? '' : ' style="display:none"';
 
 		return sprintf(
-			'<button type="button" class="button wpmake-aua-row-change" data-user="%1$d">%2$s</button> ' .
+			'<div class="wpmake-aua-row-actions" data-user="%1$d">' .
+			'<button type="button" class="button wpmake-aua-row-change" data-user="%1$d">%2$s</button>' .
 			'<button type="button" class="button wpmake-aua-row-remove" data-user="%1$d"%3$s>%4$s</button>' .
+			'</div>' .
 			'<span class="wpmake-aua-row-status" data-user="%1$d" role="status" aria-live="polite"></span>',
 			(int) $item->ID,
 			esc_html__( 'Change', 'wpmake-advance-user-avatar' ),

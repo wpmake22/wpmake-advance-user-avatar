@@ -28,11 +28,28 @@
 
 		r.change.prop( "disabled", isBusy );
 		r.remove.prop( "disabled", isBusy );
-		r.status.text( isBusy ? params().savingText : "" );
+
+		if ( isBusy ) {
+			r.status.text( params().savingText ).removeClass( "is-error" );
+		} else {
+			clearStatus( userId );
+		}
 	}
 
 	function fail( userId, message ) {
-		$row( userId ).status.text( message || params().errorText );
+		$row( userId ).status.text( message || params().errorText ).addClass( "is-error" );
+	}
+
+	function clearStatus( userId ) {
+		$row( userId ).status.text( "" ).removeClass( "is-error" );
+	}
+
+	function messageFrom( xhr ) {
+		try {
+			return JSON.parse( xhr.responseText ).data.message;
+		} catch ( err ) {
+			return "";
+		}
 	}
 
 	function post( action, data ) {
@@ -89,16 +106,7 @@
 					} )
 					.fail( function ( xhr ) {
 						busy( userId, false );
-
-						var message = "";
-
-						try {
-							message = JSON.parse( xhr.responseText ).data.message;
-						} catch ( err ) {
-							message = "";
-						}
-
-						fail( userId, message );
+						fail( userId, messageFrom( xhr ) );
 					} );
 			} );
 		}
@@ -106,42 +114,73 @@
 		frames[ userId ].open();
 	} );
 
+	/*
+	 * An inline confirmation rather than window.confirm(). A browser that has decided
+	 * to suppress repeated dialogs -- which is exactly what happens to an admin
+	 * clearing several avatars in a row -- swallows the prompt and auto-dismisses it,
+	 * so the row silently stops responding. This also matches the front-end
+	 * uploader's confirmation, added in 1.3.0.
+	 */
 	$( document ).on( "click", ".wpmake-aua-row-remove", function ( e ) {
 		e.preventDefault();
 
-		var userId = $( this ).data( "user" );
+		var $btn    = $( this );
+		var userId  = $btn.data( "user" );
+		var $wrap   = $( '.wpmake-aua-row-actions[data-user="' + userId + '"]' );
 
-		if ( ! window.confirm( params().confirmText ) ) {
+		if ( $wrap.find( ".wpmake-aua-row-confirm" ).length ) {
 			return;
 		}
 
-		busy( userId, true );
+		clearStatus( userId );
 
-		post( "remove_avatar", { security: params().removeNonce, user_id: userId } )
-			.done( function ( res ) {
-				busy( userId, false );
+		var $bar = $(
+			'<span class="wpmake-aua-row-confirm">' +
+				'<span class="wpmake-aua-row-confirm-text"></span>' +
+				'<button type="button" class="button button-link-delete wpmake-aua-confirm-yes"></button>' +
+				'<button type="button" class="button wpmake-aua-confirm-no"></button>' +
+			"</span>"
+		);
 
-				if ( res && res.success ) {
-					var r = $row( userId );
+		$bar.find( ".wpmake-aua-row-confirm-text" ).text( params().confirmText );
+		$bar.find( ".wpmake-aua-confirm-yes" ).text( params().confirmYes );
+		$bar.find( ".wpmake-aua-confirm-no" ).text( params().confirmNo );
 
-					r.avatar.attr( "src", res.data && res.data.fallback_url ? res.data.fallback_url : r.avatar.data( "default" ) );
-					r.remove.hide();
-				} else {
-					fail( userId, res && res.data ? res.data.message : "" );
-				}
-			} )
-			.fail( function ( xhr ) {
-				busy( userId, false );
+		$wrap.children().hide();
+		$wrap.append( $bar );
+		$bar.find( ".wpmake-aua-confirm-yes" ).trigger( "focus" );
 
-				var message = "";
+		// Cancel just puts the row back. Remove was visible a moment ago -- that is
+		// how we got here -- so showing the hidden children again is enough.
+		$bar.find( ".wpmake-aua-confirm-no" ).one( "click", function () {
+			$bar.remove();
+			$wrap.children().show();
+			$btn.trigger( "focus" );
+		} );
 
-				try {
-					message = JSON.parse( xhr.responseText ).data.message;
-				} catch ( err ) {
-					message = "";
-				}
+		$bar.find( ".wpmake-aua-confirm-yes" ).one( "click", function () {
+			$bar.remove();
+			$wrap.children().show();
 
-				fail( userId, message );
-			} );
+			busy( userId, true );
+
+			post( "remove_avatar", { security: params().removeNonce, user_id: userId } )
+				.done( function ( res ) {
+					busy( userId, false );
+
+					if ( res && res.success ) {
+						var r = $row( userId );
+
+						r.avatar.attr( "src", res.data && res.data.fallback_url ? res.data.fallback_url : r.avatar.data( "default" ) );
+						r.remove.hide();
+					} else {
+						fail( userId, res && res.data ? res.data.message : "" );
+					}
+				} )
+				.fail( function ( xhr ) {
+					busy( userId, false );
+					fail( userId, messageFrom( xhr ) );
+				} );
+		} );
 	} );
 }( jQuery ) );
