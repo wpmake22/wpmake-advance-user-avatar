@@ -419,6 +419,13 @@ class Frontend {
 				'wpmake_advance_user_avatar_retake'        => esc_html__( 'Retake', 'wpmake-advance-user-avatar' ),
 				'wpmake_advance_user_avatar_reupload'      => esc_html__( 'Re-upload', 'wpmake-advance-user-avatar' ),
 				'wpmake_advance_user_avatar_save_avatar'   => esc_html__( 'Save avatar', 'wpmake-advance-user-avatar' ),
+
+				// Media Library picker. Off unless the setting is on and the user can
+				// upload files; the button is not rendered otherwise.
+				'wpmake_advance_user_avatar_media_library' => wpmake_aua_can_choose_from_media_library(),
+				'wpmake_advance_user_avatar_set_nonce'     => wp_create_nonce( 'wpmake_advance_user_avatar_set_nonce' ),
+				'wpmake_advance_user_avatar_choose_title'  => esc_html__( 'Choose a profile picture', 'wpmake-advance-user-avatar' ),
+				'wpmake_advance_user_avatar_choose_button' => esc_html__( 'Use this picture', 'wpmake-advance-user-avatar' ),
 			)
 		);
 

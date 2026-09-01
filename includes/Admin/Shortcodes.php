@@ -132,6 +132,9 @@ class Shortcodes {
 			// wp_enqueue_scripts gate in Frontend.php cannot see.
 			wpmake_aua_enqueue_frontend_assets();
 
+			// Only the uploader has a picker on it, and only sometimes.
+			wpmake_aua_enqueue_media_picker();
+
 			$wpmake_aua_atts = wp_parse_args( (array) $atts, self::default_uploader_atts() );
 
 			include wpmake_advance_user_avatar_locate_template( 'wpmake-advance-user-avatar-upload-page.php' );

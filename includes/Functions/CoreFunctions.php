@@ -445,6 +445,59 @@ if ( ! function_exists( 'wpmake_aua_enqueue_frontend_assets' ) ) {
 	}
 }
 
+if ( ! function_exists( 'wpmake_aua_can_choose_from_media_library' ) ) {
+	/**
+	 * Whether the front-end uploader should offer the Media Library.
+	 *
+	 * Two conditions, and the capability is not optional. The setting is the site
+	 * owner's choice; `upload_files` is whether there is a library to choose from at
+	 * all. A subscriber without it gets an empty grid, which reads as a broken button
+	 * rather than an empty library -- so they are not shown one however the setting
+	 * is set.
+	 *
+	 * The template, the asset gate and the localised script data all need the same
+	 * answer, which is why it lives here rather than being re-derived three times.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @return bool
+	 */
+	function wpmake_aua_can_choose_from_media_library() {
+		$options = get_option( 'wpmake_advance_user_avatar_settings', array() );
+
+		if ( empty( $options['media_library'] ) ) {
+			return false;
+		}
+
+		return current_user_can( 'upload_files' );
+	}
+}
+
+if ( ! function_exists( 'wpmake_aua_enqueue_media_picker' ) ) {
+	/**
+	 * Load the media modal, only where the uploader is actually rendering.
+	 *
+	 * The media modal is a large dependency to put on a front-end page -- Backbone,
+	 * the media views and their templates -- so wp_enqueue_media() is deliberately not
+	 * part of wpmake_aua_enqueue_frontend_assets(). That runs for the avatar display
+	 * shortcode too, which has no picker on it.
+	 *
+	 * Safe to call during the_content: wp_enqueue_media() prints its templates on
+	 * wp_footer (see wp-includes/media.php line 5314), which has not fired yet.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @return void
+	 */
+	function wpmake_aua_enqueue_media_picker() {
+		if ( ! wpmake_aua_can_choose_from_media_library() ) {
+			return;
+		}
+
+		wp_enqueue_media();
+	}
+}
+
 if ( ! function_exists( 'wpmake_aua_avatar_subsizes' ) ) {
 	/**
 	 * Extra square sizes generated for avatar uploads.

@@ -639,6 +639,7 @@ jQuery(function ($) {
 					var $wrap = $node.closest(".wpmake-advance-user-avatar-upload");
 					$wrap.find(".wpmake-advance-user-avatar-remove").hide();
 					$wrap.find(".wpmake_advance_user_avatar_take_snapshot").show();
+					$wrap.find(".wpmake_advance_user_avatar_media_library").show();
 					$wrap.find(".wpmake_advance_user_avatar_upload").show();
 					$wrap.find('input[type="file"]').off("click");
 				}
@@ -716,7 +717,7 @@ jQuery(function ($) {
 							$(".wpmake-advance-user-avatar-container .profile-preview, .wpmake-advance-user-avatar-upload .profile-preview")
 								.attr("src", res.data.profile_picture_url);
 							$wrap.find(".wpmake-advance-user-avatar-remove").show();
-							$wrap.find(".wpmake_advance_user_avatar_take_snapshot, .wpmake_advance_user_avatar_upload").hide();
+							$wrap.find(".wpmake_advance_user_avatar_take_snapshot, .wpmake_advance_user_avatar_media_library, .wpmake_advance_user_avatar_upload").hide();
 							$wrap.find(".wpmake-advance-user-avatar-input").val(res.data.attachment_id);
 							$wrap.append(
 								'<div class="wpmake-advance-user-avatar-success" role="status" aria-live="polite">' +
@@ -726,6 +727,70 @@ jQuery(function ($) {
 							);
 						}
 					} catch (e) {
+						message = errorIcon + p.wpmake_advance_user_avatar_something_wrong;
+						isError = true;
+					}
+
+					if (isError) {
+						$wrap.append('<div class="wpmake-advance-user-avatar-error">' + message + "</div>");
+					}
+
+					$(document).trigger("wpmake_advance_user_avatar_ajax_complete");
+				}
+			});
+		},
+
+		// Assign an attachment that already exists. Shares the server-side service and
+		// the capability check with the uploader; only the endpoint differs.
+		set_from_library: function ($wrap, attachmentId) {
+			var p = wpmake_advance_user_avatar_params;
+
+			$wrap.find(".wpmake-advance-user-avatar-error, .wpmake-advance-user-avatar-success").remove();
+
+			$.ajax({
+				url:  p.ajax_url,
+				type: "POST",
+				data: {
+					action:        "wpmake_advance_user_avatar_upload_set_avatar",
+					security:      p.wpmake_advance_user_avatar_set_nonce,
+					attachment_id: attachmentId
+				},
+				complete: function (xhr) {
+					var errorIcon = '<img src="' + p.wpmake_assets_url + '/images/error.png" width="30px">';
+					var isError   = false;
+					var message   = "";
+
+					try {
+						var res = JSON.parse(xhr.responseText);
+
+						if (typeof res.success === "undefined" || typeof res.data === "undefined") {
+							throw new Error();
+						}
+
+						if (!res.success) {
+							message = errorIcon + res.data.message;
+							isError = true;
+						} else {
+							var successIcon =
+								'<span class="wpmake-success-icon" aria-hidden="true">' +
+									'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">' +
+										'<polyline points="20 6 9 17 4 12"/>' +
+									'</svg>' +
+								'</span>';
+
+							$(".wpmake-advance-user-avatar-container .profile-preview, .wpmake-advance-user-avatar-upload .profile-preview")
+								.attr("src", res.data.profile_picture_url);
+							$wrap.find(".wpmake-advance-user-avatar-remove").show();
+							$wrap.find(".wpmake_advance_user_avatar_take_snapshot, .wpmake_advance_user_avatar_media_library, .wpmake_advance_user_avatar_upload").hide();
+							$wrap.find(".wpmake-advance-user-avatar-input").val(res.data.attachment_id);
+							$wrap.append(
+								'<div class="wpmake-advance-user-avatar-success" role="status" aria-live="polite">' +
+									successIcon +
+									'<span class="wpmake-success-text">' + p.wpmake_advance_user_avatar_upload_success_message + '</span>' +
+								'</div>'
+							);
+						}
+					} catch (err) {
 						message = errorIcon + p.wpmake_advance_user_avatar_something_wrong;
 						isError = true;
 					}
@@ -758,6 +823,52 @@ jQuery(function ($) {
 		$(this).closest(".wpmake-advance-user-avatar-upload")
 			.find('input[type="file"]')
 			.trigger("click");
+	});
+
+	/* =========================================================================
+	   Media Library button — off by default, and never rendered for a user who
+	   cannot upload_files. Assigns an existing attachment rather than uploading,
+	   so it posts to set_avatar instead of method_upload.
+	   ========================================================================= */
+	var wpmakeMediaFrame;
+
+	$(document).on("click", ".wpmake_advance_user_avatar_media_library", function (e) {
+		e.preventDefault();
+
+		var p     = wpmake_advance_user_avatar_params;
+		var $wrap = $(this).closest(".wpmake-advance-user-avatar-upload");
+
+		if (!window.wp || !wp.media) {
+			return;
+		}
+
+		if (!wpmakeMediaFrame) {
+			wpmakeMediaFrame = wp.media({
+				title:    p.wpmake_advance_user_avatar_choose_title,
+				button:   { text: p.wpmake_advance_user_avatar_choose_button },
+				library:  { type: "image" },
+				multiple: false
+			});
+
+			wpmakeMediaFrame.on("open", function () {
+				var remembered = window.getUserSetting ? window.getUserSetting("libraryContent") : "";
+
+				wpmakeMediaFrame.content.mode("browse");
+
+				// mode() writes that remembered tab as a side effect; put it back.
+				if (remembered && window.setUserSetting) {
+					window.setUserSetting("libraryContent", remembered);
+				}
+			});
+
+			wpmakeMediaFrame.on("select", function () {
+				var attachment = wpmakeMediaFrame.state().get("selection").first().toJSON();
+
+				WPMake_Advance_User_Avatar_Frontend.set_from_library($wrap, attachment.id);
+			});
+		}
+
+		wpmakeMediaFrame.open();
 	});
 
 	/* =========================================================================

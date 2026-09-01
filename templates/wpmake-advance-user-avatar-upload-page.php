@@ -48,6 +48,11 @@ $wpmake_aua_style = Shortcodes::container_style( $wpmake_aua_atts );
 	$wpmake_upload_label  = ! empty( $wpmake_aua_atts['upload_text'] ) ? $wpmake_aua_atts['upload_text'] : __( 'Upload file', 'wpmake-advance-user-avatar' );
 	$wpmake_remove_label  = ! empty( $wpmake_aua_atts['remove_text'] ) ? $wpmake_aua_atts['remove_text'] : __( 'Remove', 'wpmake-advance-user-avatar' );
 	$wpmake_capture_label = ! empty( $wpmake_aua_atts['capture_text'] ) ? $wpmake_aua_atts['capture_text'] : __( 'Take Picture', 'wpmake-advance-user-avatar' );
+	$wpmake_library_label = __( 'Choose from Media Library', 'wpmake-advance-user-avatar' );
+
+	// Both the setting and upload_files have to hold. Never rendered for a user who
+	// would open the picker on an empty library.
+	$wpmake_show_library = wpmake_aua_can_choose_from_media_library();
 	?>
 	<img class="profile-preview" alt="profile-picture" src="<?php echo esc_url( $image ); ?>" >
 	<header>
@@ -72,12 +77,25 @@ $wpmake_aua_style = Shortcodes::container_style( $wpmake_aua_atts );
 							<button type="button" class="button wpmake_advance_user_avatar_take_snapshot hide-if-no-js"><?php echo esc_html( $wpmake_capture_label ); ?></button>
 							<?php
 						}
+
+						if ( $wpmake_show_library ) {
+							?>
+							<button type="button" class="button wpmake_advance_user_avatar_media_library hide-if-no-js"><?php echo esc_html( $wpmake_library_label ); ?></button>
+							<?php
+						}
 						?>
 							<button type="button" class="button wpmake_advance_user_avatar_upload hide-if-no-js"><?php echo esc_html( $wpmake_upload_label ); ?></button>
 						<?php
 					} else {
 						?>
 							<button type="button" class="button wpmake-advance-user-avatar-remove hide-if-no-js"><?php echo esc_html( $wpmake_remove_label ); ?></button>
+						<?php
+						if ( $wpmake_show_library ) {
+							?>
+							<button type="button" class="button wpmake_advance_user_avatar_media_library hide-if-no-js" style="display:none"><?php echo esc_html( $wpmake_library_label ); ?></button>
+							<?php
+						}
+						?>
 							<button type="button" class="button wpmake_advance_user_avatar_upload hide-if-no-js" style="display:none"><?php echo esc_html( $wpmake_upload_label ); ?></button>
 						<?php
 					}
