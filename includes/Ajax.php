@@ -230,6 +230,192 @@ class Ajax {
 	}
 
 	/**
+	 * Turn an uploaded file into an avatar attachment.
+	 *
+	 * The whole pipeline the site owner's settings govern: the accepted mime types,
+	 * the size ceiling, the plugin's own upload directory, EXIF orientation, the
+	 * configured output size, and the 32/64/96px avatar variants.
+	 *
+	 * Extracted from method_upload() so the profile screen posts its file through
+	 * exactly the same path. A second implementation in wp-admin would be a second
+	 * place for the settings to stop being honoured.
+	 *
+	 * Does no capability checking -- callers must have cleared
+	 * wpmake_aua_current_user_can_edit_avatar() before handing a file to this.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @param array $file One entry from $_FILES.
+	 * @param array $crop Optional crop geometry from the browser cropper.
+	 * @return int|\WP_Error Attachment ID, or a WP_Error describing the failure.
+	 */
+	public static function create_avatar_attachment( array $file, array $crop = array() ) {
+		if ( empty( $file['tmp_name'] ) || ! isset( $file['size'] ) || $file['size'] < 1 ) {
+			return new \WP_Error( 'wpmake_aua_no_file', esc_html__( 'No file was received. Please select a file and try again.', 'wpmake-advance-user-avatar' ) );
+		}
+
+		/*
+		 * Sniff the real type off the file itself. The check this replaces looked
+		 * only at the extension on the supplied filename.
+		 */
+		$filetype = wp_check_filetype_and_ext( $file['tmp_name'], isset( $file['name'] ) ? $file['name'] : '' );
+
+		if ( empty( $filetype['type'] ) || ! in_array( $filetype['type'], self::get_allowed_mimes(), true ) ) {
+			return new \WP_Error(
+				'wpmake_aua_bad_type',
+				sprintf(
+					/* translators: %s: comma-separated list of accepted file types e.g. JPG, PNG, GIF */
+					esc_html__( 'Invalid file type. Accepted: %s.', 'wpmake-advance-user-avatar' ),
+					esc_html( self::get_allowed_types_label() )
+				)
+			);
+		}
+
+		$max_upload_bytes = self::get_max_upload_bytes();
+
+		if ( $file['size'] > $max_upload_bytes ) {
+			return new \WP_Error(
+				'wpmake_aua_too_large',
+				/* translators: %s - Max Size */
+				sprintf( esc_html__( 'Please upload a picture with size less than %s', 'wpmake-advance-user-avatar' ), size_format( $max_upload_bytes ) )
+			);
+		}
+
+		$upload_dir  = wp_upload_dir();
+		$upload_path = apply_filters( 'wpmake_advance_user_avatar_upload_url', $upload_dir['basedir'] . '/wpmake-advance-user-avatar' ); /*Get path of upload dir of WordPress*/
+
+		// Cheap when the directory is already there; covers upgrades that never re-run activation.
+		wp_mkdir_p( $upload_path );
+
+		if ( ! is_writable( $upload_path ) ) {  /*Check if upload dir is writable*/ // phpcs:ignore
+			return new \WP_Error( 'wpmake_aua_unwritable', esc_html__( 'Upload path permission deny.', 'wpmake-advance-user-avatar' ) );
+		}
+
+		$custom_subdir = '/wpmake-advance-user-avatar';
+		$custom_path   = $upload_dir['basedir'] . $custom_subdir;
+		$custom_url    = $upload_dir['baseurl'] . $custom_subdir;
+
+		$upload_dir_filter = static function ( $dirs ) use ( $custom_path, $custom_url, $custom_subdir ) {
+			$dirs['path']   = $custom_path;
+			$dirs['url']    = $custom_url;
+			$dirs['subdir'] = $custom_subdir;
+			return $dirs;
+		};
+
+		add_filter( 'upload_dir', $upload_dir_filter );
+
+		$overrides = array(
+			'test_form' => false,
+			'mimes'     => self::get_allowed_mime_overrides(),
+		);
+
+		$uploaded = wp_handle_upload( $file, $overrides );
+		remove_filter( 'upload_dir', $upload_dir_filter );
+
+		if ( ! $uploaded || isset( $uploaded['error'] ) ) {
+			return new \WP_Error(
+				'wpmake_aua_upload_failed',
+				! empty( $uploaded['error'] )
+					? $uploaded['error']
+					: esc_html__( 'File cannot be uploaded.', 'wpmake-advance-user-avatar' )
+			);
+		}
+
+		$file_url  = $uploaded['url'];
+		$file_path = $uploaded['file'];
+		$file_type = $uploaded['type'];
+
+		// Fix image EXIF orientation before processing further.
+		self::fix_image_orientation( $file_path );
+
+		$options = get_option( 'wpmake_advance_user_avatar_settings', array() );
+
+		/*
+		 * Crop before the attachment exists, so the thumbnail sizes generated below
+		 * are cut from the final image rather than from the untouched upload.
+		 */
+		if ( ! empty( $options['cropping_interface'] ) && ! empty( $crop ) ) {
+			$cropped = self::crop_image( $file_path, $crop, $options );
+
+			if ( is_wp_error( $cropped ) ) {
+				wp_delete_file( $file_path );
+
+				return $cropped;
+			}
+
+			/*
+			 * A site filtering image_editor_output_format -- a WebP conversion plugin,
+			 * say -- can have the editor write under a different extension than it
+			 * read. Follow the file the editor actually produced, or the attachment
+			 * would be pointing at the copy we are about to leave behind.
+			 */
+			if ( $cropped['path'] !== $file_path ) {
+				wp_delete_file( $file_path );
+
+				$file_url  = trailingslashit( dirname( $file_url ) ) . wp_basename( $cropped['path'] );
+				$file_path = $cropped['path'];
+				$file_type = $cropped['mime-type'];
+			}
+		} else {
+			/*
+			 * No crop geometry, which is every upload made with the cropper switched
+			 * off. The configured "Uploaded Image Size" used to be skipped entirely
+			 * here, so the setting did nothing at all unless the cropper was on.
+			 */
+			$resized = self::resize_image( $file_path, $options );
+
+			if ( is_wp_error( $resized ) ) {
+				wp_delete_file( $file_path );
+
+				return $resized;
+			}
+
+			// Same output-format caveat as the crop branch above.
+			if ( is_array( $resized ) && $resized['path'] !== $file_path ) {
+				wp_delete_file( $file_path );
+
+				$file_url  = trailingslashit( dirname( $file_url ) ) . wp_basename( $resized['path'] );
+				$file_path = $resized['path'];
+				$file_type = $resized['mime-type'];
+			}
+		}
+
+		$attachment_id = wp_insert_attachment(
+			array(
+				'guid'           => $file_url,
+				'post_mime_type' => $file_type,
+				'post_title'     => preg_replace( '/\.[^.]+$/', '', basename( $file_path ) ),
+				'post_content'   => '',
+				'post_status'    => 'inherit',
+			),
+			$file_path
+		);
+
+		if ( is_wp_error( $attachment_id ) ) {
+			wp_delete_file( $file_path );
+
+			return $attachment_id;
+		}
+
+		include_once ABSPATH . 'wp-admin/includes/image.php';
+
+		if ( ! isset( $options['thumbnail_size'] ) || $options['thumbnail_size'] ) {
+			/*
+			 * Add the 32/64/96px avatar variants for this attachment only. The setting
+			 * has always promised them; until now nothing generated them.
+			 */
+			add_filter( 'intermediate_image_sizes_advanced', 'wpmake_aua_add_avatar_subsizes' );
+
+			// Generate and save the attachment metas into the database.
+			wp_update_attachment_metadata( $attachment_id, wp_generate_attachment_metadata( $attachment_id, get_attached_file( $attachment_id ) ) );
+
+			remove_filter( 'intermediate_image_sizes_advanced', 'wpmake_aua_add_avatar_subsizes' );
+		}
+
+		return $attachment_id;
+	}
+
+	/**
 	 * Handle an avatar upload.
 	 *
 	 * Who may upload, which types are accepted and how large a file may be are all
@@ -260,201 +446,18 @@ class Ajax {
 
 		$upload = isset( $_FILES['file'] ) ? $_FILES['file'] : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
-		if ( empty( $upload['tmp_name'] ) || ! isset( $upload['size'] ) || $upload['size'] < 1 ) {
-			wp_send_json_error(
-				array(
-					'message' => esc_html__( 'No file was received. Please select a file and try again.', 'wpmake-advance-user-avatar' ),
-				)
-			);
-		}
-
-		/*
-		 * Sniff the real type off the file itself. The check this replaces looked
-		 * only at the extension on the supplied filename.
-		 */
-		$filetype = wp_check_filetype_and_ext( $upload['tmp_name'], isset( $upload['name'] ) ? $upload['name'] : '' );
-
-		if ( empty( $filetype['type'] ) || ! in_array( $filetype['type'], self::get_allowed_mimes(), true ) ) {
-			wp_send_json_error(
-				array(
-					'message' => sprintf(
-						/* translators: %s: comma-separated list of accepted file types e.g. JPG, PNG, GIF */
-						esc_html__( 'Invalid file type. Accepted: %s.', 'wpmake-advance-user-avatar' ),
-						esc_html( self::get_allowed_types_label() )
-					),
-				)
-			);
-		}
-
-		$max_upload_bytes = self::get_max_upload_bytes();
-
-		if ( $upload['size'] > $max_upload_bytes ) {
-			wp_send_json_error(
-				array(
-					/* translators: %s - Max Size */
-					'message' => sprintf( esc_html__( 'Please upload a picture with size less than %s', 'wpmake-advance-user-avatar' ), size_format( $max_upload_bytes ) ),
-				)
-			);
-		}
-
 		// Retrieves cropped picture dimensions from ajax request.
-		$value              = isset( $_REQUEST['cropped_image'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['cropped_image'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$cropped_image_size = json_decode( $value, true );
+		$value = isset( $_REQUEST['cropped_image'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['cropped_image'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$crop  = json_decode( $value, true );
 
-		$upload_dir  = wp_upload_dir();
-		$upload_path = apply_filters( 'wpmake_advance_user_avatar_upload_url', $upload_dir['basedir'] . '/wpmake-advance-user-avatar' ); /*Get path of upload dir of WordPress*/
-
-		// Cheap when the directory is already there; covers upgrades that never re-run activation.
-		wp_mkdir_p( $upload_path );
-
-		if ( ! is_writable( $upload_path ) ) {  /*Check if upload dir is writable*/ // phpcs:ignore
-
-			wp_send_json_error(
-				array(
-					'message' => esc_html__( 'Upload path permission deny.', 'wpmake-advance-user-avatar' ),
-				)
-			);
-
-		}
-
-		$custom_subdir = '/wpmake-advance-user-avatar';
-		$custom_path   = $upload_dir['basedir'] . $custom_subdir;
-		$custom_url    = $upload_dir['baseurl'] . $custom_subdir;
-
-		$upload_dir_filter = static function ( $dirs ) use ( $custom_path, $custom_url, $custom_subdir ) {
-			$dirs['path']   = $custom_path;
-			$dirs['url']    = $custom_url;
-			$dirs['subdir'] = $custom_subdir;
-			return $dirs;
-		};
-
-		add_filter( 'upload_dir', $upload_dir_filter );
-
-		$overrides = array(
-			'test_form' => false,
-			'mimes'     => self::get_allowed_mime_overrides(),
-		);
-
-		$uploaded = wp_handle_upload( $upload, $overrides );
-		remove_filter( 'upload_dir', $upload_dir_filter );
-
-		if ( ! $uploaded || isset( $uploaded['error'] ) ) {
-			wp_send_json_error(
-				array(
-					'message' => ! empty( $uploaded['error'] )
-						? $uploaded['error']
-						: esc_html__( 'File cannot be uploaded.', 'wpmake-advance-user-avatar' ),
-				)
-			);
-		}
-
-		$file_url  = $uploaded['url'];
-		$file_path = $uploaded['file'];
-		$file_type = $uploaded['type'];
-
-		// Fix image EXIF orientation before processing further.
-		self::fix_image_orientation( $file_path );
-
-		$options = get_option( 'wpmake_advance_user_avatar_settings', array() );
-
-		/*
-		 * Crop before the attachment exists, so the thumbnail sizes generated below
-		 * are cut from the final image rather than from the untouched upload.
-		 */
-		if ( ! empty( $options['cropping_interface'] ) && ! empty( $cropped_image_size ) ) {
-			$cropped = self::crop_image( $file_path, $cropped_image_size, $options );
-
-			if ( is_wp_error( $cropped ) ) {
-				wp_delete_file( $file_path );
-
-				wp_send_json_error(
-					array(
-						'message' => $cropped->get_error_message(),
-					)
-				);
-			}
-
-			/*
-			 * A site filtering image_editor_output_format -- a WebP conversion plugin,
-			 * say -- can have the editor write under a different extension than it
-			 * read. Follow the file the editor actually produced, or the attachment
-			 * would be pointing at the copy we are about to leave behind.
-			 */
-			if ( $cropped['path'] !== $file_path ) {
-				wp_delete_file( $file_path );
-
-				$file_url  = trailingslashit( dirname( $file_url ) ) . wp_basename( $cropped['path'] );
-				$file_path = $cropped['path'];
-				$file_type = $cropped['mime-type'];
-			}
-		} else {
-			/*
-			 * No crop geometry, which is every upload made with the cropper switched
-			 * off. The configured "Uploaded Image Size" used to be skipped entirely
-			 * here, so the setting did nothing at all unless the cropper was on.
-			 */
-			$resized = self::resize_image( $file_path, $options );
-
-			if ( is_wp_error( $resized ) ) {
-				wp_delete_file( $file_path );
-
-				wp_send_json_error(
-					array(
-						'message' => $resized->get_error_message(),
-					)
-				);
-			}
-
-			// Same output-format caveat as the crop branch above.
-			if ( is_array( $resized ) && $resized['path'] !== $file_path ) {
-				wp_delete_file( $file_path );
-
-				$file_url  = trailingslashit( dirname( $file_url ) ) . wp_basename( $resized['path'] );
-				$file_path = $resized['path'];
-				$file_type = $resized['mime-type'];
-			}
-		}
-
-		$attachment_id = wp_insert_attachment(
-			array(
-				'guid'           => $file_url,
-				'post_mime_type' => $file_type,
-				'post_title'     => preg_replace( '/\.[^.]+$/', '', basename( $file_path ) ),
-				'post_content'   => '',
-				'post_status'    => 'inherit',
-			),
-			$file_path
-		);
+		$attachment_id = self::create_avatar_attachment( $upload, is_array( $crop ) ? $crop : array() );
 
 		if ( is_wp_error( $attachment_id ) ) {
-			wp_delete_file( $file_path );
-
 			wp_send_json_error(
 				array(
 					'message' => $attachment_id->get_error_message(),
 				)
 			);
-		}
-
-		include_once ABSPATH . 'wp-admin/includes/image.php';
-
-		if ( ! isset( $options['thumbnail_size'] ) || $options['thumbnail_size'] ) {
-			/*
-			 * Add the 32/64/96px avatar variants for this attachment only. The setting
-			 * has always promised them; until now nothing generated them.
-			 */
-			add_filter( 'intermediate_image_sizes_advanced', 'wpmake_aua_add_avatar_subsizes' );
-
-			// Generate and save the attachment metas into the database.
-			wp_update_attachment_metadata( $attachment_id, wp_generate_attachment_metadata( $attachment_id, get_attached_file( $attachment_id ) ) );
-
-			remove_filter( 'intermediate_image_sizes_advanced', 'wpmake_aua_add_avatar_subsizes' );
-		}
-
-		$url = wp_get_attachment_url( $attachment_id );
-
-		if ( empty( $url ) ) {
-			$url = $file_url;
 		}
 
 		if ( ! wpmake_aua_set_user_avatar( $user_id, $attachment_id ) ) {
@@ -469,6 +472,13 @@ class Ajax {
 					'message' => esc_html__( 'The avatar could not be saved. Please try again.', 'wpmake-advance-user-avatar' ),
 				)
 			);
+		}
+
+		$url = wp_get_attachment_url( $attachment_id );
+
+		if ( empty( $url ) ) {
+			// Same value the attachment's guid was set to.
+			$url = get_post_field( 'guid', $attachment_id );
 		}
 
 		wp_send_json_success(
