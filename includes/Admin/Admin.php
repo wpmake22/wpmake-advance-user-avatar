@@ -32,6 +32,13 @@ class Admin {
 	private Settings $settings;
 
 	/**
+	 * User profile field instance.
+	 *
+	 * @var UserProfile
+	 */
+	private UserProfile $user_profile;
+
+	/**
 	 * Hook suffix of this plugin's own admin screen.
 	 *
 	 * Captured from add_submenu_page() rather than hardcoded, so the asset gate
@@ -45,7 +52,8 @@ class Admin {
 	 * Constructor.
 	 */
 	public function __construct() {
-		$this->settings = new Settings();
+		$this->settings     = new Settings();
+		$this->user_profile = new UserProfile();
 
 		$this->init_hooks();
 		add_filter( 'admin_footer_text', array( $this, 'admin_footer_text' ), 1 );
@@ -130,6 +138,12 @@ class Admin {
 	 * @return void
 	 */
 	public function enqueue_admin_assets( $hook_suffix ): void {
+		if ( in_array( $hook_suffix, array( 'profile.php', 'user-edit.php' ), true ) ) {
+			$this->enqueue_user_profile_assets();
+
+			return;
+		}
+
 		if ( $hook_suffix !== $this->screen_hook ) {
 			return;
 		}
@@ -167,6 +181,51 @@ class Admin {
 		 * No wp_localize_script here any more. Its only consumer was the review
 		 * notice, which now carries its own ajax URL and nonce inline.
 		 */
+	}
+
+	/**
+	 * Enqueue the profile screen's assets.
+	 *
+	 * Deliberately not the settings bundle: Select2 and the settings stylesheet have
+	 * no part in this field, and the front-end uploader -- webcam, cropper and all --
+	 * has no business in wp-admin. This is the media picker and one small script.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @return void
+	 */
+	private function enqueue_user_profile_assets(): void {
+		$user_id = UserProfile::get_screen_user_id();
+
+		// Nothing renders when the field is not shown, so nothing should load either.
+		if ( ! $user_id || ! wpmake_aua_current_user_can_edit_avatar( $user_id ) ) {
+			return;
+		}
+
+		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+
+		// The media picker is only rendered for a user who has a library to pick
+		// from, so its scripts -- which are not small -- follow the same test.
+		if ( UserProfile::can_use_media_library() ) {
+			wp_enqueue_media();
+		}
+
+		wp_enqueue_script(
+			'wpmake-advance-user-avatar-user-profile-script',
+			WPMAKE_ADVANCE_USER_AVATAR_ASSETS_URL . '/js/admin/wpmake-advance-user-avatar-user-profile' . $suffix . '.js',
+			array( 'jquery' ),
+			WPMAKE_ADVANCE_USER_AVATAR_VERSION,
+			true
+		);
+
+		wp_localize_script(
+			'wpmake-advance-user-avatar-user-profile-script',
+			'wpmake_aua_user_profile_params',
+			array(
+				'chooseTitle'  => esc_html__( 'Choose a profile picture', 'wpmake-advance-user-avatar' ),
+				'chooseButton' => esc_html__( 'Use this picture', 'wpmake-advance-user-avatar' ),
+			)
+		);
 	}
 
 	/**
