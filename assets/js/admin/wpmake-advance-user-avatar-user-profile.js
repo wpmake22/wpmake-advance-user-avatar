@@ -34,6 +34,24 @@
 			multiple: false
 		} );
 
+		/*
+		 * Core remembers which tab the viewer last used across every media frame in
+		 * wp-admin, so a button that says "Choose from Media Library" could open on
+		 * "Upload files". Only this frame is pinned to the library; the remembered
+		 * preference is left alone everywhere else.
+		 */
+		frame.on( "open", function () {
+			var remembered = window.getUserSetting ? window.getUserSetting( "libraryContent" ) : "";
+
+			frame.content.mode( "browse" );
+
+			// mode() writes that remembered tab as a side effect, which would change
+			// it for every other media frame in wp-admin. Put the viewer's own back.
+			if ( remembered && window.setUserSetting ) {
+				window.setUserSetting( "libraryContent", remembered );
+			}
+		} );
+
 		frame.on( "select", function () {
 			var attachment = frame.state().get( "selection" ).first().toJSON();
 			var url        = attachment.url;
