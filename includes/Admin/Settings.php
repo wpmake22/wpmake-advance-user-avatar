@@ -219,6 +219,19 @@ class Settings {
 			),
 		);
 
+		$sections['advanced'] = array(
+			'title'  => __( 'Advanced', 'wpmake-advance-user-avatar' ),
+			'badge'  => __( 'New', 'wpmake-advance-user-avatar' ),
+			'fields' => array(
+				'delete_data_on_uninstall' => array(
+					'type'        => 'toggle',
+					'label'       => __( 'Delete all avatars and settings when the plugin is deleted', 'wpmake-advance-user-avatar' ),
+					'description' => __( 'Off by default, and safe to leave off. When on, deleting the plugin permanently removes every uploaded avatar and its files, along with this plugin\'s settings. Deactivating does nothing -- only deleting the plugin from the Plugins screen.', 'wpmake-advance-user-avatar' ),
+					'warning'     => __( 'This cannot be undone. Uploaded photos are deleted for every user on the site.', 'wpmake-advance-user-avatar' ),
+				),
+			),
+		);
+
 		return $sections;
 	}
 
@@ -709,12 +722,18 @@ class Settings {
 			);
 		}
 
-		// Boolean toggles — stored as '1' or ''.
-		$output['thumbnail_size']          = ! empty( $input['thumbnail_size'] ) ? '1' : '';
-		$output['cropping_interface']      = ! empty( $input['cropping_interface'] ) ? '1' : '';
-		$output['capture_picture']         = ! empty( $input['capture_picture'] ) ? '1' : '';
-		$output['media_library']           = ! empty( $input['media_library'] ) ? '1' : '';
-		$output['woocommerce_integration'] = ! empty( $input['woocommerce_integration'] ) ? '1' : '';
+		/*
+		 * Boolean toggles — stored as '1' or ''.
+		 *
+		 * delete_data_on_uninstall is the same shape as the rest on purpose: absent or
+		 * empty means off. Nothing anywhere may default it to on -- see uninstall.php.
+		 */
+		$output['thumbnail_size']           = ! empty( $input['thumbnail_size'] ) ? '1' : '';
+		$output['cropping_interface']       = ! empty( $input['cropping_interface'] ) ? '1' : '';
+		$output['capture_picture']          = ! empty( $input['capture_picture'] ) ? '1' : '';
+		$output['media_library']            = ! empty( $input['media_library'] ) ? '1' : '';
+		$output['delete_data_on_uninstall'] = ! empty( $input['delete_data_on_uninstall'] ) ? '1' : '';
+		$output['woocommerce_integration']  = ! empty( $input['woocommerce_integration'] ) ? '1' : '';
 
 		// WooCommerce Display — granular location checkboxes.
 		$allowed_locations = array(
