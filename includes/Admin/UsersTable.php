@@ -44,6 +44,32 @@ class UsersTable extends \WP_List_Table {
 	const CAPABILITY = 'list_users';
 
 	/**
+	 * Whether the current user can actually use the bulk manager.
+	 *
+	 * `list_users` alone is not enough on a network. A site administrator has it, but
+	 * core maps `edit_user` to do_not_allow for anyone but themselves unless they have
+	 * `manage_network_users` -- so the screen would list every user and refuse to
+	 * change a single one. Avatars are network-wide, so widening that check would let
+	 * a site administrator alter how a user appears on sites they have no rights over.
+	 * Hiding a screen that cannot work is the honest option.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @return bool
+	 */
+	public static function current_user_can_manage(): bool {
+		if ( ! current_user_can( self::CAPABILITY ) ) {
+			return false;
+		}
+
+		if ( is_multisite() && ! current_user_can( 'manage_network_users' ) ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
 	 * Constructor.
 	 */
 	public function __construct() {
@@ -416,7 +442,7 @@ class UsersTable extends \WP_List_Table {
 	 * @return void
 	 */
 	public function render_screen(): void {
-		if ( ! current_user_can( self::CAPABILITY ) ) {
+		if ( ! self::current_user_can_manage() ) {
 			wp_die(
 				esc_html__( 'Sorry, you are not allowed to manage other users\' avatars.', 'wpmake-advance-user-avatar' ),
 				esc_html__( 'Advanced User Avatar', 'wpmake-advance-user-avatar' ),

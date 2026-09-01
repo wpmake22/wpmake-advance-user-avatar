@@ -272,7 +272,7 @@ class Admin {
 	 * @return void
 	 */
 	private function enqueue_users_table_assets( string $suffix ): void {
-		if ( ! current_user_can( UsersTable::CAPABILITY ) ) {
+		if ( ! UsersTable::current_user_can_manage() ) {
 			return;
 		}
 
@@ -366,7 +366,7 @@ class Admin {
 		 * the time the page callback runs the headers are gone and the same refusal
 		 * would go out as a 200.
 		 */
-		if ( ! current_user_can( UsersTable::CAPABILITY ) ) {
+		if ( ! UsersTable::current_user_can_manage() ) {
 			wp_die(
 				esc_html__( 'Sorry, you are not allowed to manage other users\' avatars.', 'wpmake-advance-user-avatar' ),
 				esc_html__( 'Advanced User Avatar', 'wpmake-advance-user-avatar' ),
@@ -425,7 +425,7 @@ class Admin {
 		);
 
 		// The bulk manager is only offered to somebody who could actually use it.
-		if ( current_user_can( UsersTable::CAPABILITY ) ) {
+		if ( UsersTable::current_user_can_manage() ) {
 			$tabs['avatars'] = esc_html__( 'Manage Avatars', 'wpmake-advance-user-avatar' );
 		}
 
