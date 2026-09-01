@@ -291,7 +291,7 @@ class UserProfile {
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- validated inside the pipeline, which sniffs the file's real type.
 		$file = isset( $_FILES['wpmake_aua_avatar_file'] ) ? $_FILES['wpmake_aua_avatar_file'] : array();
 
-		$attachment_id = Ajax::create_avatar_attachment( (array) $file );
+		$attachment_id = Ajax::create_avatar_attachment( (array) $file, array(), $user_id );
 
 		if ( is_wp_error( $attachment_id ) ) {
 			$this->set_save_error( $attachment_id->get_error_message() );

@@ -245,11 +245,14 @@ class Ajax {
 	 *
 	 * @since 1.4.0
 	 *
-	 * @param array $file One entry from $_FILES.
-	 * @param array $crop Optional crop geometry from the browser cropper.
+	 * @param array $file     One entry from $_FILES.
+	 * @param array $crop     Optional crop geometry from the browser cropper.
+	 * @param int   $owner_id User the avatar is for. Becomes the attachment's author,
+	 *                        so an avatar belongs to the person it depicts rather than
+	 *                        to whichever administrator happened to upload it.
 	 * @return int|\WP_Error Attachment ID, or a WP_Error describing the failure.
 	 */
-	public static function create_avatar_attachment( array $file, array $crop = array() ) {
+	public static function create_avatar_attachment( array $file, array $crop = array(), int $owner_id = 0 ) {
 		if ( empty( $file['tmp_name'] ) || ! isset( $file['size'] ) || $file['size'] < 1 ) {
 			return new \WP_Error( 'wpmake_aua_no_file', esc_html__( 'No file was received. Please select a file and try again.', 'wpmake-advance-user-avatar' ) );
 		}
@@ -380,16 +383,25 @@ class Ajax {
 			}
 		}
 
-		$attachment_id = wp_insert_attachment(
-			array(
-				'guid'           => $file_url,
-				'post_mime_type' => $file_type,
-				'post_title'     => preg_replace( '/\.[^.]+$/', '', basename( $file_path ) ),
-				'post_content'   => '',
-				'post_status'    => 'inherit',
-			),
-			$file_path
+		$attachment = array(
+			'guid'           => $file_url,
+			'post_mime_type' => $file_type,
+			'post_title'     => preg_replace( '/\.[^.]+$/', '', basename( $file_path ) ),
+			'post_content'   => '',
+			'post_status'    => 'inherit',
 		);
+
+		/*
+		 * Author the attachment to the user the avatar is for. Left to default it
+		 * would belong to whoever was acting, so an administrator setting a
+		 * customer's picture would own it -- and deleting that administrator would
+		 * offer to delete every avatar they had ever set for somebody else.
+		 */
+		if ( $owner_id > 0 ) {
+			$attachment['post_author'] = $owner_id;
+		}
+
+		$attachment_id = wp_insert_attachment( $attachment, $file_path );
 
 		if ( is_wp_error( $attachment_id ) ) {
 			wp_delete_file( $file_path );
@@ -450,7 +462,7 @@ class Ajax {
 		$value = isset( $_REQUEST['cropped_image'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['cropped_image'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$crop  = json_decode( $value, true );
 
-		$attachment_id = self::create_avatar_attachment( $upload, is_array( $crop ) ? $crop : array() );
+		$attachment_id = self::create_avatar_attachment( $upload, is_array( $crop ) ? $crop : array(), $user_id );
 
 		if ( is_wp_error( $attachment_id ) ) {
 			wp_send_json_error(
