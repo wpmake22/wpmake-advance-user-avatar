@@ -285,6 +285,8 @@ class Settings {
 		<?php esc_html_e( 'Users Avatar', 'wpmake-advance-user-avatar' ); ?>
 			</h1>
 
+		<?php Admin::render_tab_nav( 'settings' ); ?>
+
 		<?php if ( $this->is_woocommerce_active() ) : ?>
 				<div class="wpmake-aua-woo-banner">
 					<span class="dashicons dashicons-cart wpmake-aua-woo-banner-icon"></span>
