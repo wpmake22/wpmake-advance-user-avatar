@@ -69,6 +69,14 @@ Install the plugin and give your customers a face on your store.
 
 Yes. Once the WooCommerce integration is enabled in settings, the customer's avatar appears on the My Account dashboard and an upload field is added to the Account Details page. No template editing or shortcode placement is required for the standard WooCommerce account pages.
 
+= How does this work on a multisite network? =
+
+An avatar is network-wide: a user uploads once and the same picture appears on every site in the network they belong to. The plugin records which site the image was uploaded to and reads it from there, so the same avatar resolves correctly everywhere.
+
+Managing other people's avatars is limited to super administrators. WordPress only lets a user edit another user's account if they have network-level user permissions, and because avatars are network-wide, letting a single site's administrator change one would change how that person appears on sites they have no rights over. The bulk avatar manager is therefore hidden for administrators without network user permissions; every user can still set their own avatar from their profile or the front-end uploader.
+
+Uploads stay on the site they were made on, in that site's own uploads directory. If you switch on the Advanced deletion setting, each site answers for itself when the plugin is deleted -- a site that left it off keeps its avatars even if a sibling site opted in.
+
 = Do my customers need a Gravatar account to use this? =
 
 No. That is the point of the plugin. Customers upload a photo directly from their device or take one with their webcam. No Gravatar account, no external sign-up, no email hashing.
@@ -148,6 +156,11 @@ There are also action hooks for adding markup without replacing a template: `wpm
 == Changelog ==
 
 = 1.4.0   - unreleased =
+* Fix     - Multisite: a user's avatar showed the wrong image on other sites in a network. The avatar is stored as an attachment ID in user meta, which is shared across the whole network, but attachment IDs are per-site -- so on another site that ID resolved against that site's own media and rendered whichever image happened to occupy it. The plugin now records which site an avatar was uploaded to and reads it from there, so one upload shows correctly everywhere. Single-site installs are entirely unaffected.
+* Fix     - Multisite: deleting the plugin now cleans up every site on the network rather than only the one it was deleted from, with each site honouring its own Advanced deletion setting. A site that left the setting off keeps its avatars even when another site opted in.
+* Fix     - Multisite: deleting an attachment no longer clears avatars belonging to a different site that happen to share its ID.
+* Fix     - Multisite: the avatar upload directory is created for every site on the network, including sites added later, instead of only the site the plugin was activated from.
+* Tweak   - Multisite: the bulk avatar manager is hidden from administrators who do not have network user permissions. WordPress does not let them edit other users, so the screen previously listed everybody and could change nobody -- and since avatars are network-wide, granting them that would change how a user appears on sites they do not administer.
 * Feature - An "Advanced" setting to delete every avatar and all plugin data when the plugin is deleted, plus the `uninstall.php` to carry it out. Off by default and safe to leave off: with it off, deleting the plugin leaves everything exactly where it is, and deactivating never removes anything either way. With it on, deleting the plugin removes the plugin's options, the avatar reference on every user, the bulk manager's screen option, the plugin's transients, every avatar the plugin uploaded along with its files, and the upload directory once empty. Avatars chosen from the Media Library are left alone -- those are the site's own images and may be in use elsewhere. Another plugin's options are never touched, BuddyPress's `bp-disable-avatar-uploads` included.
 * Feature - Users can optionally pick an existing image from the Media Library instead of uploading one. Off by default, so nothing changes for an existing site, and only ever offered to users who can already upload files -- which most subscribers and customers cannot, and who would otherwise be handed a picker onto an empty library. The media scripts load only where the uploader actually renders and only when both conditions hold.
 * Feature - A bulk avatar manager, on a new "Manage Avatars" tab of the Users > Users Avatar screen. Every user with their current picture, searchable by username, email or display name, sortable, paginated at whatever the screen options say, and with Change and Remove on each row that act without reloading the page. Managing avatars one profile at a time was the plugin's largest remaining gap against the alternatives.
