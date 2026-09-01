@@ -731,3 +731,40 @@
 #toplevel_page_wpmake-aua ul li a[href="admin.php?page=wpmake-aua-members"] {
 	display: none;
 }
+
+// =============================================================================
+// Bulk avatar manager rows
+// =============================================================================
+
+.wpmake-aua-row-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	align-items: center;
+}
+
+// The inline remove confirmation, in place of a blocking window.confirm(). A
+// browser that has decided to suppress repeated dialogs would otherwise swallow
+// the prompt and the row would look like it had simply stopped working.
+.wpmake-aua-row-confirm {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	align-items: center;
+
+	.wpmake-aua-row-confirm-text {
+		font-weight: 600;
+	}
+}
+
+.wpmake-aua-row-status {
+	display: block;
+	margin-top: 4px;
+	font-style: italic;
+
+	&.is-error {
+		color: #b32d2e; // Matches core's .notice-error accent.
+		font-style: normal;
+		font-weight: 600;
+	}
+}
