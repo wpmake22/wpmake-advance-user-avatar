@@ -3,7 +3,7 @@ Contributors: wpmakedev, iamprazol
 Tags: woocommerce-avatar, woocommerce-profile-picture, user-avatar, profile-picture, custom-avatar
 Requires at least: 6.0
 Tested up to: 7.1
-Stable tag: 1.3.0
+Stable tag: 2.0.0
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -206,7 +206,7 @@ Two actions fire after every change, each passed the user ID and the attachment 
 
 == Changelog ==
 
-= 1.4.0   - unreleased =
+= 2.0.0   - unreleased =
 * Fix     - Multisite: a user's avatar showed the wrong image on other sites in a network. The avatar is stored as an attachment ID in user meta, which is shared across the whole network, but attachment IDs are per-site -- so on another site that ID resolved against that site's own media and rendered whichever image happened to occupy it. The plugin now records which site an avatar was uploaded to and reads it from there, so one upload shows correctly everywhere. Single-site installs are entirely unaffected.
 * Fix     - Multisite: deleting the plugin now cleans up every site on the network rather than only the one it was deleted from, with each site honouring its own Advanced deletion setting. A site that left the setting off keeps its avatars even when another site opted in.
 * Fix     - Multisite: deleting an attachment no longer clears avatars belonging to a different site that happen to share its ID.
@@ -247,7 +247,9 @@ Two actions fire after every change, each passed the user ID and the attachment 
 * Dev     - PHPCS now runs in CI on pull requests and pushes to main.
 * Dev     - `grunt css` no longer rewrites the bundled third-party stylesheets, and is now a no-op on an unchanged tree.
 
-**Developer note:** `wpmake_advance_user_avatar_replace_gravatar_image()` and `wpmake_advance_user_avatar_build_avatar_html()` have been removed. WordPress now builds the avatar markup itself, including class merging and `srcset`. If you replaced either function, that override no longer runs -- filter `pre_get_avatar_data`, or the new `wpmake_aua_avatar_subsizes` filter for the generated sizes.
+**Developer note — why this is 2.0.0:** two public functions have been removed, so the version is a major one. `wpmake_advance_user_avatar_replace_gravatar_image()` and `wpmake_advance_user_avatar_build_avatar_html()` are gone. WordPress now builds the avatar markup itself, including class merging and `srcset`. If you replaced either function, that override no longer runs -- filter `pre_get_avatar_data` (this plugin hooks it at priority 99, so use a later one to override it), or the new `wpmake_aua_avatar_subsizes` filter for the generated sizes.
+
+Both shipped templates changed in this release and are now marked `@version 2.0.0`. If you copied either into your theme, compare your copy against the new one -- the uploader template gained the optional Media Library button.
 
 = 1.3.0   - 29-08-2026 =
 * Feature - WP-Members integration: adds the avatar uploader to the WP-Members profile edit form.

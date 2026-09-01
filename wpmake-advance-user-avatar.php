@@ -3,7 +3,7 @@
  * Plugin Name: Advanced User Avatar
  * Plugin URI: https://www.wpmake.net/user-avatar-demo/
  * Description: Adds an avatar upload field through a simple shortcode or block to let your site users upload a custom profile picture (avatar) directly from their device.
- * Version: 1.3.0
+ * Version: 2.0.0
  * Author: WPMake
  * Author URI: https://www.wpmake.net
  * Text Domain: wpmake-advance-user-avatar
@@ -25,7 +25,7 @@ if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
 use WPMake\WPMakeAdvanceUserAvatar\UserAvatar;
 
 if ( ! defined( 'WPMAKE_ADVANCE_USER_AVATAR_VERSION' ) ) {
-	define( 'WPMAKE_ADVANCE_USER_AVATAR_VERSION', '1.3.0' );
+	define( 'WPMAKE_ADVANCE_USER_AVATAR_VERSION', '2.0.0' );
 }
 
 // Define WPMAKE_ADVANCE_USER_AVATAR_PLUGIN_FILE.
