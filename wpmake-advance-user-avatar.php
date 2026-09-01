@@ -67,4 +67,7 @@ function wpmake_advance_user_avatar() {
 
 register_activation_hook( __FILE__, array( UserAvatar::class, 'activate' ) );
 
+// A site added to a network after activation needs its own avatar directory.
+add_action( 'wp_initialize_site', array( UserAvatar::class, 'initialize_site' ), 100 );
+
 wpmake_advance_user_avatar();

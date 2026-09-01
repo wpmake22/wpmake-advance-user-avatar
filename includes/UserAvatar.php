@@ -158,9 +158,57 @@ if ( ! class_exists( 'UserAvatar' ) ) :
 		 *
 		 * @since 1.3.0
 		 *
+		 * @param bool $network_wide Whether the plugin is being activated for a whole
+		 *                           network. WordPress passes this to the hook.
 		 * @return void
 		 */
-		public static function activate() {
+		public static function activate( $network_wide = false ) {
+			/*
+			 * Uploads are per-site, so a network activation has to create the directory on
+			 * every site -- not just whichever one the activation happened from.
+			 */
+			if ( $network_wide && is_multisite() ) {
+				$blog_ids = get_sites(
+					array(
+						'fields' => 'ids',
+						'number' => 0,
+					)
+				);
+
+				foreach ( $blog_ids as $blog_id ) {
+					switch_to_blog( $blog_id );
+					self::create_upload_directory();
+					restore_current_blog();
+				}
+
+				return;
+			}
+
+			self::create_upload_directory();
+		}
+
+		/**
+		 * Create the avatar directory for a site added after activation.
+		 *
+		 * @since 1.4.0
+		 *
+		 * @param \WP_Site $new_site Site that was just created.
+		 * @return void
+		 */
+		public static function initialize_site( $new_site ) {
+			switch_to_blog( (int) $new_site->blog_id );
+			self::create_upload_directory();
+			restore_current_blog();
+		}
+
+		/**
+		 * Create the avatar directory for the current site.
+		 *
+		 * @since 1.4.0
+		 *
+		 * @return void
+		 */
+		private static function create_upload_directory() {
 			$path = self::get_upload_path();
 
 			// wp_mkdir_p() applies the filesystem's own permissions rather than a blanket 0777.
