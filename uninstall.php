@@ -19,11 +19,20 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
 
-$wpmake_aua_settings = get_option( 'wpmake_advance_user_avatar_settings', array() );
+/**
+ * Whether this site asked for its data to be deleted.
+ *
+ * Options are per-site on a network, so every site answers for itself. A site that
+ * left the switch off keeps everything, even when a sibling site opted in.
+ *
+ * @since 1.4.0
+ *
+ * @return bool
+ */
+function wpmake_aua_uninstall_opted_in() {
+	$settings = get_option( 'wpmake_advance_user_avatar_settings', array() );
 
-// The switch is off, absent, or the option was never written. Leave everything.
-if ( empty( $wpmake_aua_settings['delete_data_on_uninstall'] ) ) {
-	return;
+	return ! empty( $settings['delete_data_on_uninstall'] );
 }
 
 /**
@@ -198,37 +207,129 @@ function wpmake_aua_uninstall_delete_profile_transients() {
 	} while ( ! empty( $user_ids ) );
 }
 
-wpmake_aua_uninstall_delete_attachments();
-wpmake_aua_uninstall_remove_directory();
-wpmake_aua_uninstall_delete_profile_transients();
+/**
+ * Remove everything belonging to the current site.
+ *
+ * Attachments, files, the upload directory, this site's options and this site's
+ * transients. Avatar references are user meta, which is global on a network, so they
+ * are handled by the caller -- and only for users whose avatar came from a site that
+ * opted in.
+ *
+ * @since 1.4.0
+ *
+ * @return void
+ */
+function wpmake_aua_uninstall_current_site() {
+	wpmake_aua_uninstall_delete_attachments();
+	wpmake_aua_uninstall_remove_directory();
+	wpmake_aua_uninstall_delete_profile_transients();
+
+	delete_transient( 'wpmake_aua_review_notice_snoozed' );
+
+	/*
+	 * `bp-disable-avatar-uploads` is deliberately absent. The plugin writes to it when
+	 * the BuddyPress integration is toggled, but it is BuddyPress's own option and
+	 * deleting it here would change another plugin's configuration.
+	 */
+	$options = array(
+		'wpmake_advance_user_avatar_settings',
+		'wpmake_advance_user_avatar_admin_footer_text_rated',
+		'wpmake_aua_activated',
+		'wpmake_aua_updated_at',
+		'wpmake_aua_woo_migrated_v2',
+		'wpmake_aua_review_notice_dismissed',
+	);
+
+	foreach ( $options as $option ) {
+		delete_option( $option );
+	}
+}
+
+/**
+ * Clear the avatar reference of every user whose avatar came from a given site.
+ *
+ * The reference lives in global user meta, so it cannot simply be deleted for all
+ * users: on a network, one site opting in must not wipe the avatars of users whose
+ * pictures belong to a site that did not. The site is recorded alongside the ID
+ * since 1.4.0; where it is absent the avatar belongs to the main site.
+ *
+ * @since 1.4.0
+ *
+ * @param int $blog_id Site whose avatars should be forgotten.
+ * @return void
+ */
+function wpmake_aua_uninstall_forget_avatars_for_site( $blog_id ) {
+	$blog_id  = (int) $blog_id;
+	$is_main  = ( ! is_multisite() ) || (int) get_main_site_id() === $blog_id;
+	$user_ids = get_users(
+		array(
+			'fields'       => 'ID',
+			'number'       => -1,
+			'blog_id'      => 0,
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- a one-off on delete.
+			'meta_key'     => 'wpmake_advance_user_avatar_attachment_id',
+			'meta_compare' => 'EXISTS',
+		)
+	);
+
+	foreach ( $user_ids as $user_id ) {
+		$recorded = (int) get_user_meta( $user_id, 'wpmake_aua_avatar_blog_id', true );
+
+		// No record means the main site, which is where a pre-1.4.0 avatar lives.
+		if ( 0 === $recorded && ! $is_main ) {
+			continue;
+		}
+
+		if ( $recorded > 0 && $recorded !== $blog_id ) {
+			continue;
+		}
+
+		delete_user_meta( $user_id, 'wpmake_advance_user_avatar_attachment_id' );
+		delete_user_meta( $user_id, 'wpmake_aua_avatar_blog_id' );
+	}
+}
+
+if ( ! is_multisite() ) {
+	if ( wpmake_aua_uninstall_opted_in() ) {
+		wpmake_aua_uninstall_current_site();
+		wpmake_aua_uninstall_forget_avatars_for_site( 1 );
+		delete_metadata( 'user', 0, 'wpmake_aua_users_per_page', '', true );
+	}
+
+	return;
+}
 
 /*
- * User meta, across every user, without walking them one at a time.
- *
- * The avatar reference, plus the bulk manager's rows-per-page screen option, which
- * WordPress stores as user meta.
+ * A network. Every site answers for itself, and restore_current_blog() runs on every
+ * path out of the loop so a failure part-way through cannot leave the request pointed
+ * at the wrong site.
  */
-delete_metadata( 'user', 0, 'wpmake_advance_user_avatar_attachment_id', '', true );
-delete_metadata( 'user', 0, 'wpmake_aua_users_per_page', '', true );
-
-delete_transient( 'wpmake_aua_review_notice_snoozed' );
-
-/*
- * Every option this plugin writes.
- *
- * `bp-disable-avatar-uploads` is deliberately absent. The plugin writes to it when
- * the BuddyPress integration is toggled, but it is BuddyPress's own option and
- * deleting it here would change another plugin's configuration.
- */
-$wpmake_aua_options = array(
-	'wpmake_advance_user_avatar_settings',
-	'wpmake_advance_user_avatar_admin_footer_text_rated',
-	'wpmake_aua_activated',
-	'wpmake_aua_updated_at',
-	'wpmake_aua_woo_migrated_v2',
-	'wpmake_aua_review_notice_dismissed',
+$wpmake_aua_site_ids = get_sites(
+	array(
+		'fields' => 'ids',
+		'number' => 0,
+	)
 );
 
-foreach ( $wpmake_aua_options as $wpmake_aua_option ) {
-	delete_option( $wpmake_aua_option );
+$wpmake_aua_any_opted_in = false;
+
+foreach ( $wpmake_aua_site_ids as $wpmake_aua_site_id ) {
+	switch_to_blog( (int) $wpmake_aua_site_id );
+
+	if ( wpmake_aua_uninstall_opted_in() ) {
+		$wpmake_aua_any_opted_in = true;
+
+		wpmake_aua_uninstall_current_site();
+		wpmake_aua_uninstall_forget_avatars_for_site( (int) $wpmake_aua_site_id );
+	}
+
+	restore_current_blog();
+}
+
+/*
+ * The bulk manager's screen option is global user meta for a screen that no longer
+ * exists anywhere, since deleting a plugin removes it from the whole network.
+ */
+if ( $wpmake_aua_any_opted_in ) {
+	delete_metadata( 'user', 0, 'wpmake_aua_users_per_page', '', true );
 }
