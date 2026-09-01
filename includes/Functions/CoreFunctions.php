@@ -135,6 +135,35 @@ if ( ! function_exists( 'wpmake_aua_resolve_user_id' ) ) {
 	}
 }
 
+if ( ! function_exists( 'wpmake_aua_get_avatar_blog_id' ) ) {
+	/**
+	 * The site an avatar's attachment belongs to.
+	 *
+	 * User meta is global across a network but attachment IDs are not: ID 4 on one
+	 * site is a different post, or nothing at all, on another. Storing the ID alone
+	 * meant a user's avatar on site B resolved against site B's posts table and
+	 * rendered whatever image happened to occupy that ID -- confidently, and wrongly.
+	 *
+	 * Existing installs have no recorded site. On a network they are assumed to belong
+	 * to the main site, which is where a single site that later became a network keeps
+	 * its uploads.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @param int $user_id User ID.
+	 * @return int Blog ID, or 0 on a single-site install where the question is moot.
+	 */
+	function wpmake_aua_get_avatar_blog_id( $user_id ) {
+		if ( ! is_multisite() ) {
+			return 0;
+		}
+
+		$blog_id = (int) get_user_meta( (int) $user_id, 'wpmake_aua_avatar_blog_id', true );
+
+		return $blog_id > 0 ? $blog_id : (int) get_main_site_id();
+	}
+}
+
 if ( ! function_exists( 'wpmake_aua_get_avatar_url' ) ) {
 	/**
 	 * URL of a user's uploaded avatar at the requested pixel size.
@@ -168,9 +197,57 @@ if ( ! function_exists( 'wpmake_aua_get_avatar_url' ) ) {
 			$size = 96;
 		}
 
-		$url = wp_get_attachment_image_url( $attachment_id, array( $size, $size ) );
+		/*
+		 * On a network the attachment may live on another site, so resolving it here
+		 * would read the wrong posts table. Switching is not free, and an avatar can be
+		 * asked for many times on one page -- a comment list especially -- so the
+		 * answer is memoised per site, attachment and size for the rest of the request.
+		 */
+		$blog_id = wpmake_aua_get_avatar_blog_id( $user_id );
 
-		return $url ? $url : '';
+		if ( 0 === $blog_id || get_current_blog_id() === $blog_id ) {
+			$url = wp_get_attachment_image_url( $attachment_id, array( $size, $size ) );
+
+			return $url ? $url : '';
+		}
+
+		static $resolved = array();
+
+		$cache_key = $blog_id . ':' . $attachment_id . ':' . $size;
+
+		if ( isset( $resolved[ $cache_key ] ) ) {
+			return $resolved[ $cache_key ];
+		}
+
+		$requesting_home = untrailingslashit( (string) get_option( 'siteurl' ) );
+
+		switch_to_blog( $blog_id );
+
+		$url         = wp_get_attachment_image_url( $attachment_id, array( $size, $size ) );
+		$source_home = untrailingslashit( (string) get_option( 'siteurl' ) );
+
+		restore_current_blog();
+
+		$url = $url ? $url : '';
+
+		/*
+		 * switch_to_blog() gets the path right but not the host. _wp_upload_dir() builds
+		 * the URL from the WP_CONTENT_URL constant (wp-includes/functions.php line
+		 * 2483), and a constant is fixed at bootstrap from whichever site was
+		 * requested -- so the file part points at the source site while the address
+		 * still points at this one. Move the base across.
+		 *
+		 * Guarded on the URL actually starting with this site's address: a network
+		 * serving uploads from a CDN has a base that is nothing to do with either
+		 * site's siteurl, and core's answer is already right in that case.
+		 */
+		if ( '' !== $url && $source_home !== $requesting_home && 0 === strpos( $url, $requesting_home ) ) {
+			$url = $source_home . substr( $url, strlen( $requesting_home ) );
+		}
+
+		$resolved[ $cache_key ] = $url;
+
+		return $url;
 	}
 }
 
@@ -284,6 +361,14 @@ if ( ! function_exists( 'wpmake_aua_set_user_avatar' ) ) {
 			return false;
 		}
 
+		/*
+		 * Which site the attachment belongs to. Written only on a network, so a
+		 * single-site install keeps exactly the meta it had before.
+		 */
+		if ( is_multisite() ) {
+			update_user_meta( $user_id, 'wpmake_aua_avatar_blog_id', get_current_blog_id() );
+		}
+
 		/**
 		 * Fires once a user's avatar has been set.
 		 *
@@ -332,6 +417,10 @@ if ( ! function_exists( 'wpmake_aua_remove_user_avatar' ) ) {
 		 */
 		if ( '' !== $stored && ! update_user_meta( $user_id, 'wpmake_advance_user_avatar_attachment_id', '' ) ) {
 			return false;
+		}
+
+		if ( is_multisite() ) {
+			delete_user_meta( $user_id, 'wpmake_aua_avatar_blog_id' );
 		}
 
 		/**
@@ -391,7 +480,18 @@ if ( ! function_exists( 'wpmake_aua_clear_deleted_avatar_references' ) ) {
 			)
 		);
 
+		$current_blog = is_multisite() ? get_current_blog_id() : 0;
+
 		foreach ( $user_ids as $user_id ) {
+			/*
+			 * The ID matches, but on a network it only refers to *this* attachment if the
+			 * avatar came from this site. Deleting attachment 4 on site 2 must not clear
+			 * avatars pointing at site 1's attachment 4.
+			 */
+			if ( $current_blog && wpmake_aua_get_avatar_blog_id( $user_id ) !== $current_blog ) {
+				continue;
+			}
+
 			wpmake_aua_remove_user_avatar( $user_id );
 		}
 	}
