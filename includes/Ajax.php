@@ -223,6 +223,27 @@ class Ajax {
 
 		self::require_avatar_capability( $user_id );
 
+		/*
+		 * Assigning an attachment that already exists is a Media Library operation, so
+		 * it takes the Media Library capability -- on top of the avatar check above,
+		 * which only says whose avatar may be changed.
+		 *
+		 * Without this the endpoint trusts the caller to have obeyed the "Let users
+		 * choose from the Media Library" setting. The button is not rendered for a user
+		 * who cannot upload_files, but the nonce is localised for everybody, so a
+		 * subscriber could post an attachment ID and help themselves to any image on
+		 * the site. That is the same shape as the 1.3.0 fix: a value that belongs to
+		 * the site owner's settings being decided by the request.
+		 */
+		if ( ! current_user_can( 'upload_files' ) ) {
+			wp_send_json_error(
+				array(
+					'message' => esc_html__( 'You are not allowed to choose from the Media Library.', 'wpmake-advance-user-avatar' ),
+				),
+				403
+			);
+		}
+
 		$attachment_id = isset( $_REQUEST['attachment_id'] ) ? absint( wp_unslash( $_REQUEST['attachment_id'] ) ) : 0;
 
 		if ( ! wpmake_aua_set_user_avatar( $user_id, $attachment_id ) ) {
