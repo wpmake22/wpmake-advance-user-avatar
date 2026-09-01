@@ -349,6 +349,54 @@ if ( ! function_exists( 'wpmake_aua_remove_user_avatar' ) ) {
 	}
 }
 
+/*
+ * Keep avatar references honest when the attachment behind one goes away.
+ *
+ * An attachment can be deleted from under an avatar in several ways: an admin
+ * clears it from the Media Library, or the user who owns it is deleted along with
+ * their content. Nothing broke before this -- wpmake_aua_get_avatar_url() returns
+ * an empty string for a missing attachment and core falls back to Gravatar -- but
+ * the user meta was left pointing at an ID that no longer exists, and the bulk
+ * manager reads that row as "has an avatar" and offers to remove it.
+ */
+add_action( 'delete_attachment', 'wpmake_aua_clear_deleted_avatar_references' );
+
+if ( ! function_exists( 'wpmake_aua_clear_deleted_avatar_references' ) ) {
+	/**
+	 * Clear the avatar of every user pointing at an attachment being deleted.
+	 *
+	 * Goes through wpmake_aua_remove_user_avatar() rather than writing the meta
+	 * directly, so `wpmake_aua_avatar_removed` fires as it would for any other
+	 * removal. Attachments may be shared between users, so this can be more than one.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @param int $attachment_id Attachment about to be deleted.
+	 * @return void
+	 */
+	function wpmake_aua_clear_deleted_avatar_references( $attachment_id ) {
+		$attachment_id = (int) $attachment_id;
+
+		if ( $attachment_id <= 0 ) {
+			return;
+		}
+
+		$user_ids = get_users(
+			array(
+				'fields'     => 'ID',
+				'number'     => -1,
+				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key, WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- only ever on attachment deletion, and the reference has to be found by value.
+				'meta_key'   => 'wpmake_advance_user_avatar_attachment_id',
+				'meta_value' => $attachment_id,
+			)
+		);
+
+		foreach ( $user_ids as $user_id ) {
+			wpmake_aua_remove_user_avatar( $user_id );
+		}
+	}
+}
+
 if ( ! function_exists( 'wpmake_aua_get_allowed_mimes' ) ) {
 	/**
 	 * Image mime types this site accepts for an avatar.
