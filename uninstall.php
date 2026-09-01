@@ -27,6 +27,54 @@ if ( empty( $wpmake_aua_settings['delete_data_on_uninstall'] ) ) {
 }
 
 /**
+ * Where this site keeps its avatars.
+ *
+ * The upload handler runs the directory through
+ * `wpmake_advance_user_avatar_upload_url`, so a site can have moved it. The plugin
+ * itself is not loaded during uninstall, but a theme or mu-plugin that registered
+ * that filter still is -- so asking for it here is meaningful, and hardcoding the
+ * default would quietly leave a relocated directory and all its files behind.
+ *
+ * @since 1.4.0
+ *
+ * @return array {
+ *     @type string $dir      Absolute path of the avatar directory.
+ *     @type string $relative Path relative to the uploads basedir, with a trailing
+ *                            slash, for matching against _wp_attached_file.
+ * }
+ */
+function wpmake_aua_uninstall_upload_paths() {
+	$default_subdir = 'wpmake-advance-user-avatar';
+	$upload_dir     = wp_upload_dir();
+
+	if ( ! empty( $upload_dir['error'] ) ) {
+		return array(
+			'dir'      => '',
+			'relative' => trailingslashit( $default_subdir ),
+		);
+	}
+
+	$basedir = trailingslashit( $upload_dir['basedir'] );
+	$dir     = apply_filters( 'wpmake_advance_user_avatar_upload_url', $upload_dir['basedir'] . '/' . $default_subdir );
+	$dir     = untrailingslashit( (string) $dir );
+
+	/*
+	 * _wp_attached_file is stored relative to the uploads basedir, so the query below
+	 * can only match a directory that lives inside it. A filter pointing somewhere
+	 * else is out of reach; fall back to the default rather than matching nothing at
+	 * all, and the directory removal still uses the real path.
+	 */
+	$relative = 0 === strpos( $dir . '/', $basedir )
+		? substr( $dir . '/', strlen( $basedir ) )
+		: trailingslashit( $default_subdir );
+
+	return array(
+		'dir'      => $dir,
+		'relative' => $relative,
+	);
+}
+
+/**
  * Delete the attachments this plugin created, and their files.
  *
  * Scoped by file path rather than by which users point at one, for two reasons.
@@ -41,7 +89,8 @@ if ( empty( $wpmake_aua_settings['delete_data_on_uninstall'] ) ) {
  * @return void
  */
 function wpmake_aua_uninstall_delete_attachments() {
-	$batch = 50;
+	$batch    = 50;
+	$relative = wpmake_aua_uninstall_upload_paths()['relative'];
 
 	while ( true ) {
 		$attachment_ids = get_posts(
@@ -56,7 +105,7 @@ function wpmake_aua_uninstall_delete_attachments() {
 				'meta_query'             => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- a one-off on delete, and there is no other way to scope by file path.
 					array(
 						'key'     => '_wp_attached_file',
-						'value'   => 'wpmake-advance-user-avatar/',
+						'value'   => $relative,
 						'compare' => 'LIKE',
 					),
 				),
@@ -97,15 +146,9 @@ function wpmake_aua_uninstall_delete_attachments() {
  * @return void
  */
 function wpmake_aua_uninstall_remove_directory() {
-	$upload_dir = wp_upload_dir();
+	$path = wpmake_aua_uninstall_upload_paths()['dir'];
 
-	if ( ! empty( $upload_dir['error'] ) ) {
-		return;
-	}
-
-	$path = trailingslashit( $upload_dir['basedir'] ) . 'wpmake-advance-user-avatar';
-
-	if ( ! is_dir( $path ) ) {
+	if ( '' === $path || ! is_dir( $path ) ) {
 		return;
 	}
 
