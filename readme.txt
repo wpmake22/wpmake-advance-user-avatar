@@ -205,7 +205,7 @@ Two actions fire after every change, each passed the user ID and the attachment 
 
 == Changelog ==
 
-= 2.0.0   - unreleased =
+= 2.0.0   - 02/09/2026 =
 * Feature - Set your profile picture from Users > Profile, the screen most people look at first.
 * Feature - Administrators can now change or remove any user's picture. Until now everyone could only manage their own.
 * Feature - New "Manage Avatars" tab lists every user with their current picture. Search it, sort it, and change or remove a picture without leaving the page.
@@ -231,10 +231,14 @@ Two actions fire after every change, each passed the user ID and the attachment 
 * Fix     - Multisite: deleting the plugin now tidies up every site in the network, not just the one you deleted it from, and each site keeps its own choice about whether to delete.
 * Fix     - Multisite: the upload folder is created for every site, including sites added later.
 * Fix     - Multisite: deleting an image on one site no longer clears people's pictures on another.
+* Fix     - "Product reviews" in the WooCommerce display settings did nothing; unticking it now hides review avatars.
+* Fix     - The upload widget no longer overflows its box when its buttons need more room.
 * Tweak   - Redesigned the plugin's screens: a proper navigation bar across the top, and a cleaner user table that is easier to read.
 * Tweak   - The Media Library window now opens on the Media Library tab, not on whichever tab you used last somewhere else.
 * Tweak   - Multisite: the "Manage Avatars" tab is hidden from administrators who cannot edit users, because it could not change anything for them.
 * Tweak   - The review notice is lighter and no longer loads the admin scripts just to show three buttons.
+* Tweak   - WooCommerce settings now say where the order history avatar appears: above the orders table.
+* Tweak   - The thumbnail preview now shows the sizes actually generated: 32, 64 and 96 pixels.
 * Dev     - New functions for setting avatars from your own code: `wpmake_aua_set_user_avatar()`, `wpmake_aua_remove_user_avatar()` and `wpmake_aua_current_user_can_edit_avatar()`. See the FAQ.
 * Dev     - New actions `wpmake_aua_avatar_set` and `wpmake_aua_avatar_removed`, each passed the user ID and the attachment ID.
 * Dev     - Avatars are now supplied through the `pre_get_avatar_data` filter, at priority 99, instead of `get_avatar`.

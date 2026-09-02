@@ -42,7 +42,11 @@
 	justify-content: center;
 	align-items: var(--wpmake-aua-align);
 	width: var(--wpmake-aua-width);
-	height: var(--wpmake-aua-height);
+	// The box grows rather than clipping: four buttons, a long label or a status
+	// message needs more than the 300px the height property used to pin it to, and
+	// the overflow landed on top of whatever the theme rendered underneath.
+	max-width: 100%;
+	min-height: var(--wpmake-aua-height);
 	padding: var(--wpmake-aua-padding);
 
 	h4 {
@@ -124,8 +128,9 @@
 				}
 			}
 
-			// Neutral outlined — resting state for Remove
-			&.wpmake-advance-user-avatar-remove {
+			// Neutral outlined — Remove, and the Media Library picker beside it
+			&.wpmake-advance-user-avatar-remove,
+			&.wpmake_advance_user_avatar_media_library {
 				background-color: transparent;
 				border-color: var(--wpmake-aua-btn-remove-border);
 				color: var(--wpmake-aua-btn-remove-color);

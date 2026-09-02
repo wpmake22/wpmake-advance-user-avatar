@@ -12,9 +12,25 @@ jobs:
       - name: Set env
         id: vars
         run: echo ::set-output name=tag::${GITHUB_REF:10}
+      # The action runs `composer install` (dev dependencies included, because
+      # `npm run build` calls `composer run-script makepot`) inside its own
+      # container. That image installs php-curl, php-mbstring and php-xmlrpc but
+      # not php-xml or php-zip, so the xml/zip extensions the dev tools require
+      # are absent - hence the `ext-*` entries in composer.json's
+      # `config.platform`, which let the install resolve. None of those tools are
+      # executed during the build, so nothing needs the extensions for real.
+      #
+      # The GIT_CONFIG_* variables are the container-side equivalent of
+      # `git config --global --add safe.directory`: the action runs as root over a
+      # checkout owned by the runner user, and a config step on the runner cannot
+      # reach the container's HOME.
       - name: Build
         id: build
         uses: wpeverest/action-build@4.0.0
+        env:
+          GIT_CONFIG_COUNT: 1
+          GIT_CONFIG_KEY_0: safe.directory
+          GIT_CONFIG_VALUE_0: /github/workspace
         with:
           generate-zip: true
       - name: WordPress Plugin Deploy

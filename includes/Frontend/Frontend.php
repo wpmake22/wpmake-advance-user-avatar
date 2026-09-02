@@ -51,10 +51,10 @@ class Frontend {
 	/**
 	 * Wires up all WooCommerce display hooks based on the saved location settings.
 	 *
-	 * Backward compat: if the granular woo_display_locations option has not been
-	 * saved yet (user hasn't visited the settings page since the update) but the
-	 * legacy woocommerce_integration toggle was enabled, the two original locations
-	 * (my_account_dashboard + account_details_tab) are assumed.
+	 * The locations, including the backward-compatible fallback to the legacy
+	 * woocommerce_integration toggle, come from
+	 * wpmake_aua_get_woo_display_locations() so that avatar resolution reads the
+	 * same list this method hooks from.
 	 *
 	 * @param array $options Saved plugin options.
 	 */
@@ -63,14 +63,7 @@ class Frontend {
 			return;
 		}
 
-		// Resolve active display locations, falling back to legacy setting.
-		$locations = isset( $options['woo_display_locations'] )
-			? (array) $options['woo_display_locations']
-			: array();
-
-		if ( empty( $locations ) && ! empty( $options['woocommerce_integration'] ) ) {
-			$locations = array( 'my_account_dashboard', 'account_details_tab' );
-		}
+		$locations = wpmake_aua_get_woo_display_locations();
 
 		// -- Display locations ------------------------------------------------
 
@@ -97,9 +90,9 @@ class Frontend {
 			add_action( 'woocommerce_before_account_orders', array( $this, 'woo_render_avatar_viewer' ), 5 );
 		}
 
-		// Product reviews — the global pre_get_avatar_data filter in CoreFunctions.php
-		// already replaces Gravatar site-wide, so no additional hook is needed.
-		// The setting exists so the user can deliberately opt in/out.
+		// Product reviews — no hook: the site-wide pre_get_avatar_data filter in
+		// CoreFunctions.php already covers them, and reads this location itself so
+		// that clearing the checkbox hands reviews back to Gravatar.
 
 		// Checkout page — avatar viewer above customer detail fields.
 		if ( in_array( 'checkout_page', $locations, true ) ) {

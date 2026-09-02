@@ -53,6 +53,12 @@ if ( ! function_exists( 'wpmake_aua_pre_get_avatar_data' ) ) {
 			return $args;
 		}
 
+		// Product reviews are the one surface a store can switch off, because it is
+		// the one customers see before they have an account of their own.
+		if ( ! wpmake_aua_is_woo_location_enabled( 'product_reviews' ) && wpmake_aua_is_product_review( $id_or_email ) ) {
+			return $args;
+		}
+
 		$user_id = wpmake_aua_resolve_user_id( $id_or_email );
 
 		if ( ! $user_id ) {
@@ -556,6 +562,85 @@ if ( ! function_exists( 'wpmake_aua_get_uploaded_image_size' ) ) {
 			'width'  => $width > 0 ? $width : 500,
 			'height' => $height > 0 ? $height : 500,
 		);
+	}
+}
+
+if ( ! function_exists( 'wpmake_aua_get_woo_display_locations' ) ) {
+	/**
+	 * WooCommerce locations the site has switched avatars on for.
+	 *
+	 * Frontend.php used to resolve this inline, which left the product reviews
+	 * location with nowhere to be read: reviews are supplied by the site-wide
+	 * pre_get_avatar_data filter, not by a WooCommerce hook. Both now read the
+	 * same list, so the checkbox and the behaviour cannot disagree.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return array Location keys.
+	 */
+	function wpmake_aua_get_woo_display_locations() {
+		$options = get_option( 'wpmake_advance_user_avatar_settings', array() );
+
+		$locations = isset( $options['woo_display_locations'] )
+			? (array) $options['woo_display_locations']
+			: array();
+
+		/*
+		 * Backward compat: a site that has not saved the granular settings since the
+		 * update, but had the legacy woocommerce_integration toggle on, gets the two
+		 * locations that toggle used to mean.
+		 */
+		if ( empty( $locations ) && ! empty( $options['woocommerce_integration'] ) ) {
+			$locations = array( 'my_account_dashboard', 'account_details_tab' );
+		}
+
+		return $locations;
+	}
+}
+
+if ( ! function_exists( 'wpmake_aua_is_woo_location_enabled' ) ) {
+	/**
+	 * Whether one WooCommerce display location is switched on.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $location Location key, e.g. 'product_reviews'.
+	 * @return bool
+	 */
+	function wpmake_aua_is_woo_location_enabled( $location ) {
+		return in_array( $location, wpmake_aua_get_woo_display_locations(), true );
+	}
+}
+
+if ( ! function_exists( 'wpmake_aua_is_product_review' ) ) {
+	/**
+	 * Whether an avatar identifier belongs to a comment on a WooCommerce product.
+	 *
+	 * Reviews are ordinary comments on a product, so the post type is the reliable
+	 * test: WooCommerce stores older reviews with an empty comment type and newer
+	 * ones as 'review'.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param mixed $id_or_email ID, email, or object identifying the user.
+	 * @return bool
+	 */
+	function wpmake_aua_is_product_review( $id_or_email ) {
+		if ( ! class_exists( 'WooCommerce' ) ) {
+			return false;
+		}
+
+		if ( ! is_object( $id_or_email ) || ! isset( $id_or_email->comment_ID ) ) {
+			return false;
+		}
+
+		$comment = get_comment( $id_or_email );
+
+		if ( ! $comment ) {
+			return false;
+		}
+
+		return 'product' === get_post_type( (int) $comment->comment_post_ID );
 	}
 }
 

@@ -78,7 +78,7 @@ class Settings {
 						),
 						'order_history'        => array(
 							'label'    => __( 'Order history', 'wpmake-advance-user-avatar' ),
-							'sublabel' => __( 'Next to each order', 'wpmake-advance-user-avatar' ),
+							'sublabel' => __( 'Above the orders table', 'wpmake-advance-user-avatar' ),
 						),
 						'product_reviews'      => array(
 							'label'    => __( 'Product reviews', 'wpmake-advance-user-avatar' ),
@@ -160,18 +160,20 @@ class Settings {
 					'label'       => __( 'Store in thumbnail sizes', 'wpmake-advance-user-avatar' ),
 					'badge'       => __( 'New', 'wpmake-advance-user-avatar' ),
 					'description' => __( 'Generate 32px, 64px and 96px variants for different page contexts', 'wpmake-advance-user-avatar' ),
+					// The sizes wpmake_aua_avatar_subsizes() actually generates. A row here
+					// for a size that is never written promises a file that does not exist.
 					'thumbnails'  => array(
 						array(
 							'size'    => 32,
 							'context' => __( 'admin bar, comments', 'wpmake-advance-user-avatar' ),
 						),
 						array(
-							'size'    => 48,
-							'context' => __( 'My Account header', 'wpmake-advance-user-avatar' ),
-						),
-						array(
 							'size'    => 64,
 							'context' => __( 'product reviews', 'wpmake-advance-user-avatar' ),
+						),
+						array(
+							'size'    => 96,
+							'context' => __( 'My Account, upload form', 'wpmake-advance-user-avatar' ),
 						),
 					),
 				),

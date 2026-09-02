@@ -52,7 +52,11 @@
       "roots/wordpress-core-installer": true
 		},
     "platform": {
-      "php": "7.4.3"
+      "php": "7.4.3",
+      "ext-simplexml": "7.4.3",
+      "ext-xmlreader": "7.4.3",
+      "ext-xmlwriter": "7.4.3",
+      "ext-zip": "7.4.3"
     }
 	}
 }

@@ -9,13 +9,14 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-01T16:55:07+00:00\n"
+"POT-Creation-Date: 2026-09-02T16:05:03+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: wpmake-advance-user-avatar\n"
 
 #. Plugin Name of the plugin
 #: includes/Admin/Admin.php:372
+#: includes/Admin/Admin.php:432
 #: includes/Admin/UsersTable.php:448
 msgid "Advanced User Avatar"
 msgstr ""
@@ -38,13 +39,13 @@ msgstr ""
 
 #: includes/Admin/Admin.php:257
 #: includes/Admin/Admin.php:298
-#: includes/Frontend/Frontend.php:427
+#: includes/Frontend/Frontend.php:420
 msgid "Choose a profile picture"
 msgstr ""
 
 #: includes/Admin/Admin.php:258
 #: includes/Admin/Admin.php:299
-#: includes/Frontend/Frontend.php:428
+#: includes/Frontend/Frontend.php:421
 msgid "Use this picture"
 msgstr ""
 
@@ -53,13 +54,13 @@ msgid "Remove this avatar?"
 msgstr ""
 
 #: includes/Admin/Admin.php:301
-#: includes/Frontend/Frontend.php:416
+#: includes/Frontend/Frontend.php:409
 msgid "Yes, remove"
 msgstr ""
 
 #: includes/Admin/Admin.php:302
-#: includes/Admin/Settings.php:381
-#: includes/Frontend/Frontend.php:406
+#: includes/Admin/Settings.php:388
+#: includes/Frontend/Frontend.php:399
 msgid "Cancel"
 msgstr ""
 
@@ -76,8 +77,6 @@ msgid "Advanced Users Avatar"
 msgstr ""
 
 #: includes/Admin/Admin.php:323
-#: includes/Admin/Settings.php:304
-#: includes/Admin/UsersTable.php:458
 msgid "Users Avatar"
 msgstr ""
 
@@ -91,40 +90,42 @@ msgid "Users per page"
 msgstr ""
 
 #: includes/Admin/Admin.php:424
+#: includes/Admin/Settings.php:312
 #: includes/UserAvatar.php:247
 msgid "Settings"
 msgstr ""
 
 #: includes/Admin/Admin.php:429
+#: includes/Admin/UsersTable.php:465
 msgid "Manage Avatars"
 msgstr ""
 
-#: includes/Admin/Admin.php:436
-msgid "Secondary menu"
+#: includes/Admin/Admin.php:466
+msgid "Help"
 msgstr ""
 
 #. translators: 1: Plugin name 2: Five-star rating link
-#: includes/Admin/Admin.php:494
+#: includes/Admin/Admin.php:562
 msgid "If you like %1$s please leave us a %2$s rating. A huge thanks in advance!"
 msgstr ""
 
-#: includes/Admin/Admin.php:496
+#: includes/Admin/Admin.php:564
 msgid "Thank You!"
 msgstr ""
 
-#: includes/Admin/Admin.php:508
+#: includes/Admin/Admin.php:576
 msgid "Thank you for using Advanced User Avatar."
 msgstr ""
 
-#: includes/Admin/Admin.php:539
+#: includes/Admin/Admin.php:607
 msgid "Sure, I'd love to!"
 msgstr ""
 
-#: includes/Admin/Admin.php:540
+#: includes/Admin/Admin.php:608
 msgid "Maybe Later"
 msgstr ""
 
-#: includes/Admin/Admin.php:541
+#: includes/Admin/Admin.php:609
 msgid "I already did!"
 msgstr ""
 
@@ -165,7 +166,7 @@ msgid "Order history"
 msgstr ""
 
 #: includes/Admin/Settings.php:81
-msgid "Next to each order"
+msgid "Above the orders table"
 msgstr ""
 
 #: includes/Admin/Settings.php:84
@@ -233,10 +234,10 @@ msgid "Store in thumbnail sizes"
 msgstr ""
 
 #: includes/Admin/Settings.php:161
-#: includes/Admin/Settings.php:186
-#: includes/Admin/Settings.php:194
-#: includes/Admin/Settings.php:207
-#: includes/Admin/Settings.php:224
+#: includes/Admin/Settings.php:188
+#: includes/Admin/Settings.php:196
+#: includes/Admin/Settings.php:209
+#: includes/Admin/Settings.php:226
 msgid "New"
 msgstr ""
 
@@ -244,128 +245,128 @@ msgstr ""
 msgid "Generate 32px, 64px and 96px variants for different page contexts"
 msgstr ""
 
-#: includes/Admin/Settings.php:166
+#: includes/Admin/Settings.php:168
 msgid "admin bar, comments"
 msgstr ""
 
-#: includes/Admin/Settings.php:170
-msgid "My Account header"
-msgstr ""
-
-#: includes/Admin/Settings.php:174
+#: includes/Admin/Settings.php:172
 msgid "product reviews"
 msgstr ""
 
-#: includes/Admin/Settings.php:180
+#: includes/Admin/Settings.php:176
+msgid "My Account, upload form"
+msgstr ""
+
+#: includes/Admin/Settings.php:182
 msgid "Cropping Interface"
 msgstr ""
 
-#: includes/Admin/Settings.php:181
+#: includes/Admin/Settings.php:183
 msgid "Allow user to crop selected or captured image"
 msgstr ""
 
-#: includes/Admin/Settings.php:185
+#: includes/Admin/Settings.php:187
 msgid "Let users choose from the Media Library"
 msgstr ""
 
-#: includes/Admin/Settings.php:187
+#: includes/Admin/Settings.php:189
 msgid "Adds a \"Choose from Media Library\" button to the uploader. Only shown to users who can already upload files, which most subscribers and customers cannot."
 msgstr ""
 
-#: includes/Admin/Settings.php:193
+#: includes/Admin/Settings.php:195
 msgid "Capture Picture"
 msgstr ""
 
-#: includes/Admin/Settings.php:198
+#: includes/Admin/Settings.php:200
 msgid "Webcam capture"
 msgstr ""
 
-#: includes/Admin/Settings.php:199
+#: includes/Admin/Settings.php:201
 msgid "Enable taking a photo directly from the customer's webcam"
 msgstr ""
 
-#: includes/Admin/Settings.php:200
+#: includes/Admin/Settings.php:202
 msgid "Requires valid SSL (HTTPS) on your domain"
 msgstr ""
 
-#: includes/Admin/Settings.php:206
+#: includes/Admin/Settings.php:208
 msgid "Integrations"
 msgstr ""
 
-#: includes/Admin/Settings.php:211
+#: includes/Admin/Settings.php:213
 msgid "BuddyPress Integration"
 msgstr ""
 
-#: includes/Admin/Settings.php:212
+#: includes/Admin/Settings.php:214
 msgid "Display user avatar in BuddyPress avatar areas and Change Avatar section"
 msgstr ""
 
-#: includes/Admin/Settings.php:216
+#: includes/Admin/Settings.php:218
 msgid "WP-Members Integration"
 msgstr ""
 
-#: includes/Admin/Settings.php:217
+#: includes/Admin/Settings.php:219
 msgid "Add the avatar uploader to the WP-Members profile edit form"
 msgstr ""
 
-#: includes/Admin/Settings.php:223
+#: includes/Admin/Settings.php:225
 msgid "Advanced"
 msgstr ""
 
-#: includes/Admin/Settings.php:228
+#: includes/Admin/Settings.php:230
 msgid "Delete all avatars and settings when the plugin is deleted"
 msgstr ""
 
-#: includes/Admin/Settings.php:229
+#: includes/Admin/Settings.php:231
 msgid "Off by default, and safe to leave off. When on, deleting the plugin permanently removes every uploaded avatar and its files, along with this plugin's settings. Deactivating does nothing -- only deleting the plugin from the Plugins screen."
 msgstr ""
 
-#: includes/Admin/Settings.php:230
+#: includes/Admin/Settings.php:232
 msgid "This cannot be undone. Uploaded photos are deleted for every user on the site."
 msgstr ""
 
-#: includes/Admin/Settings.php:313
+#: includes/Admin/Settings.php:320
 msgid "WooCommerce detected."
 msgstr ""
 
-#: includes/Admin/Settings.php:314
+#: includes/Admin/Settings.php:321
 msgid "Avatar settings below are applied to your store's My Account page, product reviews, and checkout — giving customers a personalised shopping experience."
 msgstr ""
 
-#: includes/Admin/Settings.php:369
+#: includes/Admin/Settings.php:376
 msgid "WooCommerce is required"
 msgstr ""
 
-#: includes/Admin/Settings.php:378
+#: includes/Admin/Settings.php:385
 msgid "Save Changes"
 msgstr ""
 
-#: includes/Admin/Settings.php:402
+#: includes/Admin/Settings.php:409
 msgid "Add a profile picture upload form, allowing users to upload or remove their avatar image."
 msgstr ""
 
-#: includes/Admin/Settings.php:406
+#: includes/Admin/Settings.php:413
 msgid "Display the avatar upload form for the logged-in user."
 msgstr ""
 
-#: includes/Admin/Settings.php:413
+#: includes/Admin/Settings.php:420
 msgid "Available Shortcodes"
 msgstr ""
 
-#: includes/Admin/Settings.php:423
+#: includes/Admin/Settings.php:430
 msgid "Copy shortcode"
 msgstr ""
 
-#: includes/Admin/Settings.php:436
+#: includes/Admin/Settings.php:443
 msgid "Visit wpmake.net for full documentation"
 msgstr ""
 
-#: includes/Admin/Settings.php:501
-#: includes/Admin/Settings.php:626
+#: includes/Admin/Settings.php:508
+#: includes/Admin/Settings.php:633
 msgid "Enable"
 msgstr ""
 
-#: includes/Admin/Settings.php:590
+#: includes/Admin/Settings.php:597
 msgid "by"
 msgstr ""
 
@@ -375,7 +376,7 @@ msgstr ""
 
 #: includes/Admin/UserProfile.php:168
 #: includes/Admin/UserProfile.php:173
-#: includes/Frontend/Frontend.php:285
+#: includes/Frontend/Frontend.php:278
 msgid "Profile Picture"
 msgstr ""
 
@@ -440,7 +441,7 @@ msgstr ""
 msgid "No users found."
 msgstr ""
 
-#: includes/Admin/UsersTable.php:469
+#: includes/Admin/UsersTable.php:466
 msgid "Search users"
 msgstr ""
 
@@ -507,79 +508,79 @@ msgstr ""
 msgid "The uploaded file could not be read as an image."
 msgstr ""
 
-#: includes/Frontend/Frontend.php:397
+#: includes/Frontend/Frontend.php:390
 msgid "Uploading..."
 msgstr ""
 
-#: includes/Frontend/Frontend.php:398
+#: includes/Frontend/Frontend.php:391
 msgid "Something wrong, please try again."
 msgstr ""
 
-#: includes/Frontend/Frontend.php:399
+#: includes/Frontend/Frontend.php:392
 msgid "Crop Your Picture"
 msgstr ""
 
-#: includes/Frontend/Frontend.php:400
+#: includes/Frontend/Frontend.php:393
 msgid "Crop Picture"
 msgstr ""
 
-#: includes/Frontend/Frontend.php:401
+#: includes/Frontend/Frontend.php:394
 msgid "Capture"
 msgstr ""
 
-#: includes/Frontend/Frontend.php:402
+#: includes/Frontend/Frontend.php:395
 msgid "Camera Unavailable"
 msgstr ""
 
-#: includes/Frontend/Frontend.php:403
+#: includes/Frontend/Frontend.php:396
 msgid "Camera access requires a secure (HTTPS) connection. You can upload a photo from your device instead."
 msgstr ""
 
-#: includes/Frontend/Frontend.php:404
+#: includes/Frontend/Frontend.php:397
 msgid "Camera Access Denied"
 msgstr ""
 
-#: includes/Frontend/Frontend.php:405
+#: includes/Frontend/Frontend.php:398
 msgid "Camera access was blocked. Allow it in your browser settings, or upload a photo instead."
 msgstr ""
 
-#: includes/Frontend/Frontend.php:407
+#: includes/Frontend/Frontend.php:400
 msgid "Close"
 msgstr ""
 
-#: includes/Frontend/Frontend.php:414
+#: includes/Frontend/Frontend.php:407
 msgid "Avatar has been uploaded successfully."
 msgstr ""
 
-#: includes/Frontend/Frontend.php:415
+#: includes/Frontend/Frontend.php:408
 msgid "Remove your avatar?"
 msgstr ""
 
-#: includes/Frontend/Frontend.php:417
+#: includes/Frontend/Frontend.php:410
 msgid "Upload a Photo"
 msgstr ""
 
-#: includes/Frontend/Frontend.php:418
+#: includes/Frontend/Frontend.php:411
 msgid "Square crop (1:1)"
 msgstr ""
 
-#: includes/Frontend/Frontend.php:419
+#: includes/Frontend/Frontend.php:412
 msgid "Retake"
 msgstr ""
 
-#: includes/Frontend/Frontend.php:420
+#: includes/Frontend/Frontend.php:413
 msgid "Re-upload"
 msgstr ""
 
-#: includes/Frontend/Frontend.php:421
+#: includes/Frontend/Frontend.php:414
 msgid "Save avatar"
 msgstr ""
 
-#: includes/Functions/CoreFunctions.php:860
+#: includes/Functions/CoreFunctions.php:945
 msgid "We hope you’re enjoying a great experience with the <strong>Advanced User Avatar</strong> plugin! We kindly request you to consider leaving a positive review for the plugin."
 msgstr ""
 
-#: includes/Functions/CoreFunctions.php:861
+#: includes/Functions/CoreFunctions.php:946
 msgid "Your review motivates us to continue providing regular updates with new features and bug fixes, ensuring the plugin works seamlessly for you. It also supports us in offering free assistance, just as we always have. <span class=\"dashicons dashicons-smiley smile-icon\"></span><br>"
 msgstr ""
 
@@ -612,37 +613,31 @@ msgstr ""
 msgid "Display Avatar"
 msgstr ""
 
-#: chunks/user-avatar/block.json
 #: src/user-avatar/block.json
 msgctxt "block title"
 msgid "Advanced User Avatar"
 msgstr ""
 
-#: chunks/user-avatar/block.json
 #: src/user-avatar/block.json
 msgctxt "block description"
 msgid "This block allows user to upload their avatar"
 msgstr ""
 
-#: chunks/user-avatar/block.json
 #: src/user-avatar/block.json
 msgctxt "block keyword"
 msgid "user avatar"
 msgstr ""
 
-#: chunks/user-avatar/block.json
 #: src/user-avatar/block.json
 msgctxt "block keyword"
 msgid "avatar"
 msgstr ""
 
-#: chunks/user-avatar/block.json
 #: src/user-avatar/block.json
 msgctxt "block keyword"
 msgid "profile picture"
 msgstr ""
 
-#: chunks/user-avatar/block.json
 #: src/user-avatar/block.json
 msgctxt "block keyword"
 msgid "picture"
