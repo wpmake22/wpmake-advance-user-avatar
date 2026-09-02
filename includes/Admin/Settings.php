@@ -299,12 +299,17 @@ class Settings {
 		$sections = $this->get_sections();
 		?>
 		<div class="wrap wpmake-aua-settings-page">
-			<h1 class="wpmake-aua-page-title">
-				<img src="<?php echo esc_url( WPMAKE_ADVANCE_USER_AVATAR_ASSETS_URL . '/images/icon.png' ); ?>" width="50" height="50" alt="" />
-		<?php esc_html_e( 'Users Avatar', 'wpmake-advance-user-avatar' ); ?>
-			</h1>
+		<?php
+		Admin::render_tab_nav( 'settings' );
 
-		<?php Admin::render_tab_nav( 'settings' ); ?>
+		/*
+		 * A bare heading rather than a panel: the sections below are already cards,
+		 * and wrapping them in another one would nest a card inside a card.
+		 */
+		echo '<div class="wpmake-aua-screen-head">';
+		printf( '<h1 class="wpmake-aua-screen-title">%s</h1>', esc_html__( 'Settings', 'wpmake-advance-user-avatar' ) );
+		echo '</div>';
+		?>
 
 		<?php if ( $this->is_woocommerce_active() ) : ?>
 				<div class="wpmake-aua-woo-banner">

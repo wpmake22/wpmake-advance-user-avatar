@@ -429,11 +429,14 @@ class Admin {
 			$tabs['avatars'] = esc_html__( 'Manage Avatars', 'wpmake-advance-user-avatar' );
 		}
 
-		if ( count( $tabs ) < 2 ) {
-			return;
-		}
+		echo '<nav class="wpmake-aua-topnav" aria-label="' . esc_attr__( 'Advanced User Avatar', 'wpmake-advance-user-avatar' ) . '">';
 
-		echo '<nav class="nav-tab-wrapper wp-clearfix" aria-label="' . esc_attr__( 'Secondary menu', 'wpmake-advance-user-avatar' ) . '">';
+		printf(
+			'<img class="wpmake-aua-topnav__logo" src="%s" width="28" height="28" alt="" />',
+			esc_url( WPMAKE_ADVANCE_USER_AVATAR_ASSETS_URL . '/images/icon.png' )
+		);
+
+		echo '<ul class="wpmake-aua-topnav__tabs">';
 
 		foreach ( $tabs as $slug => $label ) {
 			$url = add_query_arg(
@@ -445,14 +448,79 @@ class Admin {
 			);
 
 			printf(
-				'<a href="%1$s" class="nav-tab%2$s">%3$s</a>',
+				'<li><a href="%1$s" class="wpmake-aua-topnav__tab%2$s"%3$s>%4$s</a></li>',
 				esc_url( $url ),
-				$slug === $active ? ' nav-tab-active' : '',
+				$slug === $active ? ' is-active' : '',
+				$slug === $active ? ' aria-current="page"' : '',
 				esc_html( $label )
 			);
 		}
 
+		echo '</ul>';
+
+		echo '<div class="wpmake-aua-topnav__meta">';
+
+		printf(
+			'<a class="wpmake-aua-topnav__help" href="%1$s" target="_blank" rel="noreferrer noopener">%2$s</a>',
+			esc_url( 'https://wordpress.org/support/plugin/wpmake-advance-user-avatar/' ),
+			esc_html__( 'Help', 'wpmake-advance-user-avatar' )
+		);
+
+		printf(
+			'<span class="wpmake-aua-topnav__version">v%s</span>',
+			esc_html( WPMAKE_ADVANCE_USER_AVATAR_VERSION )
+		);
+
+		echo '</div>';
 		echo '</nav>';
+
+		/*
+		 * WordPress relocates admin notices to just after `.wp-header-end`, falling
+		 * back to the first heading in `.wrap`. Without this marker the fallback puts
+		 * other plugins' notices inside the panel head, between the title and the
+		 * search box.
+		 */
+		echo '<hr class="wp-header-end" />';
+	}
+
+	/**
+	 * Open the white panel both tabs render inside.
+	 *
+	 * The heading stays in the markup, inside the panel rather than above the nav:
+	 * WordPress moves admin notices to just after the first heading in `.wrap`, so
+	 * dropping it would strand every notice at the very top of the screen.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $title Heading shown at the top of the panel.
+	 * @return void
+	 */
+	public static function panel_open( string $title ): void {
+		echo '<div class="wpmake-aua-panel">';
+		echo '<div class="wpmake-aua-panel__head">';
+		printf( '<h1 class="wpmake-aua-panel__title">%s</h1>', esc_html( $title ) );
+	}
+
+	/**
+	 * Close the panel head, so the caller can add its own body.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return void
+	 */
+	public static function panel_head_close(): void {
+		echo '</div>';
+	}
+
+	/**
+	 * Close the panel.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return void
+	 */
+	public static function panel_close(): void {
+		echo '</div>';
 	}
 
 	/**

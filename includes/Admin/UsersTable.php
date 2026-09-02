@@ -453,23 +453,25 @@ class UsersTable extends \WP_List_Table {
 		$this->prepare_items();
 		?>
 		<div class="wrap wpmake-aua-settings-page">
-			<h1 class="wpmake-aua-page-title">
-				<img src="<?php echo esc_url( WPMAKE_ADVANCE_USER_AVATAR_ASSETS_URL . '/images/icon.png' ); ?>" width="50" height="50" alt="" />
-				<?php esc_html_e( 'Users Avatar', 'wpmake-advance-user-avatar' ); ?>
-			</h1>
+			<?php
+			Admin::render_tab_nav( 'avatars' );
 
-			<?php Admin::render_tab_nav( 'avatars' ); ?>
+			echo '<form method="get">';
 
-			<form method="get">
-				<?php
-				// Carry the page and tab through search and pagination links.
-				printf( '<input type="hidden" name="page" value="%s" />', esc_attr( Admin::MENU_SLUG ) );
-				printf( '<input type="hidden" name="tab" value="%s" />', 'avatars' );
+			// Carry the page and tab through search and pagination links.
+			printf( '<input type="hidden" name="page" value="%s" />', esc_attr( Admin::MENU_SLUG ) );
+			printf( '<input type="hidden" name="tab" value="%s" />', 'avatars' );
 
-				$this->search_box( esc_html__( 'Search users', 'wpmake-advance-user-avatar' ), 'wpmake-aua-user-search' );
-				$this->display();
-				?>
-			</form>
+			Admin::panel_open( esc_html__( 'Manage Avatars', 'wpmake-advance-user-avatar' ) );
+			$this->search_box( esc_html__( 'Search users', 'wpmake-advance-user-avatar' ), 'wpmake-aua-user-search' );
+			Admin::panel_head_close();
+
+			$this->display();
+
+			Admin::panel_close();
+
+			echo '</form>';
+			?>
 		</div>
 		<?php
 	}
