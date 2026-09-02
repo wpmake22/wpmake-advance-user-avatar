@@ -785,6 +785,14 @@
 	border: 0;
 }
 
+// The settings sidebar is far shorter than the fields beside it, which left a
+// tall empty column. Sticky keeps it in view instead of stranding it at the top.
+.wpmake-aua-settings-page .wpmake-aua-layout-sidebar {
+	position: sticky;
+	top: 32px;
+	align-self: flex-start;
+}
+
 .wpmake-aua-topnav {
 	display: flex;
 	align-items: center;
@@ -838,7 +846,11 @@
 	&__tab {
 		display: flex;
 		align-items: center;
-		height: 100%;
+
+		// No height here on purpose. `height: 100%` resolved against the list item
+		// and then had its padding added outside it, making the link 82px tall in a
+		// 50px row and pushing the labels below the bar's centre line.
+		box-sizing: border-box;
 		padding: 16px 12px;
 		box-shadow: inset 0 -2px 0 transparent;
 		color: #50575e;
