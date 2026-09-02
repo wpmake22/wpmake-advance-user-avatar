@@ -793,8 +793,17 @@
 	border: 1px solid #e5e7eb;
 	border-radius: 10px;
 	padding: 0 20px;
-	margin: 16px 20px 20px 0;
+	margin: 16px 0 20px;
 	min-height: 56px;
+
+	/*
+	 * A flex container is its own formatting context, so it shrinks away from a
+	 * float instead of sitting under it -- and WordPress floats the Screen Options
+	 * button right above this. Without the clear the bar came out ~150px narrower
+	 * than the panel below it.
+	 */
+	clear: both;
+	box-sizing: border-box;
 
 	&__logo {
 		flex: 0 0 auto;
@@ -969,12 +978,23 @@
 
 	.tablenav {
 		margin: 0;
-		padding: 8px 24px 12px;
+		padding: 0 24px 10px;
 		height: auto;
+
+		&::after {
+			content: "";
+			display: table;
+			clear: both;
+		}
 
 		&.bottom {
 			border-top: 1px solid #f0f0f1;
-			padding-top: 12px;
+			padding: 10px 24px;
+		}
+
+		// This screen has no bulk actions, and the empty div still took 66px.
+		.actions {
+			display: none;
 		}
 
 		.tablenav-pages {
@@ -984,6 +1004,16 @@
 			align-items: center;
 			justify-content: flex-end;
 			gap: 4px;
+
+			&.one-page .pagination-links {
+				display: none;
+			}
+		}
+
+		.displaying-num {
+			color: #6b7280;
+			font-size: 12.5px;
+			margin: 0;
 		}
 	}
 
@@ -1003,9 +1033,9 @@
 			color: #374151;
 		}
 
-		tfoot th {
-			border-top: 1px solid #e5e7eb;
-			border-bottom: 0;
+		// The repeated header row at the foot is noise in this layout.
+		tfoot {
+			display: none;
 		}
 
 		tbody td,
@@ -1037,8 +1067,17 @@
 			display: block;
 			width: 44px;
 			height: 44px;
+			min-width: 44px;
+			aspect-ratio: 1 / 1;
 			border-radius: 8px;
+
+			// A near-white picture would otherwise have no visible edge.
+			border: 1px solid #e5e7eb;
+
+			// An avatar can be any shape -- someone may pick a wide screenshot from
+			// the Media Library -- so crop to the square rather than squash to it.
 			object-fit: cover;
+			object-position: center;
 		}
 
 		.sorting-indicator {
