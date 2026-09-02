@@ -3,7 +3,11 @@
 // =============================================================================
 
 .wpmake-aua-settings-page {
-	max-width: 1400px;
+	/*
+	 * No max-width. A 1400px cap left a few hundred pixels of dead screen to the
+	 * right of the sidebar on a wide monitor, which is exactly the space the
+	 * settings and the user table want.
+	 */
 
 	// Page title with icon
 	.wpmake-aua-page-title {
