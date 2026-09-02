@@ -768,3 +768,281 @@
 		font-weight: 600;
 	}
 }
+
+// =============================================================================
+// Product navigation bar
+// =============================================================================
+
+// Sits outside .wpmake-aua-settings-page so it spans the screen the way the
+// WordPress admin expects a page-level bar to.
+// The notice anchor is structural only.
+.wpmake-aua-settings-page > .wp-header-end,
+.wrap > .wp-header-end {
+	display: block;
+	visibility: hidden;
+	height: 0;
+	margin: 0;
+	border: 0;
+}
+
+.wpmake-aua-topnav {
+	display: flex;
+	align-items: center;
+	gap: 24px;
+	background: #fff;
+	border: 1px solid #e5e7eb;
+	border-radius: 10px;
+	padding: 0 20px;
+	margin: 16px 20px 20px 0;
+	min-height: 56px;
+
+	&__logo {
+		flex: 0 0 auto;
+		width: 28px;
+		height: 28px;
+		border-radius: 6px;
+	}
+
+	&__tabs {
+		display: flex;
+		align-items: stretch;
+		gap: 4px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		flex: 1 1 auto;
+		min-width: 0;
+
+		// Scrolls when the tabs outgrow the bar, without a visible gutter.
+		overflow-x: auto;
+		scrollbar-width: none;
+
+		&::-webkit-scrollbar {
+			display: none;
+		}
+
+		li {
+			margin: 0;
+		}
+	}
+
+	&__tab {
+		display: flex;
+		align-items: center;
+		height: 100%;
+		padding: 16px 12px;
+		box-shadow: inset 0 -2px 0 transparent;
+		color: #50575e;
+		font-size: 13.5px;
+		font-weight: 500;
+		text-decoration: none;
+		white-space: nowrap;
+		transition: color .15s, box-shadow .15s;
+
+		&:hover,
+		&:focus {
+			color: #2563eb;
+		}
+
+		// Focus ring only for keyboard users; the underline already shows state.
+		&:focus-visible {
+			outline: 2px solid #2563eb;
+			outline-offset: -2px;
+		}
+
+		&.is-active {
+			color: #2563eb;
+			box-shadow: inset 0 -2px 0 #2563eb;
+			font-weight: 600;
+		}
+	}
+
+	&__meta {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		flex: 0 0 auto;
+	}
+
+	&__help {
+		color: #50575e;
+		font-size: 13.5px;
+		text-decoration: none;
+
+		&:hover,
+		&:focus {
+			color: #2563eb;
+		}
+	}
+
+	&__version {
+		display: inline-flex;
+		align-items: center;
+		padding: 2px 8px;
+		border: 1px solid #e5e7eb;
+		border-radius: 20px;
+		background: #f9fafb;
+		color: #6b7280;
+		font-size: 11.5px;
+		font-weight: 500;
+	}
+}
+
+// The nav is page-level, so keep WordPress's own notices below it.
+.wpmake-aua-settings-page {
+	.wpmake-aua-screen-head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 16px;
+		margin: 0 0 16px;
+	}
+
+	.wpmake-aua-screen-title {
+		margin: 0;
+		padding: 0;
+		font-size: 20px;
+		font-weight: 600;
+		color: #1d2327;
+	}
+}
+
+// =============================================================================
+// Panel — the white card a screen's content sits in
+// =============================================================================
+
+.wpmake-aua-panel {
+	background: #fff;
+	border: 1px solid #e5e7eb;
+	border-radius: 10px;
+	overflow: hidden;
+
+	&__head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 16px;
+		flex-wrap: wrap;
+		padding: 18px 24px;
+	}
+
+	&__title {
+		margin: 0;
+		padding: 0;
+		font-size: 20px;
+		font-weight: 600;
+		color: #1d2327;
+	}
+
+	// The list table's own search box, dropped into the panel head.
+	.search-box {
+		float: none;
+		margin: 0;
+		display: flex;
+		align-items: center;
+		gap: 8px;
+
+		input[type="search"] {
+			min-width: 240px;
+			height: 36px;
+			border: 1px solid #e5e7eb;
+			border-radius: 8px;
+			padding: 0 12px;
+			box-shadow: none;
+
+			&:focus {
+				border-color: #2563eb;
+				box-shadow: 0 0 0 3px rgba(37, 99, 235, .12);
+				outline: none;
+			}
+		}
+
+		.button {
+			height: 36px;
+			border-radius: 8px;
+		}
+	}
+
+	// -----------------------------------------------------------------------
+	// The list table itself
+	// -----------------------------------------------------------------------
+
+	.tablenav {
+		margin: 0;
+		padding: 8px 24px 12px;
+		height: auto;
+
+		&.bottom {
+			border-top: 1px solid #f0f0f1;
+			padding-top: 12px;
+		}
+
+		.tablenav-pages {
+			float: none;
+			margin: 0;
+			display: flex;
+			align-items: center;
+			justify-content: flex-end;
+			gap: 4px;
+		}
+	}
+
+	table.wp-list-table {
+		border: 0;
+		border-top: 1px solid #f0f0f1;
+		box-shadow: none;
+		margin: 0;
+
+		thead th,
+		tfoot th {
+			background: #f9fafb;
+			border-bottom: 1px solid #e5e7eb;
+			padding: 14px 24px;
+			font-size: 12.5px;
+			font-weight: 600;
+			color: #374151;
+		}
+
+		tfoot th {
+			border-top: 1px solid #e5e7eb;
+			border-bottom: 0;
+		}
+
+		tbody td,
+		tbody th {
+			padding: 16px 24px;
+			border-bottom: 1px solid #f0f0f1;
+			vertical-align: middle;
+		}
+
+		tbody tr:last-child td {
+			border-bottom: 0;
+		}
+
+		tbody tr:hover {
+			background: #f9fafb;
+		}
+
+		// Core stripes clash with the hover state above.
+		&.striped tbody tr.alternate,
+		tbody tr.alternate {
+			background: transparent;
+		}
+
+		.column-avatar {
+			width: 88px;
+		}
+
+		.wpmake-aua-row-avatar {
+			display: block;
+			width: 44px;
+			height: 44px;
+			border-radius: 8px;
+			object-fit: cover;
+		}
+
+		.sorting-indicator {
+			vertical-align: middle;
+		}
+	}
+}
